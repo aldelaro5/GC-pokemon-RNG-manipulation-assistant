@@ -28,6 +28,8 @@ void MainWindow::initialiseWidgets()
 
   m_btnStartSeedFinder = new QPushButton(tr("Find your seed"));
   connect(m_btnStartSeedFinder, &QPushButton::clicked, this, &MainWindow::startSeedFinder);
+
+  m_predictorWidget = new PredictorWidget(this);
 }
 
 void MainWindow::makeLayouts()
@@ -35,6 +37,7 @@ void MainWindow::makeLayouts()
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_cmbGame);
   mainLayout->addWidget(m_btnStartSeedFinder);
+  mainLayout->addWidget(m_predictorWidget);
 
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);

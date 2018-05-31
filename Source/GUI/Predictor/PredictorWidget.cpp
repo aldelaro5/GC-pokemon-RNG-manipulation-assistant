@@ -10,13 +10,16 @@ PredictorWidget::PredictorWidget(QWidget* parent) : QWidget(parent)
 
 void PredictorWidget::initialiseWidgets()
 {
-  m_lblStartersNames.append(new QLabel(tr("Select a game")));
+  QLabel* lblUninitialised = new QLabel(tr("Select a game"));
+  lblUninitialised->setAlignment(Qt::AlignmentFlag::AlignCenter);
+  m_lblStartersNames.append(lblUninitialised);
 
   m_tblStartersPrediction = new QTableWidget();
 }
 
 void PredictorWidget::makeLayouts()
 {
+  m_startersNamesLayout = new QHBoxLayout;
   for (auto label : m_lblStartersNames)
     m_startersNamesLayout->addWidget(label);
 

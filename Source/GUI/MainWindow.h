@@ -6,6 +6,7 @@
 #include <QTableWidget>
 
 #include "../PokemonRNGSystem/BaseRNGSystem.h"
+#include "Predictor/PredictorWidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -31,4 +32,5 @@ private:
 
   QComboBox* m_cmbGame;
   QPushButton* m_btnStartSeedFinder;
+  PredictorWidget* m_predictorWidget;
 };
