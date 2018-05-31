@@ -1,21 +1,21 @@
-#include "StartersPredictionWidget.h"
+#include "PredictorWidget.h"
 
 #include <QVBoxLayout>
 
-StartersPredictionWidget::StartersPredictionWidget(QWidget* parent) : QWidget(parent)
+PredictorWidget::PredictorWidget(QWidget* parent) : QWidget(parent)
 {
   initialiseWidgets();
   makeLayouts();
 }
 
-void StartersPredictionWidget::initialiseWidgets()
+void PredictorWidget::initialiseWidgets()
 {
   m_lblStartersNames.append(new QLabel(tr("Select a game")));
 
   m_tblStartersPrediction = new QTableWidget();
 }
 
-void StartersPredictionWidget::makeLayouts()
+void PredictorWidget::makeLayouts()
 {
   for (auto label : m_lblStartersNames)
     m_startersNamesLayout->addWidget(label);

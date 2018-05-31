@@ -8,10 +8,10 @@
 
 #include "../../PokemonRNGSystem/BaseRNGSystem.h"
 
-class StartersPredictionWidget : public QWidget
+class PredictorWidget : public QWidget
 {
 public:
-  StartersPredictionWidget(QWidget* parent = nullptr);
+  PredictorWidget(QWidget* parent = nullptr);
   void setStartersPrediction(BaseRNGSystem::startersPrediction startersPrediction);
 
 private:
