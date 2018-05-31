@@ -3,8 +3,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
-#include "../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
+#include "../PokemonRNGSystem/SPokemonRNG.h"
 #include "GUICommon.h"
 
 MainWindow::MainWindow()
@@ -45,11 +44,10 @@ void MainWindow::makeLayouts()
 void MainWindow::gameChanged()
 {
   gameSelection selection = static_cast<gameSelection>(m_cmbGame->currentIndex());
-  delete m_system;
   if (selection == gameSelection::Colosseum)
-    m_system = new ColosseumRNGSystem();
+    SPokemonRNG::switchGame(SPokemonRNG::GCPokemonGame::Colosseum);
   else if (selection = gameSelection::XD)
-    m_system = new GaleDarknessRNGSystem();
+    SPokemonRNG::switchGame(SPokemonRNG::GCPokemonGame::XD);
 
   if (m_cmbGame->count() == static_cast<int>(gameSelection::Unselected) + 1)
     m_cmbGame->removeItem(static_cast<int>(gameSelection::Unselected));
