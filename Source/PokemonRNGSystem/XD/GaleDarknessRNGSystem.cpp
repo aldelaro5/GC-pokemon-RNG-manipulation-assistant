@@ -311,8 +311,8 @@ u32 GaleDarknessRNGSystem::rollRNGNamingScreenNext(u32 seed)
 BaseRNGSystem::startersPrediction GaleDarknessRNGSystem::generateStarterPokemons(u32 seed)
 {
   startersPrediction result;
-  std::vector<pokemonGen> startersProperties;
-  pokemonGen starter;
+  std::vector<starterGen> startersProperties;
+  starterGen starter;
 
   // 500 numbers of 32 bits are generated, but they don't seem to influence anything.
   seed = LCGn(seed, 1000);
@@ -346,6 +346,7 @@ BaseRNGSystem::startersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   starter.isShiny = isPidShiny(lTrainerId, hTrainerId, personalityID);
   starter.genderIndex = getPidGender(eeveeGenderRatio, personalityID);
   starter.natureIndex = personalityID % 25;
+  starter.name = "Eevee";
   startersProperties.push_back(starter);
 
   result.starters = startersProperties;

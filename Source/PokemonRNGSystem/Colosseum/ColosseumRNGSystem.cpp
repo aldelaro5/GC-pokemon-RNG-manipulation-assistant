@@ -18,7 +18,7 @@
 */
 
 // The natures wanted for all Pokemon of all ultimate teams
-static std::array<std::array<u8, 6>, 8> s_natureTeamsData = {
+static const std::array<std::array<u8, 6>, 8> s_natureTeamsData = {
     {{{0x16, 0x15, 0x0f, 0x13, 0x04, 0x04}},
      {{0x0b, 0x08, 0x01, 0x10, 0x10, 0x0C}},
      {{0x02, 0x10, 0x0f, 0x12, 0x0f, 0x03}},
@@ -29,21 +29,21 @@ static std::array<std::array<u8, 6>, 8> s_natureTeamsData = {
      {{0x03, 0x0a, 0x0f, 0x03, 0x0f, 0x03}}}};
 
 // The genders wanted for all Pokemon of all ultimate teams
-static std::array<std::array<u8, 6>, 8> s_genderTeamsData = {{{{0, 1, 1, 0, 0, 1}},
-                                                              {{2, 1, 0, 0, 1, 0}},
-                                                              {{0, 1, 0, 1, 0, 1}},
-                                                              {{2, 1, 1, 1, 0, 0}},
-                                                              {{0, 0, 0, 0, 0, 1}},
-                                                              {{2, 1, 2, 0, 2, 1}},
-                                                              {{2, 0, 0, 1, 1, 0}},
-                                                              {{1, 0, 1, 0, 1, 0}}}};
+static const std::array<std::array<u8, 6>, 8> s_genderTeamsData = {{{{0, 1, 1, 0, 0, 1}},
+                                                                    {{2, 1, 0, 0, 1, 0}},
+                                                                    {{0, 1, 0, 1, 0, 1}},
+                                                                    {{2, 1, 1, 1, 0, 0}},
+                                                                    {{0, 0, 0, 0, 0, 1}},
+                                                                    {{2, 1, 2, 0, 2, 1}},
+                                                                    {{2, 0, 0, 1, 1, 0}},
+                                                                    {{1, 0, 1, 0, 1, 0}}}};
 
 // The genders wanted for dummy Pokemon of dummy teams
-static std::array<std::array<u8, 6>, 4> s_genderDummyTeamsData = {
+static const std::array<std::array<u8, 6>, 4> s_genderDummyTeamsData = {
     {{{1, 0, 1, 0, 1, 0}}, {{1, 0, 1, 0, 1, 0}}, {{1, 0, 1, 0, 1, 0}}, {{1, 0, 1, 0, 1, 0}}}};
 
 // The gender ratios of all Pokemon of all ultimate teams
-static std::array<std::array<u8, 6>, 8> s_genderRatioTeamsData = {
+static const std::array<std::array<u8, 6>, 8> s_genderRatioTeamsData = {
     {{{0x1f, 0x7f, 0x7f, 0x7f, 0xbf, 0x7f}},
      {{0xff, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f}},
      {{0x1f, 0x3f, 0x7f, 0x7f, 0x7f, 0x7f}},
@@ -54,14 +54,16 @@ static std::array<std::array<u8, 6>, 8> s_genderRatioTeamsData = {
      {{0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f}}}};
 
 // The gender ratios of all Pokemon of all dummy teams
-static std::array<std::array<u8, 6>, 4> s_genderRatioDummyTeamsData = {
+static const std::array<std::array<u8, 6>, 4> s_genderRatioDummyTeamsData = {
     {{{0x3f, 0x3f, 0x1f, 0x1f, 0x1f, 0x1f}},
      {{0x1f, 0x7f, 0x1f, 0x7f, 0x7f, 0x7f}},
      {{0xbf, 0x1f, 0x7f, 0x7f, 0x7f, 0x7f}},
      {{0x7f, 0x7f, 0xff, 0x7f, 0x7f, 0x7f}}}};
 
 // The gender ratio of the starters.
-static std::array<u8, 2> s_genderRatioStarters = {{0x1f, 0x1f}};
+static const std::array<u8, 2> s_genderRatioStarters = {{0x1f, 0x1f}};
+
+static const std::array<std::string, 2> s_startersName = {{"Umbreon", "Espeon"}};
 
 // The minimum possible amount of naming screen animation render calls obtained by TASing the input
 // of the naming screen when using the WES preset name.
@@ -278,8 +280,8 @@ u32 ColosseumRNGSystem::rollRNGNamingScreenNext(u32 seed)
 BaseRNGSystem::startersPrediction ColosseumRNGSystem::generateStarterPokemons(u32 seed)
 {
   startersPrediction result;
-  std::vector<pokemonGen> startersProperties;
-  pokemonGen starter;
+  std::vector<starterGen> startersProperties;
+  starterGen starter;
 
   // 500 numbers of 32 bits are generated, but they don't seem to influence anything.
   seed = LCGn(seed, 1000);
@@ -316,6 +318,7 @@ BaseRNGSystem::startersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     starter.isShiny = false;
     starter.genderIndex = 0;
     starter.natureIndex = personalityID % 25;
+    starter.name = s_startersName[i];
     startersProperties.push_back(starter);
   }
   result.starters = startersProperties;

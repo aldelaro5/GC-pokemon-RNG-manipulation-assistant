@@ -11,8 +11,9 @@
 class BaseRNGSystem
 {
 public:
-  struct pokemonGen
+  struct starterGen
   {
+    std::string name = "";
     int hpIV = 0;
     int atkIV = 0;
     int defIV = 0;
@@ -26,7 +27,7 @@ public:
 
   struct startersPrediction
   {
-    std::vector<pokemonGen> starters;
+    std::vector<starterGen> starters;
     u32 startingSeed = 0;
     int frameNumber = 0;
   };
