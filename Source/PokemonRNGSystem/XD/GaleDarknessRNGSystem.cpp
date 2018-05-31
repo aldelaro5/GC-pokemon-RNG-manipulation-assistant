@@ -288,6 +288,11 @@ int GaleDarknessRNGSystem::getMinFramesAmountNamingScreen()
   return minNamingScreenFrames;
 }
 
+int GaleDarknessRNGSystem::getNbrStartersPrediction()
+{
+  return 2;
+}
+
 u32 GaleDarknessRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   LCG(seed);

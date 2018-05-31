@@ -260,6 +260,11 @@ int ColosseumRNGSystem::getMinFramesAmountNamingScreen()
   return minNamingScreenFrames;
 }
 
+int ColosseumRNGSystem::getNbrStartersPrediction()
+{
+  return 1;
+}
+
 u32 ColosseumRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   // Exhaust all guaranteed calls before considering input and wasted frames.

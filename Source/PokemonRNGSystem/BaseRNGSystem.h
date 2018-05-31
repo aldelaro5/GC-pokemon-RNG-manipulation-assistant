@@ -64,6 +64,7 @@ protected:
   // outcome got
   virtual bool generateBattleTeam(u32& seed, std::vector<int> criteria) = 0;
   virtual int getMinFramesAmountNamingScreen() = 0;
+  virtual int getNbrStartersPrediction() = 0;
   // Do all the RNG calls to get to before the first possible frame of confirming the name on the
   // naming screen using a preset name
   virtual u32 rollRNGNamingScreenInit(u32 seed) = 0;
