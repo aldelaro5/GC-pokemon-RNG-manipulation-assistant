@@ -1,3 +1,5 @@
+#include "GUI/GUICommon.h"
+#include "GUI/MainWindow.h"
 #include "PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
 #include "PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
 
@@ -59,8 +61,10 @@ void testPredictor(BaseRNGSystem& system, u32 seed)
     for (auto j : i.starters)
     {
       std::cout << j.hpIV << " " << j.atkIV << " " << j.defIV << " " << j.spAtkIV << " "
-                << j.spDefIV << " " << j.speedIV << " " << Common::naturesStr[j.natureIndex] << " "
-                << (j.isShiny ? "Yes" : "No") << " " << Common::genderStr[j.genderIndex] << "   ";
+                << j.spDefIV << " " << j.speedIV << " "
+                << GUICommon::naturesStr[j.natureIndex].toStdString() << " "
+                << (j.isShiny ? "Yes" : "No") << " "
+                << GUICommon::genderStr[j.genderIndex].toStdString() << "   ";
     }
     std::cout << std::endl;
   }
@@ -68,20 +72,18 @@ void testPredictor(BaseRNGSystem& system, u32 seed)
 
 int main(int argc, char** argv)
 {
+  QApplication app(argc, argv);
+  MainWindow window;
+  window.show();
+  return app.exec();
   /*ColosseumRNGSystem system;
   system.precalculateNbrRollsBeforeTeamGeneration(false, 5);
   ColosseumRNGSystem system2;
   system2.precalculateNbrRollsBeforeTeamGeneration(false, 5);
   std::cout << "done";
-
   u32 seed = testSeedFinder(system);
   std::cin.ignore();
   testPredictor(system, seed);
   std::cin.ignore();
-  return 0;
-  */
-  QApplication app(argc, argv);
-  QMainWindow window;
-  window.show();
-  return app.exec();
+  return 0;*/
 }

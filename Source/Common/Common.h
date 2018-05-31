@@ -7,11 +7,6 @@
 
 namespace Common
 {
-// Ordered by in-game nature indexes.
-extern std::array<std::string, 25> naturesStr;
-extern std::array<std::string, 17> typesStr;
-extern std::array<std::string, 2> genderStr;
-
 // The GameCube RTC does 40500000 ticks per second while the Wii is exactly 1.5 faster
 static const int ticksPerSecondGC = 40500000;
 static const int ticksPerSecondWii = static_cast<int>(ticksPerSecondGC * 1.5);

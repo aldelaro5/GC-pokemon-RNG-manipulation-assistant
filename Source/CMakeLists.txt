@@ -8,10 +8,11 @@ if(OPENMP_FOUND)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-set(SRCS Common/Common.cpp
-         PokemonRNGSystem/BaseRNGSystem.cpp
+set(SRCS PokemonRNGSystem/BaseRNGSystem.cpp
          PokemonRNGSystem/Colosseum/ColosseumRNGSystem.cpp
          PokemonRNGSystem/XD/GaleDarknessRNGSystem.cpp
+         GUI/GUICommon.cpp
+         GUI/MainWindow.cpp
          main.cpp)
 
 set(CMAKE_INCLUE_CURRENT_DIR ON)
