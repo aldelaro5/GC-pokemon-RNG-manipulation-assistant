@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseRNGSystem.h"
+#include "../PokemonRNGSystem/BaseRNGSystem.h"
 
 // Singleton wrapper arround BaseRNGSystem, to use from UI
 class SPokemonRNG

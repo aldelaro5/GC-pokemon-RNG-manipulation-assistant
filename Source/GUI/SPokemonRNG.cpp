@@ -1,7 +1,7 @@
 #include "SPokemonRNG.h"
 
-#include "Colosseum/ColosseumRNGSystem.h"
-#include "XD/GaleDarknessRNGSystem.h"
+#include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
+#include "../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
 
 BaseRNGSystem* SPokemonRNG::m_instance = nullptr;
 SPokemonRNG::GCPokemonGame SPokemonRNG::m_currentGame = SPokemonRNG::GCPokemonGame::None;

@@ -3,8 +3,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include "../PokemonRNGSystem/SPokemonRNG.h"
 #include "GUICommon.h"
+#include "SPokemonRNG.h"
 
 MainWindow::MainWindow()
 {

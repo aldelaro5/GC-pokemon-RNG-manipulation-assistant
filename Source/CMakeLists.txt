@@ -11,7 +11,7 @@ endif()
 set(SRCS PokemonRNGSystem/BaseRNGSystem.cpp
          PokemonRNGSystem/Colosseum/ColosseumRNGSystem.cpp
          PokemonRNGSystem/XD/GaleDarknessRNGSystem.cpp
-         PokemonRNGSystem/SPokemonRNG.cpp
+         GUI/SPokemonRNG.cpp
          GUI/GUICommon.cpp
          GUI/Predictor/PredictorWidget.cpp
          GUI/MainWindow.cpp
