@@ -48,9 +48,9 @@ void MainWindow::gameChanged()
 {
   gameSelection selection = static_cast<gameSelection>(m_cmbGame->currentIndex());
   if (selection == gameSelection::Colosseum)
-    SPokemonRNG::switchGame(SPokemonRNG::GCPokemonGame::Colosseum);
+    SPokemonRNG::getInstance()->switchGame(SPokemonRNG::GCPokemonGame::Colosseum);
   else if (selection = gameSelection::XD)
-    SPokemonRNG::switchGame(SPokemonRNG::GCPokemonGame::XD);
+    SPokemonRNG::getInstance()->switchGame(SPokemonRNG::GCPokemonGame::XD);
 
   if (m_cmbGame->count() == static_cast<int>(gameSelection::Unselected) + 1)
     m_cmbGame->removeItem(static_cast<int>(gameSelection::Unselected));

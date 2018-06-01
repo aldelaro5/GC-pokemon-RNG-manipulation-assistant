@@ -2,9 +2,13 @@
 
 #include "../PokemonRNGSystem/BaseRNGSystem.h"
 
+#include <QObject>
+
 // Singleton wrapper arround BaseRNGSystem, to use from UI
-class SPokemonRNG
+class SPokemonRNG : public QObject
 {
+  Q_OBJECT
+
 public:
   enum class GCPokemonGame
   {
@@ -13,11 +17,15 @@ public:
     None
   };
 
-  static BaseRNGSystem* getInstance();
-  static void switchGame(GCPokemonGame game);
+  static SPokemonRNG* getInstance();
+  void switchGame(GCPokemonGame game);
+
+signals:
+  void onSwitchGame();
 
 private:
   SPokemonRNG();
-  static BaseRNGSystem* m_instance;
+  static SPokemonRNG* m_instance;
+  static BaseRNGSystem* m_system;
   static GCPokemonGame m_currentGame;
 };
