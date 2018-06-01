@@ -262,7 +262,7 @@ int ColosseumRNGSystem::getMinFramesAmountNamingScreen()
 
 int ColosseumRNGSystem::getNbrStartersPrediction()
 {
-  return 1;
+  return 2;
 }
 
 u32 ColosseumRNGSystem::rollRNGNamingScreenInit(u32 seed)
@@ -282,11 +282,11 @@ u32 ColosseumRNGSystem::rollRNGNamingScreenNext(u32 seed)
   return seed;
 }
 
-BaseRNGSystem::startersPrediction ColosseumRNGSystem::generateStarterPokemons(u32 seed)
+BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u32 seed)
 {
-  startersPrediction result;
-  std::vector<starterGen> startersProperties;
-  starterGen starter;
+  StartersPrediction result;
+  std::vector<StarterGen> startersProperties;
+  StarterGen starter;
 
   // 500 numbers of 32 bits are generated, but they don't seem to influence anything.
   seed = LCGn(seed, 1000);

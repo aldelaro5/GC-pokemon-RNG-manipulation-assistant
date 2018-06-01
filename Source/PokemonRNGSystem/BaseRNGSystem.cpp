@@ -117,17 +117,17 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
   delete[] precalc;
 }
 
-std::vector<BaseRNGSystem::startersPrediction>
+std::vector<BaseRNGSystem::StartersPrediction>
 BaseRNGSystem::predictStartersForNbrSeconds(u32 seed, int nbrSeconds)
 {
-  std::vector<startersPrediction> predictionsResult;
+  std::vector<StartersPrediction> predictionsResult;
   seed = rollRNGNamingScreenInit(seed);
 
   for (int i = getMinFramesAmountNamingScreen();
        i < getMinFramesAmountNamingScreen() + nbrSeconds * pollingRateNamingScreenPerSec; i++)
   {
     seed = rollRNGNamingScreenNext(seed);
-    BaseRNGSystem::startersPrediction prediction = generateStarterPokemons(seed);
+    BaseRNGSystem::StartersPrediction prediction = generateStarterPokemons(seed);
     prediction.frameNumber = i;
     predictionsResult.push_back(prediction);
   }

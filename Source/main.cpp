@@ -51,7 +51,7 @@ u32 testSeedFinder(BaseRNGSystem& system)
 
 void testPredictor(BaseRNGSystem& system, u32 seed)
 {
-  std::vector<BaseRNGSystem::startersPrediction> predictions =
+  std::vector<BaseRNGSystem::StartersPrediction> predictions =
       system.predictStartersForNbrSeconds(seed, 10);
 
   for (auto i : predictions)

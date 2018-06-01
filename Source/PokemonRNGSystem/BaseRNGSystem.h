@@ -11,7 +11,7 @@
 class BaseRNGSystem
 {
 public:
-  struct starterGen
+  struct StarterGen
   {
     std::string name = "";
     int hpIV = 0;
@@ -25,9 +25,9 @@ public:
     bool isShiny = false;
   };
 
-  struct startersPrediction
+  struct StartersPrediction
   {
-    std::vector<starterGen> starters;
+    std::vector<StarterGen> starters;
     u32 startingSeed = 0;
     int frameNumber = 0;
   };
@@ -42,7 +42,7 @@ public:
   // Seed finding algorithm, this does only one pass with parellelism
   void seedFinder(std::vector<int> criteria, std::vector<u32>& seeds, bool useWii,
                   int rtcErrorMarginSeconds, bool usePrecalc, bool firstPass);
-  std::vector<startersPrediction> predictStartersForNbrSeconds(u32 seed, int nbrSeconds);
+  std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, int nbrSeconds);
 
 protected:
   struct seedRange
@@ -72,7 +72,7 @@ protected:
   // the output of rollRNGNamingScreenInit
   virtual u32 rollRNGNamingScreenNext(u32 seed) = 0;
   // Generates the starters with a given seed, the seed must have passed the naming screen
-  virtual startersPrediction generateStarterPokemons(u32 seed) = 0;
+  virtual StartersPrediction generateStarterPokemons(u32 seed) = 0;
 
   // The LCG used in both Pokemon games
   u32 inline LCG(u32& seed, u16* counter = nullptr)

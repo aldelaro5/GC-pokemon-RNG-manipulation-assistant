@@ -1,5 +1,6 @@
 #include "PredictorWidget.h"
 
+#include "../GUICommon.h"
 #include "../SPokemonRNG.h"
 
 #include <QHeaderView>
@@ -22,6 +23,7 @@ void PredictorWidget::initialiseWidgets()
   m_lblStartersNames.append(lblUninitialised);
 
   m_tblStartersPrediction = new QTableWidget();
+  m_tblStartersPrediction->verticalHeader()->hide();
 }
 
 void PredictorWidget::makeLayouts()
@@ -42,8 +44,8 @@ void PredictorWidget::switchGame()
   m_lblStartersNames[0]->setText(tr("Find your seed for predictions"));
   m_tblStartersPrediction->clear();
   m_tblHeaderLabels.clear();
-  m_tblHeaderLabels.append(tr("Frame number"));
-  m_tblHeaderLabels.append(tr("Starting seed"));
+  m_tblHeaderLabels.append(tr("Frame"));
+  m_tblHeaderLabels.append(tr("Seed"));
   for (int i = 0; i < SPokemonRNG::getInstance()->getSystem()->getNbrStartersPrediction(); i++)
   {
     m_tblHeaderLabels.append(tr("HP"));
@@ -59,5 +61,43 @@ void PredictorWidget::switchGame()
   }
   m_tblStartersPrediction->setColumnCount(m_tblHeaderLabels.count());
   m_tblStartersPrediction->setHorizontalHeaderLabels(m_tblHeaderLabels);
-  m_tblStartersPrediction->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  m_tblStartersPrediction->resizeColumnsToContents();
+}
+
+void PredictorWidget::setStartersPrediction(
+    std::vector<BaseRNGSystem::StartersPrediction> startersPrediction)
+{
+  m_tblStartersPrediction->setRowCount(startersPrediction.size());
+  for (int i = 0; i < startersPrediction.size(); i++)
+  {
+    m_tblStartersPrediction->setItem(
+        i, 0, new QTableWidgetItem(QString::number(startersPrediction[i].frameNumber)));
+    m_tblStartersPrediction->setItem(
+        i, 1, new QTableWidgetItem(QString::number(startersPrediction[i].startingSeed, 16)));
+
+    for (int j = 0; j < startersPrediction[i].starters.size(); j++)
+    {
+      BaseRNGSystem::StarterGen starter = startersPrediction[i].starters[j];
+      m_tblStartersPrediction->setItem(i, 2 + j * 9,
+                                       new QTableWidgetItem(QString::number(starter.hpIV)));
+      m_tblStartersPrediction->setItem(i, 3 + j * 9,
+                                       new QTableWidgetItem(QString::number(starter.atkIV)));
+      m_tblStartersPrediction->setItem(i, 4 + j * 9,
+                                       new QTableWidgetItem(QString::number(starter.defIV)));
+      m_tblStartersPrediction->setItem(i, 5 + j * 9,
+                                       new QTableWidgetItem(QString::number(starter.spAtkIV)));
+      m_tblStartersPrediction->setItem(i, 6 + j * 9,
+                                       new QTableWidgetItem(QString::number(starter.spDefIV)));
+      m_tblStartersPrediction->setItem(i, 7 + j * 9,
+                                       new QTableWidgetItem(QString::number(starter.speedIV)));
+
+      m_tblStartersPrediction->setItem(
+          i, 8 + j * 9, new QTableWidgetItem(GUICommon::genderStr[starter.genderIndex]));
+      m_tblStartersPrediction->setItem(
+          i, 9 + j * 9, new QTableWidgetItem(GUICommon::naturesStr[starter.natureIndex]));
+      m_tblStartersPrediction->setItem(i, 10 + j * 9,
+                                       new QTableWidgetItem(tr(starter.isShiny ? "Yes" : "No")));
+    }
+  }
+  m_tblStartersPrediction->resizeColumnsToContents();
 }

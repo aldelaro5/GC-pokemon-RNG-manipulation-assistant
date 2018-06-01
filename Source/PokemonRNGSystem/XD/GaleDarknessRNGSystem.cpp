@@ -290,7 +290,7 @@ int GaleDarknessRNGSystem::getMinFramesAmountNamingScreen()
 
 int GaleDarknessRNGSystem::getNbrStartersPrediction()
 {
-  return 2;
+  return 1;
 }
 
 u32 GaleDarknessRNGSystem::rollRNGNamingScreenInit(u32 seed)
@@ -313,11 +313,11 @@ u32 GaleDarknessRNGSystem::rollRNGNamingScreenNext(u32 seed)
   return seed;
 }
 
-BaseRNGSystem::startersPrediction GaleDarknessRNGSystem::generateStarterPokemons(u32 seed)
+BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons(u32 seed)
 {
-  startersPrediction result;
-  std::vector<starterGen> startersProperties;
-  starterGen starter;
+  StartersPrediction result;
+  std::vector<StarterGen> startersProperties;
+  StarterGen starter;
 
   // 500 numbers of 32 bits are generated, but they don't seem to influence anything.
   seed = LCGn(seed, 1000);

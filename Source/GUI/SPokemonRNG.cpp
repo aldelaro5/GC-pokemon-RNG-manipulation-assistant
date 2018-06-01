@@ -28,6 +28,7 @@ void SPokemonRNG::switchGame(SPokemonRNG::GCPokemonGame game)
   if (m_currentGame == game || game == GCPokemonGame::None)
     return;
 
+  delete m_system;
   m_currentGame = game;
   switch (m_currentGame)
   {
