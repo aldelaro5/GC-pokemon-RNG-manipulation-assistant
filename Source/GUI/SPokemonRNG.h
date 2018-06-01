@@ -18,6 +18,8 @@ public:
   };
 
   static SPokemonRNG* getInstance();
+
+  BaseRNGSystem* getSystem();
   void switchGame(GCPokemonGame game);
 
 signals:

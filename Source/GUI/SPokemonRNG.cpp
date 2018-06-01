@@ -18,8 +18,17 @@ SPokemonRNG* SPokemonRNG::getInstance()
   return m_instance;
 }
 
+BaseRNGSystem* SPokemonRNG::getSystem()
+{
+  return m_system;
+}
+
 void SPokemonRNG::switchGame(SPokemonRNG::GCPokemonGame game)
 {
+  if (m_currentGame == game || game == GCPokemonGame::None)
+    return;
+
+  m_currentGame = game;
   switch (m_currentGame)
   {
   case GCPokemonGame::Colosseum:

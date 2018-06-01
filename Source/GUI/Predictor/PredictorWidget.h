@@ -17,9 +17,11 @@ public:
 private:
   void initialiseWidgets();
   void makeLayouts();
+  void switchGame();
 
   BaseRNGSystem::startersPrediction m_startersPrediction;
   QHBoxLayout* m_startersNamesLayout;
   QVector<QLabel*> m_lblStartersNames;
+  QStringList m_tblHeaderLabels;
   QTableWidget* m_tblStartersPrediction;
 };

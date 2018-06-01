@@ -34,6 +34,7 @@ public:
 
   virtual std::string getPrecalcFilenameForSettings(bool useWii, int rtcErrorMarginSeconds);
   size_t getPracalcFileSize(bool useWii, int rtcErrorMarginSeconds);
+  virtual int getNbrStartersPrediction() = 0;
   // Does the precalculation which consist of outputing to a file the number of RNG calls done
   // before getting to the battle menu, this improves performance significantly thanks to the LCGn
   // function and this file can be reused in subsequent seed finding.
@@ -64,7 +65,6 @@ protected:
   // outcome got
   virtual bool generateBattleTeam(u32& seed, std::vector<int> criteria) = 0;
   virtual int getMinFramesAmountNamingScreen() = 0;
-  virtual int getNbrStartersPrediction() = 0;
   // Do all the RNG calls to get to before the first possible frame of confirming the name on the
   // naming screen using a preset name
   virtual u32 rollRNGNamingScreenInit(u32 seed) = 0;
