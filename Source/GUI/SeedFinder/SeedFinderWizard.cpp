@@ -3,6 +3,7 @@
 #include <QAbstractButton>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include <QtConcurrent>
 
 #include "../SPokemonRNG.h"
 
@@ -12,6 +13,8 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection gam
     : QWizard(parent), m_game(game)
 {
   numberPass = 1;
+  m_cancelSeedFinderPass = false;
+  m_seedFinderFuture = QFuture<void>();
   setPage(pageID::Start, new StartPage(this, game));
   setPage(pageID::SeedFinderPass, getSeedFinderPassPageForGame());
   setPage(pageID::End, new EndPage(this));
@@ -23,6 +26,11 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection gam
     if (which == QWizard::CustomButton1)
       nextSeedFinderPass();
   });
+  connect(this, &SeedFinderWizard::onUpdateSeedFinderProgress, this, [=](int nbrSeedsSimulated) {
+    static_cast<SeedFinderPassPage*>(currentPage())->setSeedFinderProgress(nbrSeedsSimulated);
+  });
+  connect(this, &SeedFinderWizard::onSeedFinderPassDone, this,
+          &SeedFinderWizard::seedFinderPassDone);
 
   connect(button(QWizard::NextButton), &QAbstractButton::clicked, this,
           &SeedFinderWizard::pageChanged);
@@ -50,22 +58,28 @@ SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
 void SeedFinderWizard::nextSeedFinderPass()
 {
   SeedFinderPassPage* page = static_cast<SeedFinderPassPage*>(currentPage());
-  if (numberPass == 1)
-  {
-    SPokemonRNG::getInstance()->getSystem()->seedFinder(page->obtainCriteria(), seeds, false, 5,
-                                                        false, true);
-  }
-  else
-  {
-    SPokemonRNG::getInstance()->getSystem()->seedFinder(page->obtainCriteria(), seeds, false, 5,
-                                                        false, false);
-  }
+
+  m_seedFinderFuture = QtConcurrent::run([=] {
+    page->showSeedFinderProgress(true);
+    SPokemonRNG::getInstance()->getSystem()->seedFinder(
+        page->obtainCriteria(), seeds, false, 5, true,
+        [=](int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },
+        [=] { return m_cancelSeedFinderPass; });
+    page->showSeedFinderProgress(false);
+    emit onSeedFinderPassDone();
+  });
+}
+
+void SeedFinderWizard::seedFinderPassDone()
+{
   if (seeds.size() <= 1)
   {
-    page->setSeedFinderPassDone(true);
+    SeedFinderPassPage* page = static_cast<SeedFinderPassPage*>(currentPage());
+    page->setSeedFinderDone(true);
     QList<QWizard::WizardButton> layout;
     layout << QWizard::Stretch << QWizard::FinishButton;
     setButtonLayout(layout);
+    m_seedFinderDone = true;
     QWizard::next();
   }
   else
@@ -89,6 +103,28 @@ void SeedFinderWizard::pageChanged()
 void SeedFinderWizard::accept()
 {
   QDialog::accept();
+}
+
+void SeedFinderWizard::reject()
+{
+  if (m_seedFinderDone)
+  {
+    accept();
+  }
+  else
+  {
+    QMessageBox* cancelPrompt =
+        new QMessageBox(QMessageBox::Information, "Seed Finder Cancellation",
+                        "Are you sure you want to cancel the seed finding procedure?",
+                        QMessageBox::No | QMessageBox::Yes, this);
+    cancelPrompt->exec();
+    if (cancelPrompt->result() == QMessageBox::Yes)
+    {
+      m_cancelSeedFinderPass = true;
+      m_seedFinderFuture.waitForFinished();
+      QWizard::reject();
+    }
+  }
 }
 
 StartPage::StartPage(QWidget* parent, GUICommon::gameSelection game) : QWizardPage(parent)

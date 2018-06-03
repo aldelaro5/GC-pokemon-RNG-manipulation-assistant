@@ -2,9 +2,11 @@
 
 #include <QWizard>
 
-#include <QCheckBox>
-#include <QLabel>
 #include <vector>
+
+#include <QCheckBox>
+#include <QFuture>
+#include <QLabel>
 
 #include "../../Common/CommonTypes.h"
 #include "../GUICommon.h"
@@ -12,6 +14,8 @@
 
 class SeedFinderWizard : public QWizard
 {
+  Q_OBJECT
+
 public:
   enum pageID
   {
@@ -26,18 +30,26 @@ public:
   SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game);
 
   void accept() override;
+  void reject() override;
 
   void nextSeedFinderPass();
   void pageChanged();
+  void seedFinderPassDone();
 
   static int numberPass;
+
+signals:
+  void onUpdateSeedFinderProgress(int value);
+  void onSeedFinderPassDone();
 
 private:
   SeedFinderPassPage* getSeedFinderPassPageForGame();
 
-  bool m_seedFinderPassDone = false;
+  bool m_seedFinderDone = false;
   std::vector<u32> seeds;
   GUICommon::gameSelection m_game;
+  bool m_cancelSeedFinderPass;
+  QFuture<void> m_seedFinderFuture;
 };
 
 class StartPage : public QWizardPage

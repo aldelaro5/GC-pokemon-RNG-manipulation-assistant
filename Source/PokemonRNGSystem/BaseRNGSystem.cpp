@@ -56,12 +56,14 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(bool useWii, int rt
 }
 
 void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seeds, bool useWii,
-                               int rtcErrorMarginSeconds, bool usePrecalc, bool firstPass)
+                               int rtcErrorMarginSeconds, bool usePrecalc,
+                               std::function<void(int)> progressUpdate,
+                               std::function<bool()> shouldCancelNow)
 {
   std::vector<u32> newSeeds;
   seedRange range;
   range.max = seeds.size();
-  if (firstPass)
+  if (seeds.size() == 0)
     range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
   std::ifstream precalcFile(getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds),
                             std::ios::binary | std::ios::in);
@@ -76,11 +78,22 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
             << (usePrecalc ? "with" : "without") << " precalculation using "
             << std::thread::hardware_concurrency() << " thread(s)...\n";
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+  int nbrSeedsSimulatedTotal = 0;
+  int seedsSimulatedCurrentBlock = 0;
 #pragma omp parallel for
   for (s64 i = range.min; i < range.max; i++)
   {
+    // This is probably the most awkward way to do this, but it can't be done properly with OpenMP
+    // because it requires to set an environement variable which cannot be set after the program is
+    // started
+    if (shouldCancelNow())
+    {
+      i = range.max;
+      continue;
+    }
+
     u32 seed = 0;
-    if (firstPass)
+    if (seeds.size() == 0)
     {
       if (usePrecalc)
       {
@@ -100,6 +113,16 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
     if (generateBattleTeam(seed, criteria))
 #pragma omp critical(addSeed)
       newSeeds.push_back(seed);
+#pragma omp critical(progress)
+    {
+      nbrSeedsSimulatedTotal++;
+      seedsSimulatedCurrentBlock++;
+      if (seedsSimulatedCurrentBlock >= 10000)
+      {
+        progressUpdate(nbrSeedsSimulatedTotal);
+        seedsSimulatedCurrentBlock = 0;
+      }
+    }
   }
   std::swap(newSeeds, seeds);
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();

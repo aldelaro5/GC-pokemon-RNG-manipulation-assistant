@@ -3,6 +3,7 @@
 #include "../Common/Common.h"
 #include "../Common/CommonTypes.h"
 
+#include <functional>
 #include <vector>
 
 // This class manages all the backend and the implementation details of the RNG of a GameCube
@@ -32,6 +33,13 @@ public:
     int frameNumber = 0;
   };
 
+  struct seedRange
+  {
+    s64 min = 0;
+    s64 max = 0;
+  };
+
+  BaseRNGSystem::seedRange getRangeForSettings(bool useWii, int rtcErrorMarginSeconds);
   virtual std::string getPrecalcFilenameForSettings(bool useWii, int rtcErrorMarginSeconds);
   size_t getPracalcFileSize(bool useWii, int rtcErrorMarginSeconds);
   virtual int getNbrStartersPrediction() = 0;
@@ -41,17 +49,11 @@ public:
   void precalculateNbrRollsBeforeTeamGeneration(bool useWii, int rtcErrorMarginSeconds);
   // Seed finding algorithm, this does only one pass with parellelism
   void seedFinder(std::vector<int> criteria, std::vector<u32>& seeds, bool useWii,
-                  int rtcErrorMarginSeconds, bool usePrecalc, bool firstPass);
+                  int rtcErrorMarginSeconds, bool usePrecalc,
+                  std::function<void(int)> progressUpdate, std::function<bool()> shouldCancelNow);
   std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, int nbrSeconds);
 
 protected:
-  struct seedRange
-  {
-    s64 min = 0;
-    s64 max = 0;
-  };
-
-  BaseRNGSystem::seedRange getRangeForSettings(bool useWii, int rtcErrorMarginSeconds);
   // By TASing on Dolphin to get the fastest time to set the clock and have the game init its seed,
   // we arrive at 235 frames for the GameCube
   static const u32 minRTCTicksToBootGC = (Common::ticksPerSecondGC / 60) * 235;

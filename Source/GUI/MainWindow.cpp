@@ -63,5 +63,5 @@ void MainWindow::startSeedFinder()
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   SeedFinderWizard* wizard = new SeedFinderWizard(this, selection);
-  wizard->show();
+  wizard->exec();
 }

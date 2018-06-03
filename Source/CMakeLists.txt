@@ -24,6 +24,7 @@ set(CMAKE_INCLUE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
          
 set(CMAKE_AUTOMOC ON)
          
@@ -36,6 +37,7 @@ add_executable(GC-pokemon-RNG-manip-assistant ${GUI_TYPE} ${SRCS})
 target_link_libraries(GC-pokemon-RNG-manip-assistant Qt5::Widgets)
 target_link_libraries(GC-pokemon-RNG-manip-assistant Qt5::Gui)
 target_link_libraries(GC-pokemon-RNG-manip-assistant Qt5::Core)
+target_link_libraries(GC-pokemon-RNG-manip-assistant Qt5::Concurrent)
          
 if(WIN32)
   if($<CONFIG:Debug>)
@@ -59,6 +61,10 @@ if(WIN32)
     TARGET GC-pokemon-RNG-manip-assistant POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
       $<TARGET_FILE:Qt5::Gui>
+      $<TARGET_FILE_DIR:GC-pokemon-RNG-manip-assistant>
+    TARGET GC-pokemon-RNG-manip-assistant POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      $<TARGET_FILE:Qt5::Concurrent>
       $<TARGET_FILE_DIR:GC-pokemon-RNG-manip-assistant>
     )
 endif(WIN32)

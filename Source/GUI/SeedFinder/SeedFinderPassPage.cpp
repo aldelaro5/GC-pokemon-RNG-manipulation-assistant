@@ -5,8 +5,10 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 
+#include "../../PokemonRNGSystem/BaseRNGSystem.h"
 #include "../../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
 #include "../../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
+#include "../SPokemonRNG.h"
 #include "SeedFinderWizard.h"
 
 SeedFinderPassPage::SeedFinderPassPage(QWidget* parent) : QWizardPage(parent)
@@ -14,19 +16,36 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent) : QWizardPage(parent)
   setTitle(tr("Seed Finder Pass"));
 
   QLabel* label = new QLabel(QString::number(SeedFinderWizard::numberPass));
+  m_pbSeedFinder = new QProgressBar(this);
+  m_pbSeedFinder->setVisible(false);
+  BaseRNGSystem::seedRange range =
+      SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(false, 5);
+  m_pbSeedFinder->setMinimum(0);
+  m_pbSeedFinder->setMaximum(range.max - range.min + 1);
+  m_pbSeedFinder->setValue(0);
 
   QVBoxLayout* layout = new QVBoxLayout;
   setLayout(layout);
 }
 
-void SeedFinderPassPage::setSeedFinderPassDone(const bool seedFinderPassDone)
+void SeedFinderPassPage::setSeedFinderDone(const bool seedFinderDone)
 {
-  m_seedFinderPassDone = seedFinderPassDone;
+  m_seedFinderDone = seedFinderDone;
+}
+
+void SeedFinderPassPage::setSeedFinderProgress(const int nbrSeedsSimulated)
+{
+  m_pbSeedFinder->setValue(nbrSeedsSimulated);
+}
+
+void SeedFinderPassPage::showSeedFinderProgress(const bool showProgress)
+{
+  m_pbSeedFinder->setVisible(showProgress);
 }
 
 int SeedFinderPassPage::nextId() const
 {
-  if (m_seedFinderPassDone)
+  if (m_seedFinderDone)
     return SeedFinderWizard::pageID::End;
   else
     return SeedFinderWizard::numberPass;
@@ -115,6 +134,8 @@ SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent) : SeedFinderPa
   mainLayout->addSpacing(10);
   mainLayout->addWidget(lblTeam);
   mainLayout->addLayout(rbtnTeamLayout);
+  mainLayout->addSpacing(10);
+  mainLayout->addWidget(m_pbSeedFinder);
 
   QWidget* mainWidget = new QWidget(this);
   mainWidget->setLayout(mainLayout);
@@ -273,6 +294,8 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent) : SeedFinderPassPage(parent)
   mainLayout->addSpacing(10);
   mainLayout->addLayout(topPkmnHPLayout);
   mainLayout->addLayout(bottomPkmnHPLayout);
+  mainLayout->addSpacing(10);
+  mainLayout->addWidget(m_pbSeedFinder);
   mainLayout->addStretch();
 
   QWidget* mainWidget = new QWidget(this);

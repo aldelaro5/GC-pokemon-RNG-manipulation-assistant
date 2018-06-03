@@ -13,7 +13,7 @@ u32 testSeedFinder(BaseRNGSystem& system)
   std::vector<u32> seeds;
   bool useWii = false;
   int nbrSecondsRtcErrorMargin = 5;
-  bool usePrecalc = true;
+  bool usePrecalc = false;
   std::vector<int> criteria;
   for (int i = 0; i < 2; i++)
   {
@@ -21,7 +21,8 @@ u32 testSeedFinder(BaseRNGSystem& system)
     std::cin >> input;
     criteria.push_back(input);
   }
-  system.seedFinder(criteria, seeds, useWii, nbrSecondsRtcErrorMargin, usePrecalc, true);
+  // system.seedFinder(criteria, seeds, useWii, nbrSecondsRtcErrorMargin, usePrecalc, false,
+  //                  [=](int thing) {});
   while (seeds.size() > 1)
   {
     criteria.clear();
@@ -31,7 +32,8 @@ u32 testSeedFinder(BaseRNGSystem& system)
       std::cin >> input;
       criteria.push_back(input);
     }
-    system.seedFinder(criteria, seeds, useWii, nbrSecondsRtcErrorMargin, false, false);
+    // system.seedFinder(criteria, seeds, useWii, nbrSecondsRtcErrorMargin, false, false,
+    //                  [=](int thing) {});
   }
   if (seeds.size() == 1)
   {
@@ -77,13 +79,14 @@ int main(int argc, char** argv)
   window.show();
   return app.exec();
   /*ColosseumRNGSystem system;
-  system.precalculateNbrRollsBeforeTeamGeneration(false, 5);
+  /*system.precalculateNbrRollsBeforeTeamGeneration(false, 5);
   ColosseumRNGSystem system2;
   system2.precalculateNbrRollsBeforeTeamGeneration(false, 5);
   std::cout << "done";
+
   u32 seed = testSeedFinder(system);
   std::cin.ignore();
   testPredictor(system, seed);
-  std::cin.ignore();
-  return 0;*/
+  std::cin.ignore();*/
+  return 0;
 }

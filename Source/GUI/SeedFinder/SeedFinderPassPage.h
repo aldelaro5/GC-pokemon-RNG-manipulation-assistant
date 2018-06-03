@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <QButtonGroup>
+#include <QProgressBar>
 #include <QSpinBox>
 #include <QWizardPage>
 
@@ -17,10 +18,15 @@ public:
 
   virtual std::vector<int> obtainCriteria() = 0;
 
-  void setSeedFinderPassDone(const bool seedFinderPassDone);
+  void setSeedFinderDone(const bool seedFinderDone);
+  void setSeedFinderProgress(const int nbrSeedsSimulated);
+  void showSeedFinderProgress(const bool showProgress);
+
+protected:
+  QProgressBar* m_pbSeedFinder;
 
 private:
-  bool m_seedFinderPassDone = false;
+  bool m_seedFinderDone = false;
 };
 
 class SeedFinderPassColosseum : public SeedFinderPassPage
