@@ -5,6 +5,25 @@
 class ColosseumRNGSystem final : public BaseRNGSystem
 {
 public:
+  enum QuickBattleTeamLeader
+  {
+    Blaziken = 0,
+    Entei,
+    Swampert,
+    Raikou,
+    Meganium,
+    Suicune,
+    Metagross,
+    Heracross
+  };
+
+  enum QuickBattlePlayerName
+  {
+    Wes = 0,
+    Seth,
+    Thomas
+  };
+
   std::string getPrecalcFilenameForSettings(bool useWii, int rtcErrorMarginSeconds) final override;
 
 private:

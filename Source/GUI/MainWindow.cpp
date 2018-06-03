@@ -5,6 +5,7 @@
 
 #include "GUICommon.h"
 #include "SPokemonRNG.h"
+#include "SeedFinder/SeedFinderWizard.h"
 
 MainWindow::MainWindow()
 {
@@ -22,7 +23,7 @@ void MainWindow::initialiseWidgets()
   m_cmbGame = new QComboBox;
   m_cmbGame->addItems(GUICommon::gamesStr);
   m_cmbGame->addItem(tr("--Select your game--"));
-  m_cmbGame->setCurrentIndex(static_cast<int>(gameSelection::Unselected));
+  m_cmbGame->setCurrentIndex(static_cast<int>(GUICommon::gameSelection::Unselected));
   connect(m_cmbGame, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
           &MainWindow::gameChanged);
 
@@ -46,19 +47,21 @@ void MainWindow::makeLayouts()
 
 void MainWindow::gameChanged()
 {
-  gameSelection selection = static_cast<gameSelection>(m_cmbGame->currentIndex());
-  if (selection == gameSelection::Colosseum)
+  GUICommon::gameSelection selection =
+      static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
+  if (selection == GUICommon::gameSelection::Colosseum)
     SPokemonRNG::getInstance()->switchGame(SPokemonRNG::GCPokemonGame::Colosseum);
-  else if (selection = gameSelection::XD)
+  else if (selection = GUICommon::gameSelection::XD)
     SPokemonRNG::getInstance()->switchGame(SPokemonRNG::GCPokemonGame::XD);
 
-  if (m_cmbGame->count() == static_cast<int>(gameSelection::Unselected) + 1)
-    m_cmbGame->removeItem(static_cast<int>(gameSelection::Unselected));
+  if (m_cmbGame->count() == static_cast<int>(GUICommon::gameSelection::Unselected) + 1)
+    m_cmbGame->removeItem(static_cast<int>(GUICommon::gameSelection::Unselected));
 }
 
 void MainWindow::startSeedFinder()
 {
-  std::vector<BaseRNGSystem::StartersPrediction> predictions =
-      SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(0, 10);
-  m_predictorWidget->setStartersPrediction(predictions);
+  GUICommon::gameSelection selection =
+      static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
+  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection);
+  wizard->show();
 }

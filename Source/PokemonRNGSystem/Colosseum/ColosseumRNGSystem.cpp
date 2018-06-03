@@ -2,21 +2,6 @@
 
 #include "../../Common/Common.h"
 
-/*
-0 WES
-1 SETH
-2 THOMAS
-
-0 BLAZIKEN
-1 ENTEI
-2 SWAMPERT
-3 RAIKOU
-4 MEGANIUM
-5 SUICUNE
-6 METAGROSS
-7 HERACROSS
-*/
-
 // The natures wanted for all Pokemon of all ultimate teams
 static const std::array<std::array<u8, 6>, 8> s_natureTeamsData = {
     {{{0x16, 0x15, 0x0f, 0x13, 0x04, 0x04}},

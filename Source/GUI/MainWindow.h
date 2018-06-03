@@ -11,13 +11,6 @@
 class MainWindow : public QMainWindow
 {
 public:
-  enum gameSelection
-  {
-    Colosseum = 0,
-    XD,
-    Unselected
-  };
-
   MainWindow();
   ~MainWindow();
 

@@ -2,22 +2,6 @@
 
 #include "../../Common/Common.h"
 
-/*
-player:
-0 mewtwo
-1 mew
-2 deoxys
-3 rayquaza
-4 jirachi
-
-enemy:
-0 articuno
-1 zapidos
-2 moltres
-3 kangaskhan
-4 latias
-*/
-
 // HP stat of the quick battle team pokemon without IV and EV at level 100
 static const std::array<std::array<int, 2>, 10> s_quickBattleTeamMaxBaseHPStat = {{{{322, 340}},
                                                                                    {{310, 290}},

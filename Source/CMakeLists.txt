@@ -13,6 +13,8 @@ set(SRCS PokemonRNGSystem/BaseRNGSystem.cpp
          PokemonRNGSystem/XD/GaleDarknessRNGSystem.cpp
          GUI/SPokemonRNG.cpp
          GUI/GUICommon.cpp
+         GUI/SeedFinder/SeedFinderPassPage.cpp
+         GUI/SeedFinder/SeedFinderWizard.cpp
          GUI/Predictor/PredictorWidget.cpp
          GUI/MainWindow.cpp
          main.cpp)

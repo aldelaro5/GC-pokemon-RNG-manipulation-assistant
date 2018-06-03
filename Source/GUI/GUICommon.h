@@ -5,6 +5,13 @@
 
 namespace GUICommon
 {
+enum gameSelection
+{
+  Colosseum = 0,
+  XD,
+  Unselected
+};
+
 extern QStringList gamesStr;
 
 // Ordered by in-game indexes
