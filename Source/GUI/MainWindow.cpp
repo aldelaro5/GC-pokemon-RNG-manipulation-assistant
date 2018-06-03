@@ -62,6 +62,12 @@ void MainWindow::startSeedFinder()
 {
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
-  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection);
-  wizard->exec();
+  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, 5, false, true);
+  if (wizard->exec() == QDialog::Accepted)
+  {
+    std::vector<BaseRNGSystem::StartersPrediction> predictions =
+        SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(wizard->getSeeds()[0],
+                                                                              10);
+    m_predictorWidget->setStartersPrediction(predictions);
+  }
 }

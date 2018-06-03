@@ -27,11 +27,13 @@ public:
     End = 1000
   };
 
-  SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game);
+  SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game, int rtcErrorMarginSeconds,
+                   bool useWii, bool usePrecalc);
 
   void accept() override;
   void reject() override;
 
+  std::vector<u32> getSeeds() const;
   void nextSeedFinderPass();
   void pageChanged();
   void seedFinderPassDone();
@@ -50,6 +52,9 @@ private:
   GUICommon::gameSelection m_game;
   bool m_cancelSeedFinderPass;
   QFuture<void> m_seedFinderFuture;
+  int m_rtcErrorMarginSeconds;
+  bool m_useWii;
+  bool m_usePrecalc;
 };
 
 class StartPage : public QWizardPage
@@ -63,7 +68,10 @@ public:
 class EndPage : public QWizardPage
 {
 public:
-  EndPage(QWidget* parent = nullptr);
+  EndPage(QWidget* parent, bool sucess, u32 seed = 0);
 
   int nextId() const override;
+
+private:
+  QLabel* m_lblResult;
 };

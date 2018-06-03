@@ -1,5 +1,7 @@
 #include "SeedFinderPassPage.h"
 
+#include <thread>
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QRadioButton>
@@ -11,19 +13,42 @@
 #include "../SPokemonRNG.h"
 #include "SeedFinderWizard.h"
 
-SeedFinderPassPage::SeedFinderPassPage(QWidget* parent) : QWizardPage(parent)
+SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds,
+                                       int rtcErrorMarginSeconds, bool useWii, bool usePrecalc)
+    : QWizardPage(parent)
 {
-  setTitle(tr("Seed Finder Pass"));
+  setSubTitle("Fill in the informations you see on the battle confirmation screen");
 
   QLabel* label = new QLabel(QString::number(SeedFinderWizard::numberPass));
   m_pbSeedFinder = new QProgressBar(this);
   m_pbSeedFinder->setVisible(false);
-  BaseRNGSystem::seedRange range =
-      SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(false, 5);
-  m_pbSeedFinder->setMinimum(0);
-  m_pbSeedFinder->setMaximum(range.max - range.min + 1);
-  m_pbSeedFinder->setValue(0);
+  if (nbrFoundSeeds == 0)
+  {
+    BaseRNGSystem::seedRange range =
+        SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(useWii, rtcErrorMarginSeconds);
+    m_pbSeedFinder->setMinimum(0);
+    m_pbSeedFinder->setMaximum(range.max - range.min);
+    m_pbSeedFinder->setValue(0);
+    m_lblSeedFinderStatus =
+        new QLabel("Simulating " + QString::number(range.max - range.min) + " seeds using " +
+                   QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
+                   (usePrecalc ? QString("with") : QString("without")) + " precalculation...");
+  }
+  else
+  {
+    m_pbSeedFinder->setMinimum(0);
+    m_pbSeedFinder->setMaximum(nbrFoundSeeds);
+    m_pbSeedFinder->setValue(0);
+    m_lblSeedFinderStatus =
+        new QLabel("Simulating " + QString::number(nbrFoundSeeds) + " seeds using " +
+                   QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
+                   (usePrecalc ? QString("with") : QString("without")) + " precalculation...");
+  }
+  m_lblSeedFinderStatus->setVisible(false);
+  m_lblSeedFinderStatus->setAlignment(Qt::AlignHCenter);
+  m_lblSeedFinderStatus->setWordWrap(true);
 
+  m_inputWidget = new QWidget(this);
   QVBoxLayout* layout = new QVBoxLayout;
   setLayout(layout);
 }
@@ -41,6 +66,8 @@ void SeedFinderPassPage::setSeedFinderProgress(const int nbrSeedsSimulated)
 void SeedFinderPassPage::showSeedFinderProgress(const bool showProgress)
 {
   m_pbSeedFinder->setVisible(showProgress);
+  m_lblSeedFinderStatus->setVisible(showProgress);
+  m_inputWidget->setEnabled(!showProgress);
 }
 
 int SeedFinderPassPage::nextId() const
@@ -51,7 +78,10 @@ int SeedFinderPassPage::nextId() const
     return SeedFinderWizard::numberPass;
 }
 
-SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent) : SeedFinderPassPage(parent)
+SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, int nbrFoundSeeds,
+                                                 int rtcErrorMarginSeconds, bool useWii,
+                                                 bool usePrecalc)
+    : SeedFinderPassPage(parent, nbrFoundSeeds, rtcErrorMarginSeconds, useWii, usePrecalc)
 {
   m_playerNameIndexBtnGroup = new QButtonGroup(this);
 
@@ -63,6 +93,8 @@ SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent) : SeedFinderPa
   m_playerNameIndexBtnGroup->addButton(rbtnSeth, ColosseumRNGSystem::QuickBattlePlayerName::Seth);
   m_playerNameIndexBtnGroup->addButton(rbtnThomas,
                                        ColosseumRNGSystem::QuickBattlePlayerName::Thomas);
+
+  m_playerNameIndexBtnGroup->button(0)->setChecked(true);
 
   for (auto button : m_playerNameIndexBtnGroup->buttons())
   {
@@ -102,6 +134,8 @@ SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent) : SeedFinderPa
   m_playerTeamIndexBtnGroup->addButton(rbtnHeracross,
                                        ColosseumRNGSystem::QuickBattleTeamLeader::Heracross);
 
+  m_playerTeamIndexBtnGroup->button(0)->setChecked(true);
+
   for (auto button : m_playerTeamIndexBtnGroup->buttons())
   {
     button->setMinimumWidth(125);
@@ -128,14 +162,22 @@ SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent) : SeedFinderPa
   QLabel* lblName = new QLabel("Choose your generated trainer name");
   QLabel* lblTeam = new QLabel("Choose the leader of your generated team");
 
+  QVBoxLayout* inputLayout = new QVBoxLayout;
+  inputLayout->addWidget(lblName);
+  inputLayout->addLayout(rbtnNameLayout);
+  inputLayout->addSpacing(10);
+  inputLayout->addWidget(lblTeam);
+  inputLayout->addLayout(rbtnTeamLayout);
+  inputLayout->addSpacing(10);
+  inputLayout->addStretch();
+
+  m_inputWidget->setLayout(inputLayout);
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(lblName);
-  mainLayout->addLayout(rbtnNameLayout);
-  mainLayout->addSpacing(10);
-  mainLayout->addWidget(lblTeam);
-  mainLayout->addLayout(rbtnTeamLayout);
-  mainLayout->addSpacing(10);
+  mainLayout->addWidget(m_inputWidget);
+  mainLayout->addWidget(m_lblSeedFinderStatus);
   mainLayout->addWidget(m_pbSeedFinder);
+  mainLayout->addStretch();
 
   QWidget* mainWidget = new QWidget(this);
   mainWidget->setLayout(mainLayout);
@@ -150,7 +192,9 @@ std::vector<int> SeedFinderPassColosseum::obtainCriteria()
   return criteria;
 }
 
-SeedFinderPassXD::SeedFinderPassXD(QWidget* parent) : SeedFinderPassPage(parent)
+SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds,
+                                   bool useWii, bool usePrecalc)
+    : SeedFinderPassPage(parent, nbrFoundSeeds, rtcErrorMarginSeconds, useWii, usePrecalc)
 {
   m_playerTeamIndexBtnGroup = new QButtonGroup(this);
 
@@ -170,6 +214,8 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent) : SeedFinderPassPage(parent)
                                        GaleDarknessRNGSystem::BattleNowTeamLeaderPlayer::Rayquaza);
   m_playerTeamIndexBtnGroup->addButton(rbtnJirachi,
                                        GaleDarknessRNGSystem::BattleNowTeamLeaderPlayer::Jirachi);
+
+  m_playerTeamIndexBtnGroup->button(0)->setChecked(true);
 
   for (auto button : m_playerTeamIndexBtnGroup->buttons())
   {
@@ -205,6 +251,8 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent) : SeedFinderPassPage(parent)
                                       GaleDarknessRNGSystem::BattleNowTeamLeaderEnemy::Kangaskhan);
   m_enemyTeamIndexBtnGroup->addButton(rbtnLatias,
                                       GaleDarknessRNGSystem::BattleNowTeamLeaderEnemy::Latias);
+
+  m_enemyTeamIndexBtnGroup->button(0)->setChecked(true);
 
   for (auto button : m_enemyTeamIndexBtnGroup->buttons())
   {
@@ -287,23 +335,27 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent) : SeedFinderPassPage(parent)
   QLabel* lblPkmnHP = new QLabel("Enter the HP of the indicated Pokémon:", this);
   lblPkmnHP->setAlignment(Qt::AlignHCenter);
 
+  QVBoxLayout* inputLayout = new QVBoxLayout;
+  inputLayout->addLayout(rbtnTeamLayout);
+  inputLayout->addSpacing(10);
+  inputLayout->addWidget(lblPkmnHP);
+  inputLayout->addSpacing(10);
+  inputLayout->addLayout(topPkmnHPLayout);
+  inputLayout->addLayout(bottomPkmnHPLayout);
+  inputLayout->addSpacing(10);
+  inputLayout->addStretch();
+
+  m_inputWidget->setLayout(inputLayout);
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
-  mainLayout->addLayout(rbtnTeamLayout);
-  mainLayout->addSpacing(10);
-  mainLayout->addWidget(lblPkmnHP);
-  mainLayout->addSpacing(10);
-  mainLayout->addLayout(topPkmnHPLayout);
-  mainLayout->addLayout(bottomPkmnHPLayout);
-  mainLayout->addSpacing(10);
+  mainLayout->addWidget(m_inputWidget);
+  mainLayout->addWidget(m_lblSeedFinderStatus);
   mainLayout->addWidget(m_pbSeedFinder);
   mainLayout->addStretch();
 
   QWidget* mainWidget = new QWidget(this);
   mainWidget->setLayout(mainLayout);
   layout()->addWidget(mainWidget);
-
-  setMinimumWidth(600);
-  setMinimumHeight(500);
 }
 
 std::vector<int> SeedFinderPassXD::obtainCriteria()

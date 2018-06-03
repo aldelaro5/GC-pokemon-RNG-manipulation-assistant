@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <QButtonGroup>
+#include <QLabel>
 #include <QProgressBar>
 #include <QSpinBox>
 #include <QWizardPage>
@@ -12,7 +13,8 @@
 class SeedFinderPassPage : public QWizardPage
 {
 public:
-  SeedFinderPassPage(QWidget* parent = nullptr);
+  SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds, bool useWii,
+                     bool usePrecalc);
 
   int nextId() const override;
 
@@ -20,10 +22,12 @@ public:
 
   void setSeedFinderDone(const bool seedFinderDone);
   void setSeedFinderProgress(const int nbrSeedsSimulated);
-  void showSeedFinderProgress(const bool showProgress);
+  virtual void showSeedFinderProgress(const bool showProgress);
 
 protected:
+  QLabel* m_lblSeedFinderStatus;
   QProgressBar* m_pbSeedFinder;
+  QWidget* m_inputWidget;
 
 private:
   bool m_seedFinderDone = false;
@@ -32,7 +36,8 @@ private:
 class SeedFinderPassColosseum : public SeedFinderPassPage
 {
 public:
-  SeedFinderPassColosseum(QWidget* parent = nullptr);
+  SeedFinderPassColosseum(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds,
+                          bool useWii, bool usePrecalc);
 
   std::vector<int> obtainCriteria() override;
 
@@ -44,7 +49,8 @@ private:
 class SeedFinderPassXD : public SeedFinderPassPage
 {
 public:
-  SeedFinderPassXD(QWidget* parent = nullptr);
+  SeedFinderPassXD(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds, bool useWii,
+                   bool usePrecalc);
 
   std::vector<int> obtainCriteria() override;
 

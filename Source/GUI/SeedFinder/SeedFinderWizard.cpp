@@ -9,15 +9,16 @@
 
 int SeedFinderWizard::numberPass = 1;
 
-SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game)
-    : QWizard(parent), m_game(game)
+SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game,
+                                   int rtcErrorMarginSeconds, bool useWii, bool usePrecalc)
+    : QWizard(parent), m_game(game), m_rtcErrorMarginSeconds(rtcErrorMarginSeconds),
+      m_useWii(useWii), m_usePrecalc(usePrecalc)
 {
   numberPass = 1;
   m_cancelSeedFinderPass = false;
   m_seedFinderFuture = QFuture<void>();
   setPage(pageID::Start, new StartPage(this, game));
   setPage(pageID::SeedFinderPass, getSeedFinderPassPageForGame());
-  setPage(pageID::End, new EndPage(this));
   setStartId(pageID::Start);
 
   setOptions(QWizard::HaveCustomButton1);
@@ -27,7 +28,8 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection gam
       nextSeedFinderPass();
   });
   connect(this, &SeedFinderWizard::onUpdateSeedFinderProgress, this, [=](int nbrSeedsSimulated) {
-    static_cast<SeedFinderPassPage*>(currentPage())->setSeedFinderProgress(nbrSeedsSimulated);
+    if (!m_cancelSeedFinderPass)
+      static_cast<SeedFinderPassPage*>(currentPage())->setSeedFinderProgress(nbrSeedsSimulated);
   });
   connect(this, &SeedFinderWizard::onSeedFinderPassDone, this,
           &SeedFinderWizard::seedFinderPassDone);
@@ -37,27 +39,47 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection gam
 
   setWindowTitle(tr("Seed Finder Wizard"));
 
-  QList<QWizard::WizardButton> layout;
-  layout << QWizard::Stretch << QWizard::CancelButton << QWizard::NextButton;
-  setButtonLayout(layout);
+  QList<QWizard::WizardButton> btnlayout;
+  btnlayout << QWizard::Stretch << QWizard::CancelButton << QWizard::NextButton;
+  setButtonLayout(btnlayout);
+
+  QSize size(600, 750);
+  setFixedSize(size);
+}
+
+std::vector<u32> SeedFinderWizard::getSeeds() const
+{
+  return seeds;
 }
 
 SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
 {
+  SeedFinderPassPage* page;
   switch (m_game)
   {
   case GUICommon::gameSelection::Colosseum:
-    return new SeedFinderPassColosseum(this);
+    page = new SeedFinderPassColosseum(this, seeds.size(), m_rtcErrorMarginSeconds, m_useWii,
+                                       m_usePrecalc);
+    break;
   case GUICommon::gameSelection::XD:
-    return new SeedFinderPassXD(this);
+    page =
+        new SeedFinderPassXD(this, seeds.size(), m_rtcErrorMarginSeconds, m_useWii, m_usePrecalc);
+    break;
   default:
     return nullptr;
   }
+  QString strResultStatus("No passes done");
+  if (seeds.size() > 1)
+    strResultStatus = QString::number(seeds.size()) + QString(" results");
+  page->setTitle("Seed Finder Pass #" + QString::number(numberPass) + " (" + strResultStatus + ")");
+  return page;
 }
 
 void SeedFinderWizard::nextSeedFinderPass()
 {
   SeedFinderPassPage* page = static_cast<SeedFinderPassPage*>(currentPage());
+
+  button(QWizard::CustomButton1)->setEnabled(false);
 
   m_seedFinderFuture = QtConcurrent::run([=] {
     page->showSeedFinderProgress(true);
@@ -65,8 +87,8 @@ void SeedFinderWizard::nextSeedFinderPass()
         page->obtainCriteria(), seeds, false, 5, true,
         [=](int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },
         [=] { return m_cancelSeedFinderPass; });
-    page->showSeedFinderProgress(false);
-    emit onSeedFinderPassDone();
+    if (!m_cancelSeedFinderPass)
+      emit onSeedFinderPassDone();
   });
 }
 
@@ -80,12 +102,17 @@ void SeedFinderWizard::seedFinderPassDone()
     layout << QWizard::Stretch << QWizard::FinishButton;
     setButtonLayout(layout);
     m_seedFinderDone = true;
+    if (seeds.size() == 1)
+      setPage(pageID::End, new EndPage(this, true, seeds[0]));
+    else
+      setPage(pageID::End, new EndPage(this, false));
     QWizard::next();
   }
   else
   {
     numberPass++;
     setPage(numberPass, getSeedFinderPassPageForGame());
+    button(QWizard::CustomButton1)->setEnabled(true);
     QWizard::next();
   }
 }
@@ -135,9 +162,9 @@ StartPage::StartPage(QWidget* parent, GUICommon::gameSelection game) : QWizardPa
                              GUICommon::gamesStr[game] + ".");
   label->setWordWrap(true);
 
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(label);
-  setLayout(layout);
+  QVBoxLayout* mainlayout = new QVBoxLayout;
+  mainlayout->addWidget(label);
+  setLayout(mainlayout);
 }
 
 int StartPage::nextId() const
@@ -145,9 +172,33 @@ int StartPage::nextId() const
   return SeedFinderWizard::pageID::SeedFinderPass;
 }
 
-EndPage::EndPage(QWidget* parent) : QWizardPage(parent)
+EndPage::EndPage(QWidget* parent, bool sucess, u32 seed) : QWizardPage(parent)
 {
   setTitle(tr("End"));
+
+  if (sucess)
+  {
+    m_lblResult = new QLabel(
+        "The seed finding procedure completed sucessfully.\n\n" + QString("Your current seed is ") +
+            QString::number(seed, 16).toUpper() +
+            QString("\n\nClick \"Finish\" to see your prediction in the previous window."),
+        this);
+  }
+  else
+  {
+    m_lblResult = new QLabel(
+        "The seed finding procedure completed, but your current seed hasn't been found. You have "
+        "to restart this entire procedure again (this implies that you must hard reset the "
+        "console).\n\n" +
+        QString("Tip: try to increase your clock margin of error in the settings, altough doing so "
+                "will make the seed finding procedure slower, it will make booting the game after "
+                "setting the clock more permissive giving you more time to boot the game"));
+  }
+  m_lblResult->setWordWrap(true);
+
+  QVBoxLayout* mainlayout = new QVBoxLayout;
+  mainlayout->addWidget(m_lblResult);
+  setLayout(mainlayout);
 }
 
 int EndPage::nextId() const
