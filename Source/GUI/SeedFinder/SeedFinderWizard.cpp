@@ -2,6 +2,7 @@
 
 #include <QAbstractButton>
 #include <QMessageBox>
+#include <QScrollArea>
 #include <QVBoxLayout>
 #include <QtConcurrent>
 
@@ -18,6 +19,7 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection gam
   m_cancelSeedFinderPass = false;
   m_seedFinderFuture = QFuture<void>();
   setPage(pageID::Start, new StartPage(this, game));
+  setPage(pageID::Instructions, new InstructionsPage(this, game, useWii));
   setPage(pageID::SeedFinderPass, getSeedFinderPassPageForGame());
   setStartId(pageID::Start);
 
@@ -121,6 +123,7 @@ void SeedFinderWizard::pageChanged()
 {
   if (currentId() == pageID::SeedFinderPass)
   {
+    // TODO: handle precalc prompt here
     QList<QWizard::WizardButton> layout;
     layout << QWizard::Stretch << QWizard::CancelButton << QWizard::CustomButton1;
     setButtonLayout(layout);
@@ -159,7 +162,7 @@ StartPage::StartPage(QWidget* parent, GUICommon::gameSelection game) : QWizardPa
   setTitle(tr("Introduction"));
 
   QLabel* label = new QLabel("This wizard will guide you through finding your seed in " +
-                             GUICommon::gamesStr[game] + ".");
+                             GUICommon::gamesStr[game] + ".\n\nPress \"Next\" to continue.");
   label->setWordWrap(true);
 
   QVBoxLayout* mainlayout = new QVBoxLayout;
@@ -168,6 +171,117 @@ StartPage::StartPage(QWidget* parent, GUICommon::gameSelection game) : QWizardPa
 }
 
 int StartPage::nextId() const
+{
+  return SeedFinderWizard::pageID::Instructions;
+}
+
+InstructionsPage::InstructionsPage(QWidget* parent, GUICommon::gameSelection game, bool useWii)
+    : QWizardPage(parent)
+{
+  setTitle(tr("Instructions"));
+  setSubTitle(tr("Follow these detailled instructions before starting the seed finding procedure"));
+
+  QLabel* lblSummary = new QLabel(
+      "This procedure involves first, setting your console's clock, booting the game after "
+      "setting the clock as fast as possible and then generating random battle teams over and over "
+      "which gives more and more information about your seed so that it is found by narrowing it "
+      "down to one possible one.",
+      this);
+  lblSummary->setWordWrap(true);
+
+  if (useWii)
+  {
+    m_lblConsoleInstructions = new QLabel(tr(
+        "After a hardware reset or boot, insert your disc then go to Wii settings -> calendar and "
+        "set the date to 01/01/2000. Then, set the time to 00:00, AS SOON AS you confirm the new "
+        "time, naviguate to the disc channel and boot the game as fast as possible. Depending on "
+        "your margin of error in your settings, this step may be more lenient in how fast you need "
+        "to be because the margin of error corespond to the time you can WASTE considering frame "
+        "perfect input. Note: when going to the disc channel, make sure you see the entire disc "
+        "spinning animation. To ensure you will see it, insert your disc before going to Wii "
+        "settings and wait you see the GameCube logo thumbnail on the disc channel."));
+  }
+  else
+  {
+    m_lblConsoleInstructions = new QLabel(tr(
+        "After a hardware reset or boot, insert your disc then go to the GameCube main menu by "
+        "holding A upon boot and go the the calendar settings. Set the date to 01/01/2000, then "
+        "set the time to 00:00:00. AS SOON AS you press A to set the new time, naviguate to the "
+        "gameplay menu and boot the game as fast as possible. Depending on your margin of error in "
+        "your settings, this step may be more lenient in how fast you need to be because the "
+        "margin of error corespond to the time you can WASTE considering frame perfect input. "
+        "Note: you shouldn't notice any latency when turning the cube menu after setting the time, "
+        "if you do notice such latency, ensure you do not buffer your stick input and just do them "
+        "after letting the stick neutral for a moment. You can try again if you are unsure."));
+  }
+
+  switch (game)
+  {
+  case GUICommon::gameSelection::Colosseum:
+    m_lblGameInstructions = new QLabel(tr(
+        "Upon reaching the main menu in the game, naviguate to Battle Now -> Single Battle -> "
+        "Ultimate. You should see a confirmation screen of a battle with a randomly generated "
+        "team. The seed finder will ask you for the informations displayed on this screen so make "
+        "sure you input them correctly. After entering the information and confirming everything, "
+        "wait that the pass is done, the first pass especially may take a while. Once done, back "
+        "off the confirmation screen (NEVER accept it or it will invalidate the procedure) and "
+        "select Single Battle -> Ultimate again; you are now ready to enter the informations of "
+        "the next pass. You have to do this several times until only 1 result is left, you can see "
+        "the number of results after each pass in the title of the wizard page. Note: NEVER go "
+        "back to the main menu during this procedure or it will invalidate it."));
+    break;
+  case GUICommon::gameSelection::XD:
+    m_lblGameInstructions = new QLabel(tr(
+        "Upon reaching the main menu in the game, naviguate to VS Mode -> Quick Battle -> "
+        "Single Battle -> Ultimate. You should see a confirmation screen of a battle with a "
+        "randomly generated team. The seed finder will ask you for the informations displayed on "
+        "this screen so make sure you input them correctly. After entering the information and "
+        "confirming everything, wait that the pass is done, the first pass especially may take a "
+        "while. Once done, back off the confirmation screen (NEVER accept it or it will invalidate "
+        "the procedure) and select Single Battle -> Ultimate again; you are now ready to enter the "
+        "informations of the next pass. You have to do this several times until only 1 result is "
+        "left, you can see the number of results after each pass in the title of the wizard page. "
+        "Note: NEVER go back to the main menu during this procedure or it will invalidate "
+        "it."));
+    break;
+  default:
+    m_lblGameInstructions = new QLabel("");
+    break;
+  }
+
+  QLabel* lblNext =
+      new QLabel(tr("Press \"Next\" once you acknowledged the above instructions to start the seed "
+                    "finding procedure."));
+  lblNext->setWordWrap(true);
+  m_lblConsoleInstructions->setWordWrap(true);
+  m_lblGameInstructions->setWordWrap(true);
+
+  QVBoxLayout* instructionsLayout = new QVBoxLayout;
+  instructionsLayout->addWidget(lblSummary);
+  instructionsLayout->addSpacing(30);
+  instructionsLayout->addWidget(m_lblConsoleInstructions);
+  instructionsLayout->addSpacing(30);
+  instructionsLayout->addWidget(m_lblGameInstructions);
+  instructionsLayout->addSpacing(30);
+  instructionsLayout->addWidget(lblNext);
+  instructionsLayout->addStretch();
+
+  QWidget* instructionsWidget = new QWidget(this);
+  instructionsWidget->setLayout(instructionsLayout);
+  instructionsWidget->setMinimumHeight(1500);
+  instructionsWidget->setMaximumWidth(525);
+
+  QScrollArea* mainWidget = new QScrollArea(this);
+  mainWidget->setWidget(instructionsWidget);
+  mainWidget->setMaximumWidth(600);
+
+  QVBoxLayout* mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(mainWidget);
+
+  setLayout(mainLayout);
+}
+
+int InstructionsPage::nextId() const
 {
   return SeedFinderWizard::pageID::SeedFinderPass;
 }

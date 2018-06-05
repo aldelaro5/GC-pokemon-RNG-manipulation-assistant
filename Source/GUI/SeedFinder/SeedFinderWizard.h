@@ -20,6 +20,7 @@ public:
   enum pageID
   {
     Start = 0,
+    Instructions,
     SeedFinderPass,
     // This number is set to arbirtrarilly high to allow to create new finder pass pages on the fly,
     // but kept high enough so that it will never be hit normally before getting the seed finder
@@ -63,6 +64,18 @@ public:
   StartPage(QWidget* parent, GUICommon::gameSelection game);
 
   int nextId() const override;
+};
+
+class InstructionsPage : public QWizardPage
+{
+public:
+  InstructionsPage(QWidget* parent, GUICommon::gameSelection game, bool useWii);
+
+  int nextId() const override;
+
+private:
+  QLabel* m_lblConsoleInstructions;
+  QLabel* m_lblGameInstructions;
 };
 
 class EndPage : public QWizardPage
