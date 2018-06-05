@@ -84,7 +84,7 @@ void SeedFinderWizard::nextSeedFinderPass()
   m_seedFinderFuture = QtConcurrent::run([=] {
     page->showSeedFinderProgress(true);
     SPokemonRNG::getInstance()->getSystem()->seedFinder(
-        page->obtainCriteria(), seeds, false, 5, true,
+        page->obtainCriteria(), seeds, m_useWii, m_rtcErrorMarginSeconds, m_usePrecalc,
         [=](int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },
         [=] { return m_cancelSeedFinderPass; });
     if (!m_cancelSeedFinderPass)
