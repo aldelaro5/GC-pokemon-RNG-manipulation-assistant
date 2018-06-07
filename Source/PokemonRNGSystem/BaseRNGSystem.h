@@ -46,7 +46,9 @@ public:
   // Does the precalculation which consist of outputing to a file the number of RNG calls done
   // before getting to the battle menu, this improves performance significantly thanks to the LCGn
   // function and this file can be reused in subsequent seed finding.
-  void precalculateNbrRollsBeforeTeamGeneration(bool useWii, int rtcErrorMarginSeconds);
+  void precalculateNbrRollsBeforeTeamGeneration(bool useWii, int rtcErrorMarginSeconds,
+                                                std::function<void(int)> progressUpdate,
+                                                std::function<bool()> shouldCancelNow);
   // Seed finding algorithm, this does only one pass with parellelism
   void seedFinder(std::vector<int> criteria, std::vector<u32>& seeds, bool useWii,
                   int rtcErrorMarginSeconds, bool usePrecalc,

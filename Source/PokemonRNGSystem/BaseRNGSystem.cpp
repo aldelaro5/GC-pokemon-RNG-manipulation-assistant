@@ -39,18 +39,32 @@ size_t BaseRNGSystem::getPracalcFileSize(bool useWii, int rtcErrorMarginSeconds)
   return (range.max - range.min) * sizeof(u16);
 }
 
-void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(bool useWii, int rtcErrorMarginSeconds)
+void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
+    bool useWii, int rtcErrorMarginSeconds, std::function<void(int)> progressUpdate,
+    std::function<bool()> shouldCancelNow)
 {
   std::ofstream precalcFile(getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds),
                             std::ios::binary | std::ios::out);
   seedRange range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
+  int nbrSeedsPrecalculatedTotal = 0;
+  int seedsPrecalculatedCurrentBlock = 0;
   for (s64 i = range.min; i < range.max; i++)
   {
+    if (shouldCancelNow())
+      break;
+
     u32 seed = 0;
     u16 counter = 0;
     seed = rollRNGToBattleMenu(static_cast<u32>(i), &counter);
     u16* ptrCounter = &counter;
     precalcFile.write(reinterpret_cast<const char*>(ptrCounter), sizeof(u16));
+    nbrSeedsPrecalculatedTotal++;
+    seedsPrecalculatedCurrentBlock++;
+    if (seedsPrecalculatedCurrentBlock >= 10000)
+    {
+      progressUpdate(nbrSeedsPrecalculatedTotal);
+      seedsPrecalculatedCurrentBlock = 0;
+    }
   }
   precalcFile.close();
 }
