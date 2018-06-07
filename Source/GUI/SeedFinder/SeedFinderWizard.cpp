@@ -2,6 +2,7 @@
 
 #include <QAbstractButton>
 #include <QMessageBox>
+#include <QProgressDialog>
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QtConcurrent>
@@ -11,13 +12,14 @@
 int SeedFinderWizard::numberPass = 1;
 
 SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game,
-                                   int rtcErrorMarginSeconds, bool useWii, bool usePrecalc)
+                                   int rtcErrorMarginSeconds, bool useWii)
     : QWizard(parent), m_game(game), m_rtcErrorMarginSeconds(rtcErrorMarginSeconds),
-      m_useWii(useWii), m_usePrecalc(usePrecalc)
+      m_useWii(useWii)
 {
   numberPass = 1;
   m_cancelSeedFinderPass = false;
   m_seedFinderFuture = QFuture<void>();
+  m_precalcFuture = QFuture<void>();
   setPage(pageID::Start, new StartPage(this, game));
   setPage(pageID::Instructions, new InstructionsPage(this, game, useWii));
   setPage(pageID::SeedFinderPass, getSeedFinderPassPageForGame());
@@ -35,6 +37,7 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection gam
   });
   connect(this, &SeedFinderWizard::onSeedFinderPassDone, this,
           &SeedFinderWizard::seedFinderPassDone);
+  connect(this, &SeedFinderWizard::onPrecalcDone, this, &SeedFinderWizard::precalcDone);
 
   connect(button(QWizard::NextButton), &QAbstractButton::clicked, this,
           &SeedFinderWizard::pageChanged);
@@ -119,14 +122,71 @@ void SeedFinderWizard::seedFinderPassDone()
   }
 }
 
+void SeedFinderWizard::precalcDone()
+{
+  if (!m_cancelPrecalc)
+  {
+    QMessageBox* msg =
+        new QMessageBox(QMessageBox::Information, "Precalculation sucess",
+                        "The precalculation file was created sucessfully, it will now be used with "
+                        "any subsequent seed finding procedure with the given settings.",
+                        QMessageBox::Ok);
+    msg->exec();
+    m_usePrecalc = true;
+    SeedFinderPassPage* page = static_cast<SeedFinderPassPage*>(currentPage());
+    page->setNewUsePrecalc(true);
+  }
+}
+
 void SeedFinderWizard::pageChanged()
 {
   if (currentId() == pageID::SeedFinderPass)
   {
-    // TODO: handle precalc prompt here
     QList<QWizard::WizardButton> layout;
     layout << QWizard::Stretch << QWizard::CancelButton << QWizard::CustomButton1;
     setButtonLayout(layout);
+
+    QFileInfo info(QString::fromStdString(
+        SPokemonRNG::getInstance()->getSystem()->getPrecalcFilenameForSettings(
+            m_useWii, m_rtcErrorMarginSeconds)));
+    m_usePrecalc = (info.exists() && info.isFile());
+    if (!(info.exists() && info.isFile()))
+    {
+      size_t fileSize = SPokemonRNG::getInstance()->getSystem()->getPracalcFileSize(
+          m_useWii, m_rtcErrorMarginSeconds);
+      QMessageBox* msg = new QMessageBox(
+          QMessageBox::Question, "Precalculation file",
+          "Do you want to generate a precalculation file? This file may take a while to generate "
+          "and "
+          "be rather large, but will significantly speed up performance of the seed finder with "
+          "the "
+          "given game and the following settings:\n\nClock margin of error(seeconds): " +
+              QString::number(m_rtcErrorMarginSeconds) +
+              "\nPlatform: " + (m_useWii ? QString("Nintendo Wii") : QString("Nintendo GameCube")) +
+              "\n\nEstimated file size: " + QString::number(fileSize / 1024 / 1024) +
+              "MB, do you want to create it?",
+          QMessageBox::No | QMessageBox::Yes, this);
+      msg->exec();
+      if (msg->result() == QMessageBox::Yes)
+      {
+        BaseRNGSystem::seedRange range =
+            SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(m_useWii,
+                                                                         m_rtcErrorMarginSeconds);
+        QProgressDialog* dlg = new QProgressDialog(
+            "Precalculating " + QString::number(range.max - range.min) + " seeds...", "&Cancel", 0,
+            range.max - range.min, this);
+        connect(dlg, &QProgressDialog::canceled, this, [=]() { m_cancelPrecalc = true; });
+
+        QtConcurrent::run([=]() {
+          SPokemonRNG::getInstance()->getSystem()->precalculateNbrRollsBeforeTeamGeneration(
+              m_useWii, m_rtcErrorMarginSeconds, [=](int value) { dlg->setValue(value); },
+              [=]() { return m_cancelPrecalc; });
+          emit onPrecalcDone();
+        });
+
+        dlg->exec();
+      }
+    }
   }
 }
 

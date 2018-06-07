@@ -1,6 +1,7 @@
 #include "BaseRNGSystem.h"
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -43,15 +44,19 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
     bool useWii, int rtcErrorMarginSeconds, std::function<void(int)> progressUpdate,
     std::function<bool()> shouldCancelNow)
 {
-  std::ofstream precalcFile(getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds),
-                            std::ios::binary | std::ios::out);
+  std::string filename = getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds);
+  std::ofstream precalcFile(filename, std::ios::binary | std::ios::out);
   seedRange range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
   int nbrSeedsPrecalculatedTotal = 0;
   int seedsPrecalculatedCurrentBlock = 0;
+  bool hasCancelled = false;
   for (s64 i = range.min; i < range.max; i++)
   {
     if (shouldCancelNow())
+    {
+      hasCancelled = true;
       break;
+    }
 
     u32 seed = 0;
     u16 counter = 0;
@@ -67,6 +72,8 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
     }
   }
   precalcFile.close();
+  if (hasCancelled)
+    std::remove(filename.c_str());
 }
 
 void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seeds, bool useWii,

@@ -15,7 +15,8 @@
 
 SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds,
                                        int rtcErrorMarginSeconds, bool useWii, bool usePrecalc)
-    : QWizardPage(parent)
+    : QWizardPage(parent), m_rtcMarginErrorSeconds(rtcErrorMarginSeconds), m_useWii(useWii),
+      m_usePrecalc(usePrecalc)
 {
   setSubTitle("Fill in the informations you see on the battle confirmation screen");
 
@@ -24,15 +25,15 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds,
   m_pbSeedFinder->setVisible(false);
   if (nbrFoundSeeds == 0)
   {
-    BaseRNGSystem::seedRange range =
-        SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(useWii, rtcErrorMarginSeconds);
+    BaseRNGSystem::seedRange range = SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(
+        m_useWii, m_rtcMarginErrorSeconds);
     m_pbSeedFinder->setMinimum(0);
     m_pbSeedFinder->setMaximum(range.max - range.min);
     m_pbSeedFinder->setValue(0);
     m_lblSeedFinderStatus =
         new QLabel("Simulating " + QString::number(range.max - range.min) + " seeds using " +
                    QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
-                   (usePrecalc ? QString("with") : QString("without")) + " precalculation...");
+                   (m_usePrecalc ? QString("with") : QString("without")) + " precalculation...");
   }
   else
   {
@@ -42,7 +43,7 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds,
     m_lblSeedFinderStatus =
         new QLabel("Simulating " + QString::number(nbrFoundSeeds) + " seeds using " +
                    QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
-                   (usePrecalc ? QString("with") : QString("without")) + " precalculation...");
+                   (m_usePrecalc ? QString("with") : QString("without")) + " precalculation...");
   }
   m_lblSeedFinderStatus->setVisible(false);
   m_lblSeedFinderStatus->setAlignment(Qt::AlignHCenter);
@@ -61,6 +62,17 @@ void SeedFinderPassPage::setSeedFinderDone(const bool seedFinderDone)
 void SeedFinderPassPage::setSeedFinderProgress(const int nbrSeedsSimulated)
 {
   m_pbSeedFinder->setValue(nbrSeedsSimulated);
+}
+
+void SeedFinderPassPage::setNewUsePrecalc(const bool newUsePrecalc)
+{
+  m_usePrecalc = newUsePrecalc;
+  BaseRNGSystem::seedRange range = SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(
+      m_useWii, m_rtcMarginErrorSeconds);
+  m_lblSeedFinderStatus->setText(
+      "Simulating " + QString::number(range.max - range.min) + " seeds using " +
+      QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
+      (m_usePrecalc ? QString("with") : QString("without")) + " precalculation...");
 }
 
 void SeedFinderPassPage::showSeedFinderProgress(const bool showProgress)

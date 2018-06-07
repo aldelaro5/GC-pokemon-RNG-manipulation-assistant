@@ -62,7 +62,7 @@ void MainWindow::startSeedFinder()
 {
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
-  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, 5, false, true);
+  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, 5, false);
   if (wizard->exec() == QDialog::Accepted)
   {
     std::vector<BaseRNGSystem::StartersPrediction> predictions =

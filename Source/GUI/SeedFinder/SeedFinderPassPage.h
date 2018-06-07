@@ -22,12 +22,16 @@ public:
 
   void setSeedFinderDone(const bool seedFinderDone);
   void setSeedFinderProgress(const int nbrSeedsSimulated);
+  void setNewUsePrecalc(const bool newUsePrecalc);
   virtual void showSeedFinderProgress(const bool showProgress);
 
 protected:
   QLabel* m_lblSeedFinderStatus;
   QProgressBar* m_pbSeedFinder;
   QWidget* m_inputWidget;
+  bool m_useWii = false;
+  int m_rtcMarginErrorSeconds = 0;
+  bool m_usePrecalc = false;
 
 private:
   bool m_seedFinderDone = false;
