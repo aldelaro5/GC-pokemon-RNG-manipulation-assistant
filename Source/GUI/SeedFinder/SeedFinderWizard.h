@@ -51,7 +51,7 @@ private:
   SeedFinderPassPage* getSeedFinderPassPageForGame();
 
   bool m_seedFinderDone = false;
-  std::vector<u32> seeds;
+  std::vector<u32> m_seeds;
   GUICommon::gameSelection m_game;
   bool m_cancelSeedFinderPass;
   bool m_cancelPrecalc = false;

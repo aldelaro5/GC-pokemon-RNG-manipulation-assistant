@@ -54,7 +54,7 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection gam
 
 std::vector<u32> SeedFinderWizard::getSeeds() const
 {
-  return seeds;
+  return m_seeds;
 }
 
 SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
@@ -63,19 +63,19 @@ SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
   switch (m_game)
   {
   case GUICommon::gameSelection::Colosseum:
-    page = new SeedFinderPassColosseum(this, seeds.size(), m_rtcErrorMarginSeconds, m_useWii,
+    page = new SeedFinderPassColosseum(this, m_seeds.size(), m_rtcErrorMarginSeconds, m_useWii,
                                        m_usePrecalc);
     break;
   case GUICommon::gameSelection::XD:
     page =
-        new SeedFinderPassXD(this, seeds.size(), m_rtcErrorMarginSeconds, m_useWii, m_usePrecalc);
+        new SeedFinderPassXD(this, m_seeds.size(), m_rtcErrorMarginSeconds, m_useWii, m_usePrecalc);
     break;
   default:
     return nullptr;
   }
   QString strResultStatus("No passes done");
-  if (seeds.size() > 1)
-    strResultStatus = QString::number(seeds.size()) + QString(" results");
+  if (m_seeds.size() > 1)
+    strResultStatus = QString::number(m_seeds.size()) + QString(" results");
   page->setTitle("Seed Finder Pass #" + QString::number(numberPass) + " (" + strResultStatus + ")");
   return page;
 }
@@ -86,10 +86,13 @@ void SeedFinderWizard::nextSeedFinderPass()
 
   button(QWizard::CustomButton1)->setEnabled(false);
 
+  if (numberPass == 1)
+    page->setNewUsePrecalc(m_usePrecalc);
+
   m_seedFinderFuture = QtConcurrent::run([=] {
     page->showSeedFinderProgress(true);
     SPokemonRNG::getInstance()->getSystem()->seedFinder(
-        page->obtainCriteria(), seeds, m_useWii, m_rtcErrorMarginSeconds, m_usePrecalc,
+        page->obtainCriteria(), m_seeds, m_useWii, m_rtcErrorMarginSeconds, m_usePrecalc,
         [=](int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },
         [=] { return m_cancelSeedFinderPass; });
     if (!m_cancelSeedFinderPass)
@@ -99,7 +102,7 @@ void SeedFinderWizard::nextSeedFinderPass()
 
 void SeedFinderWizard::seedFinderPassDone()
 {
-  if (seeds.size() <= 1)
+  if (m_seeds.size() <= 1)
   {
     SeedFinderPassPage* page = static_cast<SeedFinderPassPage*>(currentPage());
     page->setSeedFinderDone(true);
@@ -107,8 +110,8 @@ void SeedFinderWizard::seedFinderPassDone()
     layout << QWizard::Stretch << QWizard::FinishButton;
     setButtonLayout(layout);
     m_seedFinderDone = true;
-    if (seeds.size() == 1)
-      setPage(pageID::End, new EndPage(this, true, seeds[0]));
+    if (m_seeds.size() == 1)
+      setPage(pageID::End, new EndPage(this, true, m_seeds[0]));
     else
       setPage(pageID::End, new EndPage(this, false));
     QWizard::next();
@@ -116,7 +119,7 @@ void SeedFinderWizard::seedFinderPassDone()
   else
   {
     numberPass++;
-    setPage(numberPass, getSeedFinderPassPageForGame());
+    setPage(numberPass + pageID::SeedFinderPass, getSeedFinderPassPageForGame());
     button(QWizard::CustomButton1)->setEnabled(true);
     QWizard::next();
   }
@@ -133,8 +136,6 @@ void SeedFinderWizard::precalcDone()
                         QMessageBox::Ok);
     msg->exec();
     m_usePrecalc = true;
-    SeedFinderPassPage* page = static_cast<SeedFinderPassPage*>(currentPage());
-    page->setNewUsePrecalc(true);
   }
 }
 
@@ -160,7 +161,7 @@ void SeedFinderWizard::pageChanged()
           "and "
           "be rather large, but will significantly speed up performance of the seed finder with "
           "the "
-          "given game and the following settings:\n\nClock margin of error(seeconds): " +
+          "given game and the following settings:\n\nClock margin of error(seconds): " +
               QString::number(m_rtcErrorMarginSeconds) +
               "\nPlatform: " + (m_useWii ? QString("Nintendo Wii") : QString("Nintendo GameCube")) +
               "\n\nEstimated file size: " + QString::number(fileSize / 1024 / 1024) +
@@ -192,7 +193,10 @@ void SeedFinderWizard::pageChanged()
 
 void SeedFinderWizard::accept()
 {
-  QDialog::accept();
+  if (m_seeds.size() == 1)
+    QDialog::accept();
+  else
+    QDialog::reject();
 }
 
 void SeedFinderWizard::reject()

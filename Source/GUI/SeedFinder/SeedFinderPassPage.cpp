@@ -32,8 +32,7 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds,
     m_pbSeedFinder->setValue(0);
     m_lblSeedFinderStatus =
         new QLabel("Simulating " + QString::number(range.max - range.min) + " seeds using " +
-                   QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
-                   (m_usePrecalc ? QString("with") : QString("without")) + " precalculation...");
+                   QString::number(std::thread::hardware_concurrency()) + " thread(s) ");
   }
   else
   {
@@ -42,8 +41,7 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds,
     m_pbSeedFinder->setValue(0);
     m_lblSeedFinderStatus =
         new QLabel("Simulating " + QString::number(nbrFoundSeeds) + " seeds using " +
-                   QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
-                   (m_usePrecalc ? QString("with") : QString("without")) + " precalculation...");
+                   QString::number(std::thread::hardware_concurrency()) + " thread(s)...");
   }
   m_lblSeedFinderStatus->setVisible(false);
   m_lblSeedFinderStatus->setAlignment(Qt::AlignHCenter);
@@ -87,7 +85,7 @@ int SeedFinderPassPage::nextId() const
   if (m_seedFinderDone)
     return SeedFinderWizard::pageID::End;
   else
-    return SeedFinderWizard::numberPass;
+    return SeedFinderWizard::numberPass + SeedFinderWizard::pageID::SeedFinderPass;
 }
 
 SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, int nbrFoundSeeds,
