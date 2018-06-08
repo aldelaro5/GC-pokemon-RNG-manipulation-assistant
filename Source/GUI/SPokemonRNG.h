@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../PokemonRNGSystem/BaseRNGSystem.h"
-
 #include <QObject>
+
+#include "GUICommon.h"
+#include "../PokemonRNGSystem/BaseRNGSystem.h"
 
 // Singleton wrapper arround BaseRNGSystem, to use from UI
 class SPokemonRNG : public QObject
@@ -23,7 +24,7 @@ public:
   void switchGame(GCPokemonGame game);
 
 signals:
-  void onSwitchGame();
+  void onSwitchGame(GUICommon::gameSelection game);
 
 private:
   SPokemonRNG();

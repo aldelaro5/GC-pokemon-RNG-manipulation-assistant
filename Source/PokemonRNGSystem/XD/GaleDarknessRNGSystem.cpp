@@ -277,6 +277,13 @@ int GaleDarknessRNGSystem::getNbrStartersPrediction()
   return 1;
 }
 
+std::vector<std::string> GaleDarknessRNGSystem::getStartersName()
+{
+  std::vector<std::string> name;
+  name.push_back("Eevee");
+  return name;
+}
+
 u32 GaleDarknessRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   LCG(seed);
@@ -335,7 +342,6 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   starter.isShiny = isPidShiny(lTrainerId, hTrainerId, personalityID);
   starter.genderIndex = getPidGender(eeveeGenderRatio, personalityID);
   starter.natureIndex = personalityID % 25;
-  starter.name = "Eevee";
   startersProperties.push_back(starter);
 
   result.starters = startersProperties;

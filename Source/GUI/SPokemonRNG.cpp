@@ -34,11 +34,11 @@ void SPokemonRNG::switchGame(SPokemonRNG::GCPokemonGame game)
   {
   case GCPokemonGame::Colosseum:
     m_system = new ColosseumRNGSystem();
-    emit onSwitchGame();
+    emit onSwitchGame(static_cast<GUICommon::gameSelection>(game));
     break;
   case GCPokemonGame::XD:
     m_system = new GaleDarknessRNGSystem();
-    emit onSwitchGame();
+    emit onSwitchGame(static_cast<GUICommon::gameSelection>(game));
     break;
   }
 }

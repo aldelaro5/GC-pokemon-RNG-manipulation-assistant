@@ -14,7 +14,6 @@ class BaseRNGSystem
 public:
   struct StarterGen
   {
-    std::string name = "";
     int hpIV = 0;
     int atkIV = 0;
     int defIV = 0;
@@ -43,6 +42,7 @@ public:
   virtual std::string getPrecalcFilenameForSettings(bool useWii, int rtcErrorMarginSeconds);
   size_t getPracalcFileSize(bool useWii, int rtcErrorMarginSeconds);
   virtual int getNbrStartersPrediction() = 0;
+  virtual std::vector<std::string> getStartersName() = 0;
   // Does the precalculation which consist of outputing to a file the number of RNG calls done
   // before getting to the battle menu, this improves performance significantly thanks to the LCGn
   // function and this file can be reused in subsequent seed finding.

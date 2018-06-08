@@ -39,9 +39,25 @@ void PredictorWidget::makeLayouts()
   setLayout(mainLayout);
 }
 
-void PredictorWidget::switchGame()
+void PredictorWidget::clearLabels()
 {
-  m_lblStartersNames[0]->setText(tr("Find your seed for predictions"));
+  m_lblStartersNames.clear();
+  QLayoutItem* item;
+  while ((item = m_startersNamesLayout->takeAt(0)) != 0)
+  {
+    delete item->widget();
+    delete item;
+  }
+}
+
+void PredictorWidget::switchGame(GUICommon::gameSelection game)
+{
+  clearLabels();
+  QLabel* lblSeedFinder = new QLabel(tr("Find your seed for predictions"));
+  lblSeedFinder->setAlignment(Qt::AlignmentFlag::AlignCenter);
+
+  m_lblStartersNames.append(lblSeedFinder);
+  m_startersNamesLayout->addWidget(m_lblStartersNames[0]);
   m_tblStartersPrediction->clear();
   m_tblHeaderLabels.clear();
   m_tblHeaderLabels.append(tr("Frame"));
@@ -54,10 +70,13 @@ void PredictorWidget::switchGame()
     m_tblHeaderLabels.append(tr("SpAtk"));
     m_tblHeaderLabels.append(tr("SpDef"));
     m_tblHeaderLabels.append(tr("Speed"));
-
-    m_tblHeaderLabels.append(tr("Gender"));
     m_tblHeaderLabels.append(tr("Nature"));
-    m_tblHeaderLabels.append(tr("Shiny?"));
+
+    if (game == GUICommon::gameSelection::XD)
+    {
+      m_tblHeaderLabels.append(tr("Gender"));
+      m_tblHeaderLabels.append(tr("Shiny?"));
+    }
   }
   m_tblStartersPrediction->setColumnCount(m_tblHeaderLabels.count());
   m_tblStartersPrediction->setHorizontalHeaderLabels(m_tblHeaderLabels);
@@ -65,8 +84,26 @@ void PredictorWidget::switchGame()
 }
 
 void PredictorWidget::setStartersPrediction(
-    std::vector<BaseRNGSystem::StartersPrediction> startersPrediction)
+    std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
+    GUICommon::gameSelection game)
 {
+  clearLabels();
+  for (auto name : SPokemonRNG::getInstance()->getSystem()->getStartersName())
+  {
+    QLabel* lblName = new QLabel(QString::fromStdString(name));
+    lblName->setAlignment(Qt::AlignmentFlag::AlignCenter);
+
+    m_lblStartersNames.append(lblName);
+  }
+  m_startersNamesLayout->addStretch();
+  for (auto label : m_lblStartersNames)
+  {
+    m_startersNamesLayout->addWidget(label);
+    m_startersNamesLayout->addStretch();
+  }
+  if (m_lblStartersNames.size() > 1)
+    m_startersNamesLayout->addStretch();
+
   m_tblStartersPrediction->setRowCount(startersPrediction.size());
   for (int i = 0; i < startersPrediction.size(); i++)
   {
@@ -75,28 +112,37 @@ void PredictorWidget::setStartersPrediction(
     m_tblStartersPrediction->setItem(
         i, 1, new QTableWidgetItem(QString::number(startersPrediction[i].startingSeed, 16)));
 
+    int nbrColPerStarter = 7;
+    if (game == GUICommon::gameSelection::XD)
+      nbrColPerStarter = 9;
+
     for (int j = 0; j < startersPrediction[i].starters.size(); j++)
     {
       BaseRNGSystem::StarterGen starter = startersPrediction[i].starters[j];
-      m_tblStartersPrediction->setItem(i, 2 + j * 9,
+      m_tblStartersPrediction->setItem(i, 2 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.hpIV)));
-      m_tblStartersPrediction->setItem(i, 3 + j * 9,
+      m_tblStartersPrediction->setItem(i, 3 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.atkIV)));
-      m_tblStartersPrediction->setItem(i, 4 + j * 9,
+      m_tblStartersPrediction->setItem(i, 4 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.defIV)));
-      m_tblStartersPrediction->setItem(i, 5 + j * 9,
+      m_tblStartersPrediction->setItem(i, 5 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.spAtkIV)));
-      m_tblStartersPrediction->setItem(i, 6 + j * 9,
+      m_tblStartersPrediction->setItem(i, 6 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.spDefIV)));
-      m_tblStartersPrediction->setItem(i, 7 + j * 9,
+      m_tblStartersPrediction->setItem(i, 7 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.speedIV)));
+      m_tblStartersPrediction->setItem(
+          i, 8 + j * nbrColPerStarter,
+          new QTableWidgetItem(GUICommon::naturesStr[starter.natureIndex]));
 
-      m_tblStartersPrediction->setItem(
-          i, 8 + j * 9, new QTableWidgetItem(GUICommon::genderStr[starter.genderIndex]));
-      m_tblStartersPrediction->setItem(
-          i, 9 + j * 9, new QTableWidgetItem(GUICommon::naturesStr[starter.natureIndex]));
-      m_tblStartersPrediction->setItem(i, 10 + j * 9,
-                                       new QTableWidgetItem(tr(starter.isShiny ? "Yes" : "No")));
+      if (game == GUICommon::gameSelection::XD)
+      {
+        m_tblStartersPrediction->setItem(
+            i, 9 + j * nbrColPerStarter,
+            new QTableWidgetItem(GUICommon::genderStr[starter.genderIndex]));
+        m_tblStartersPrediction->setItem(i, 10 + j * nbrColPerStarter,
+                                         new QTableWidgetItem(tr(starter.isShiny ? "Yes" : "No")));
+      }
     }
   }
   m_tblStartersPrediction->resizeColumnsToContents();

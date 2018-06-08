@@ -250,6 +250,14 @@ int ColosseumRNGSystem::getNbrStartersPrediction()
   return 2;
 }
 
+std::vector<std::string> ColosseumRNGSystem::getStartersName()
+{
+  std::vector<std::string> names;
+  for (auto i : s_startersName)
+    names.push_back(i);
+  return names;
+}
+
 u32 ColosseumRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   // Exhaust all guaranteed calls before considering input and wasted frames.
@@ -308,7 +316,6 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     starter.isShiny = false;
     starter.genderIndex = 0;
     starter.natureIndex = personalityID % 25;
-    starter.name = s_startersName[i];
     startersProperties.push_back(starter);
   }
   result.starters = startersProperties;

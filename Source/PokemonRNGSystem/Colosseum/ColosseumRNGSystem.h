@@ -31,6 +31,7 @@ private:
   bool generateBattleTeam(u32& seed, std::vector<int> criteria) final override;
   int getMinFramesAmountNamingScreen() final override;
   int getNbrStartersPrediction() final override;
+  std::vector<std::string> getStartersName() final override;
   u32 rollRNGNamingScreenInit(u32 seed) final override;
   u32 rollRNGNamingScreenNext(u32 seed) final override;
   StartersPrediction generateStarterPokemons(u32 seed) final override;

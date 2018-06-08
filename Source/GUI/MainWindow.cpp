@@ -68,6 +68,6 @@ void MainWindow::startSeedFinder()
     std::vector<BaseRNGSystem::StartersPrediction> predictions =
         SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(wizard->getSeeds()[0],
                                                                               10);
-    m_predictorWidget->setStartersPrediction(predictions);
+    m_predictorWidget->setStartersPrediction(predictions, selection);
   }
 }

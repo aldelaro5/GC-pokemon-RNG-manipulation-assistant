@@ -7,17 +7,20 @@
 #include <QWidget>
 
 #include "../../PokemonRNGSystem/BaseRNGSystem.h"
+#include "../GUICommon.h"
 
 class PredictorWidget : public QWidget
 {
 public:
   PredictorWidget(QWidget* parent = nullptr);
-  void setStartersPrediction(std::vector<BaseRNGSystem::StartersPrediction> startersPrediction);
+  void setStartersPrediction(std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
+                             GUICommon::gameSelection game);
 
 private:
+  void clearLabels();
   void initialiseWidgets();
   void makeLayouts();
-  void switchGame();
+  void switchGame(GUICommon::gameSelection game);
 
   BaseRNGSystem::StartersPrediction m_startersPrediction;
   QHBoxLayout* m_startersNamesLayout;
