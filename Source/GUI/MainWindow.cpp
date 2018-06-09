@@ -27,17 +27,25 @@ void MainWindow::initialiseWidgets()
   connect(m_cmbGame, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
           &MainWindow::gameChanged);
 
+  m_btnSettings = new QPushButton(tr("Settings"));
+  connect(m_btnSettings, &QPushButton::clicked, this, &MainWindow::openSettings);
+
   m_btnStartSeedFinder = new QPushButton(tr("Find your seed"));
   connect(m_btnStartSeedFinder, &QPushButton::clicked, this, &MainWindow::startSeedFinder);
+  m_btnStartSeedFinder->setEnabled(false);
 
   m_predictorWidget = new PredictorWidget(this);
 }
 
 void MainWindow::makeLayouts()
 {
+  QHBoxLayout* buttonsLayout = new QHBoxLayout;
+  buttonsLayout->addWidget(m_btnStartSeedFinder);
+  buttonsLayout->addWidget(m_btnSettings);
+  
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_cmbGame);
-  mainLayout->addWidget(m_btnStartSeedFinder);
+  mainLayout->addLayout(buttonsLayout);
   mainLayout->addWidget(m_predictorWidget);
 
   QWidget* mainWidget = new QWidget;
@@ -55,7 +63,10 @@ void MainWindow::gameChanged()
     SPokemonRNG::getInstance()->switchGame(SPokemonRNG::GCPokemonGame::XD);
 
   if (m_cmbGame->count() == static_cast<int>(GUICommon::gameSelection::Unselected) + 1)
+  {
     m_cmbGame->removeItem(static_cast<int>(GUICommon::gameSelection::Unselected));
+    m_btnStartSeedFinder->setEnabled(true);
+  }
 }
 
 void MainWindow::startSeedFinder()
@@ -70,4 +81,8 @@ void MainWindow::startSeedFinder()
                                                                               10);
     m_predictorWidget->setStartersPrediction(predictions, selection);
   }
+}
+
+void MainWindow::openSettings()
+{
 }
