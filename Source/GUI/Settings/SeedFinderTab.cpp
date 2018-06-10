@@ -58,3 +58,13 @@ int SeedFinderTab::getRtcMarginError()
 {
   return m_spbRtcMarginError->value();
 }
+
+void SeedFinderTab::setPlatform(GUICommon::platform platform)
+{
+  m_cmbPlatform->setCurrentIndex(static_cast<int>(platform));
+}
+
+void SeedFinderTab::setRtcMarginError(int rtcMarginError)
+{
+  m_spbRtcMarginError->setValue(rtcMarginError);
+}

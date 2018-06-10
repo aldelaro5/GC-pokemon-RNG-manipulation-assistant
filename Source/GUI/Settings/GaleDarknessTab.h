@@ -15,6 +15,9 @@ public:
   GUICommon::shininess getShininess();
   GUICommon::gender getGender();
 
+  void setShininess(GUICommon::shininess shininess);
+  void setGender(GUICommon::gender gender);
+
 private:
   CommonPredictorFiltersWidget* m_predictorFiltersEevee;
   QComboBox* m_cmbShininess;

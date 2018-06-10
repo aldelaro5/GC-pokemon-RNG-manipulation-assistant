@@ -15,6 +15,9 @@ public:
   GUICommon::platform getPlatform();
   int getRtcMarginError();
 
+  void setPlatform(GUICommon::platform platform);
+  void setRtcMarginError(int rtcMarginError);
+
 private:
   QComboBox* m_cmbPlatform;
   QSpinBox* m_spbRtcMarginError;

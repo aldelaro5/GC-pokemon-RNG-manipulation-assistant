@@ -52,3 +52,13 @@ GUICommon::gender GaleDarknessTab::getGender()
 {
   return static_cast<GUICommon::gender>(m_cmbGender->currentIndex());
 }
+
+void GaleDarknessTab::setShininess(GUICommon::shininess shininess)
+{
+  m_cmbShininess->setCurrentIndex(static_cast<int>(shininess));
+}
+
+void GaleDarknessTab::setGender(GUICommon::gender gender)
+{
+  m_cmbGender->setCurrentIndex(static_cast<int>(gender));
+}

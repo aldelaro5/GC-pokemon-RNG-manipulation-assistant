@@ -43,6 +43,81 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
 
 void DlgSettings::loadSettings()
 {
+  QSettings settings("settings.ini", QSettings::IniFormat);
+
+  settings.beginGroup("finder");
+  m_seedFinderTab->setPlatform(static_cast<GUICommon::platform>(
+      settings.value("platform", static_cast<int>(GUICommon::platform::GameCube)).toInt()));
+  m_seedFinderTab->setRtcMarginError(settings.value("rtcMarginError", 5).toInt());
+  settings.endGroup();
+
+  settings.beginGroup("colosseumPredictor");
+  settings.beginGroup("umbreon");
+  m_coloTab->getUmbreonFiltersWidget()->setMinHpIv(settings.value("minHpIv", 0).toInt());
+  m_coloTab->getUmbreonFiltersWidget()->setMinAtkIv(settings.value("minAtkIv", 0).toInt());
+  m_coloTab->getUmbreonFiltersWidget()->setMinDefIv(settings.value("minDefIv", 0).toInt());
+  m_coloTab->getUmbreonFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
+  m_coloTab->getUmbreonFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
+  m_coloTab->getUmbreonFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
+  m_coloTab->getUmbreonFiltersWidget()->setEnableNatureFilter(
+      settings.value("enableNatureFilter", false).toBool());
+  QVector<bool> naturesFilterUmbreon;
+  int sizeNaturesUmbreon = settings.beginReadArray("naturesFilter");
+  for (int i = 0; i < sizeNaturesUmbreon; i++)
+  {
+    settings.setArrayIndex(i);
+    naturesFilterUmbreon.append(settings.value(GUICommon::naturesStr[i], false).toBool());
+  }
+  settings.endArray();
+  m_coloTab->getUmbreonFiltersWidget()->setNatureFilters(naturesFilterUmbreon);
+  settings.endGroup();
+
+  settings.beginGroup("espeon");
+  m_coloTab->getEspeonFiltersWidget()->setMinHpIv(settings.value("minHpIv", 0).toInt());
+  m_coloTab->getEspeonFiltersWidget()->setMinAtkIv(settings.value("minAtkIv", 0).toInt());
+  m_coloTab->getEspeonFiltersWidget()->setMinDefIv(settings.value("minDefIv", 0).toInt());
+  m_coloTab->getEspeonFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
+  m_coloTab->getEspeonFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
+  m_coloTab->getEspeonFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
+  m_coloTab->getEspeonFiltersWidget()->setEnableNatureFilter(
+      settings.value("enableNatureFilter", false).toBool());
+  QVector<bool> naturesFilterEspeon;
+  int sizeNaturesEspeon = settings.beginReadArray("naturesFilter");
+  for (int i = 0; i < sizeNaturesEspeon; i++)
+  {
+    settings.setArrayIndex(i);
+    naturesFilterEspeon.append(settings.value(GUICommon::naturesStr[i], false).toBool());
+  }
+  settings.endArray();
+  m_coloTab->getEspeonFiltersWidget()->setNatureFilters(naturesFilterEspeon);
+  settings.endGroup();
+  settings.endGroup();
+
+  settings.beginGroup("galeDarknessPredictor");
+  settings.beginGroup("eevee");
+  m_xdTab->getEeveeFiltersWidget()->setMinHpIv(settings.value("minHpIv", 0).toInt());
+  m_xdTab->getEeveeFiltersWidget()->setMinAtkIv(settings.value("minAtkIv", 0).toInt());
+  m_xdTab->getEeveeFiltersWidget()->setMinDefIv(settings.value("minDefIv", 0).toInt());
+  m_xdTab->getEeveeFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
+  m_xdTab->getEeveeFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
+  m_xdTab->getEeveeFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
+  m_xdTab->getEeveeFiltersWidget()->setEnableNatureFilter(
+      settings.value("enableNatureFilter", false).toBool());
+  QVector<bool> naturesFilterEevee;
+  int sizeNaturesEevee = settings.beginReadArray("naturesFilter");
+  for (int i = 0; i < sizeNaturesEevee; i++)
+  {
+    settings.setArrayIndex(i);
+    naturesFilterEevee.append(settings.value(GUICommon::naturesStr[i], false).toBool());
+  }
+  settings.endArray();
+  m_xdTab->getEeveeFiltersWidget()->setNatureFilters(naturesFilterEevee);
+  m_xdTab->setShininess(static_cast<GUICommon::shininess>(
+      settings.value("shininess", static_cast<int>(GUICommon::shininess::AnyShininess)).toInt()));
+  m_xdTab->setGender(static_cast<GUICommon::gender>(
+      settings.value("gender", static_cast<int>(GUICommon::gender::AnyGender)).toInt()));
+  settings.endGroup();
+  settings.endGroup();
 }
 
 void DlgSettings::saveSettings()

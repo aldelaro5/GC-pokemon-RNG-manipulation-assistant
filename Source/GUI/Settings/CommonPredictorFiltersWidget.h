@@ -21,6 +21,15 @@ public:
   bool getEnableNatureFilter();
   QVector<bool> getNatureFilters();
 
+  void setMinHpIv(int minHpIv);
+  void setMinAtkIv(int minAtkIv);
+  void setMinDefIv(int minDefIv);
+  void setMinSpAtkIv(int minSpAtkIv);
+  void setMinSpDefIv(int minSpDefIv);
+  void setMinSpeedIv(int minSpeedIv);
+  void setEnableNatureFilter(bool enableNatureFilter);
+  void setNatureFilters(QVector<bool> natureFilters);
+
 private:
   QSpinBox* m_spnMinHpIv;
   QSpinBox* m_spnMinAtkIv;

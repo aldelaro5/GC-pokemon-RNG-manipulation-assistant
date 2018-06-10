@@ -138,3 +138,44 @@ QVector<bool> CommonPredictorFiltersWidget::getNatureFilters()
     naturesFilter.append(i->isChecked());
   return naturesFilter;
 }
+
+void CommonPredictorFiltersWidget::setMinHpIv(int minHpIv)
+{
+  m_spnMinHpIv->setValue(minHpIv);
+}
+
+void CommonPredictorFiltersWidget::setMinAtkIv(int minAtkIv)
+{
+  m_spnMinAtkIv->setValue(minAtkIv);
+}
+
+void CommonPredictorFiltersWidget::setMinDefIv(int minDefIv)
+{
+  m_spnMinDefIv->setValue(minDefIv);
+}
+
+void CommonPredictorFiltersWidget::setMinSpAtkIv(int minSpAtkIv)
+{
+  m_spnMinSpAtkIv->setValue(minSpAtkIv);
+}
+
+void CommonPredictorFiltersWidget::setMinSpDefIv(int minSpDefIv)
+{
+  m_spnMinSpDefIv->setValue(minSpDefIv);
+}
+
+void CommonPredictorFiltersWidget::setMinSpeedIv(int minSpeedIv)
+{
+  m_spnMinSpeedIv->setValue(minSpeedIv);
+}
+
+void CommonPredictorFiltersWidget::setEnableNatureFilter(bool enableNatureFilter)
+{
+  m_chkEnableNatureFilter->setChecked(enableNatureFilter);
+}
+
+void CommonPredictorFiltersWidget::setNatureFilters(QVector<bool> natureFilters)
+{
+  for (int i = 0; i < natureFilters.size(); i++)
+    m_chkNatures[i]->setChecked(natureFilters[i]);
+}
