@@ -8,7 +8,7 @@ SeedFinderTab::SeedFinderTab(QWidget* parent) : QWidget(parent)
   QLabel* lblPlatform = new QLabel(tr("Platform: "));
   m_cmbPlatform = new QComboBox();
   m_cmbPlatform->addItems(GUICommon::platformsStr);
-  m_cmbPlatform->setCurrentIndex(0);
+  m_cmbPlatform->setCurrentIndex(GUICommon::platform::GameCube);
 
   QLabel* lblRtcMarginError = new QLabel(tr("Margin of error of the clock (in seconds): "));
   m_spbRtcMarginError = new QSpinBox();
