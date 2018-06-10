@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include <QHBoxLayout>
+#include <QSettings>
 #include <QVBoxLayout>
 
 #include "GUICommon.h"
@@ -74,7 +75,12 @@ void MainWindow::startSeedFinder()
 {
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
-  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, 5, false);
+  QSettings settings("settings.ini", QSettings::IniFormat);
+  int rtcMarginError = settings.value("finder/rtcMarginError", 5).toInt();
+  bool useWii =
+      settings.value("finder/platform", static_cast<int>(GUICommon::platform::GameCube)).toInt() ==
+      static_cast<int>(GUICommon::platform::Wii);
+  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, rtcMarginError, useWii);
   if (wizard->exec() == QDialog::Accepted)
   {
     std::vector<BaseRNGSystem::StartersPrediction> predictions =
