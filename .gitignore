@@ -3,6 +3,7 @@ Source/[Bb]inary/
 Source/bin/
 Source/obj/
 Source/GeneratedFiles/
+Source/*.ini
 Source/*.ipch
 Source/*.opensdf
 Source/*.sdf
