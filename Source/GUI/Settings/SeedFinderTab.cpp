@@ -3,8 +3,6 @@
 #include <QFormLayout>
 #include <QLabel>
 
-#include "../GUICommon.h"
-
 SeedFinderTab::SeedFinderTab(QWidget* parent) : QWidget(parent)
 {
   QLabel* lblPlatform = new QLabel(tr("Platform: "));
@@ -49,4 +47,14 @@ SeedFinderTab::SeedFinderTab(QWidget* parent) : QWidget(parent)
   mainLayout->addWidget(lblNoteMarginError);
   mainLayout->addStretch();
   setLayout(mainLayout);
+}
+
+GUICommon::platform SeedFinderTab::getPlatform()
+{
+  return static_cast<GUICommon::platform>(m_cmbPlatform->currentIndex());
+}
+
+int SeedFinderTab::getRtcMarginError()
+{
+  return m_spbRtcMarginError->value();
 }

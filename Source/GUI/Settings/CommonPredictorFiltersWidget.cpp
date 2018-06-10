@@ -63,19 +63,22 @@ CommonPredictorFiltersWidget::CommonPredictorFiltersWidget(QWidget* parent) : QW
   IvInputLayout->addRow(lblSpDefIv, m_spnMinSpDefIv);
   IvInputLayout->addRow(lblSpeedIv, m_spnMinSpeedIv);
 
-  m_chkEnableNatureFilter = new QCheckBox(tr("Filter wanted predictions by nature"), this);
   QGridLayout* naturesChkLayout = new QGridLayout;
-
   for (int i = 0; i < GUICommon::naturesStr.size(); i++)
   {
     QCheckBox* chk = new QCheckBox(GUICommon::naturesStr[i]);
-    chk->setChecked(true);
+    chk->setChecked(false);
     m_chkNatures.append(chk);
     naturesChkLayout->addWidget(chk, i / 4, i % 4);
   }
+
   m_naturesWidget = new QWidget;
   m_naturesWidget->setLayout(naturesChkLayout);
   m_naturesWidget->setEnabled(false);
+
+  m_chkEnableNatureFilter = new QCheckBox(tr("Filter wanted predictions by nature"), this);
+  connect(m_chkEnableNatureFilter, &QCheckBox::stateChanged, this,
+          [=](int state) { m_naturesWidget->setEnabled(state == Qt::CheckState::Checked); });
 
   QVBoxLayout* IvLayout = new QVBoxLayout;
   IvLayout->addWidget(lblIvs);
@@ -91,4 +94,47 @@ CommonPredictorFiltersWidget::CommonPredictorFiltersWidget(QWidget* parent) : QW
   mainLayout->addLayout(naturesLayout);
 
   setLayout(mainLayout);
+}
+
+int CommonPredictorFiltersWidget::getMinHpIv()
+{
+  return m_spnMinHpIv->value();
+}
+
+int CommonPredictorFiltersWidget::getMinAtkIv()
+{
+  return m_spnMinAtkIv->value();
+}
+
+int CommonPredictorFiltersWidget::getMinDefIv()
+{
+  return m_spnMinDefIv->value();
+}
+
+int CommonPredictorFiltersWidget::getMinSpAtkIv()
+{
+  return m_spnMinSpAtkIv->value();
+}
+
+int CommonPredictorFiltersWidget::getMinSpDefIv()
+{
+  return m_spnMinSpDefIv->value();
+}
+
+int CommonPredictorFiltersWidget::getMinSpeedIv()
+{
+  return m_spnMinSpeedIv->value();
+}
+
+bool CommonPredictorFiltersWidget::getEnableNatureFilter()
+{
+  return m_chkEnableNatureFilter->isChecked();
+}
+
+QVector<bool> CommonPredictorFiltersWidget::getNatureFilters()
+{
+  QVector<bool> naturesFilter;
+  for (auto i : m_chkNatures)
+    naturesFilter.append(i->isChecked());
+  return naturesFilter;
 }

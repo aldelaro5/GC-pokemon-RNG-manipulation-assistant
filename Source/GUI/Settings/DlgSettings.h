@@ -14,6 +14,9 @@ class DlgSettings : public QDialog
 public:
   DlgSettings(QWidget* parent = nullptr);
 
+  void loadSettings();
+  void saveSettings();
+
 private:
   QTabWidget* m_tabWidget;
   SeedFinderTab* m_seedFinderTab;

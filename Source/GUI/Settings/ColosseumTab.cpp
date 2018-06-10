@@ -23,3 +23,13 @@ ColosseumTab::ColosseumTab(QWidget* parent) : QWidget(parent)
 
   setLayout(mainLayout);
 }
+
+CommonPredictorFiltersWidget* ColosseumTab::getUmbreonFiltersWidget()
+{
+  return m_predictorFiltersUmbreon;
+}
+
+CommonPredictorFiltersWidget* ColosseumTab::getEspeonFiltersWidget()
+{
+  return m_predictorFiltersEspeon;
+}

@@ -12,6 +12,15 @@ class CommonPredictorFiltersWidget : public QWidget
 public:
   CommonPredictorFiltersWidget(QWidget* parent = nullptr);
 
+  int getMinHpIv();
+  int getMinAtkIv();
+  int getMinDefIv();
+  int getMinSpAtkIv();
+  int getMinSpDefIv();
+  int getMinSpeedIv();
+  bool getEnableNatureFilter();
+  QVector<bool> getNatureFilters();
+
 private:
   QSpinBox* m_spnMinHpIv;
   QSpinBox* m_spnMinAtkIv;

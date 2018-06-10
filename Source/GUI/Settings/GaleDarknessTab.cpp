@@ -5,8 +5,6 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include "../GUICommon.h"
-
 GaleDarknessTab::GaleDarknessTab(QWidget* parent) : QWidget(parent)
 {
   m_predictorFiltersEevee = new CommonPredictorFiltersWidget(this);
@@ -38,4 +36,19 @@ GaleDarknessTab::GaleDarknessTab(QWidget* parent) : QWidget(parent)
   mainLayout->addStretch();
 
   setLayout(mainLayout);
+}
+
+CommonPredictorFiltersWidget* GaleDarknessTab::getEeveeFiltersWidget()
+{
+  return m_predictorFiltersEevee;
+}
+
+GUICommon::shininess GaleDarknessTab::getShininess()
+{
+  return static_cast<GUICommon::shininess>(m_cmbShininess->currentIndex());
+}
+
+GUICommon::gender GaleDarknessTab::getGender()
+{
+  return static_cast<GUICommon::gender>(m_cmbGender->currentIndex());
 }
