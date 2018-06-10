@@ -19,6 +19,8 @@ QStringList naturesStr = QStringList(
 
 QStringList typesStr = QStringList({""});
 
-QStringList shininessStr = QStringList({QObject::tr("Shiny"), QObject::tr("Not shiny")});
-QStringList genderStr = QStringList({QObject::tr("Male"), QObject::tr("Female")});
+QStringList shininessStr =
+    QStringList({QObject::tr("Shiny"), QObject::tr("Not shiny"), QObject::tr("Any")});
+QStringList genderStr =
+    QStringList({QObject::tr("Male"), QObject::tr("Female"), QObject::tr("Any")});
 }; // namespace GUICommon
