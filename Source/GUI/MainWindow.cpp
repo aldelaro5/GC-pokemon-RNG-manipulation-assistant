@@ -6,6 +6,7 @@
 #include "GUICommon.h"
 #include "SPokemonRNG.h"
 #include "SeedFinder/SeedFinderWizard.h"
+#include "Settings/DlgSettings.h"
 
 MainWindow::MainWindow()
 {
@@ -42,7 +43,7 @@ void MainWindow::makeLayouts()
   QHBoxLayout* buttonsLayout = new QHBoxLayout;
   buttonsLayout->addWidget(m_btnStartSeedFinder);
   buttonsLayout->addWidget(m_btnSettings);
-  
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_cmbGame);
   mainLayout->addLayout(buttonsLayout);
@@ -85,4 +86,6 @@ void MainWindow::startSeedFinder()
 
 void MainWindow::openSettings()
 {
+  DlgSettings* dlg = new DlgSettings(this);
+  dlg->exec();
 }

@@ -6,6 +6,8 @@ namespace GUICommon
 {
 QStringList gamesStr =
     QStringList({QObject::tr("Pokemon Colosseum"), QObject::tr("Pokemon XD: Gale of Darkness")});
+QStringList platformsStr = QStringList({"Nintendo GameCube", "Nintendo Wii"});
+
 QStringList naturesStr = QStringList(
     {QObject::tr("Hardy"),   QObject::tr("Lonely"), QObject::tr("Brave"),   QObject::tr("Adamant"),
      QObject::tr("Naughty"), QObject::tr("Bold"),   QObject::tr("Docile"),  QObject::tr("Relaxed"),
@@ -17,5 +19,6 @@ QStringList naturesStr = QStringList(
 
 QStringList typesStr = QStringList({""});
 
+QStringList shininessStr = QStringList({QObject::tr("Shiny"), QObject::tr("Not shiny")});
 QStringList genderStr = QStringList({QObject::tr("Male"), QObject::tr("Female")});
 }; // namespace GUICommon

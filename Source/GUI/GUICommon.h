@@ -13,9 +13,11 @@ enum gameSelection
 };
 
 extern QStringList gamesStr;
+extern QStringList platformsStr;
 
 // Ordered by in-game indexes
 extern QStringList naturesStr;
 extern QStringList typesStr;
+extern QStringList shininessStr;
 extern QStringList genderStr;
 } // namespace GUICommon
