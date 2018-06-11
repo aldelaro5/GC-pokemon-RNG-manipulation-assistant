@@ -45,10 +45,15 @@ void DlgSettings::loadSettings()
 {
   QSettings settings("settings.ini", QSettings::IniFormat);
 
+  settings.beginGroup("general");
   settings.beginGroup("finder");
   m_generalTab->setPlatform(static_cast<GUICommon::platform>(
       settings.value("platform", static_cast<int>(GUICommon::platform::GameCube)).toInt()));
   m_generalTab->setRtcMarginError(settings.value("rtcMarginError", 5).toInt());
+  settings.endGroup();
+  settings.beginGroup("predictor");
+  m_generalTab->setPredictionTime(settings.value("time", 10).toInt());
+  settings.endGroup();
   settings.endGroup();
 
   settings.beginGroup("colosseumPredictor");
@@ -124,9 +129,15 @@ void DlgSettings::saveSettings()
 {
   QSettings settings("settings.ini", QSettings::IniFormat);
 
+  settings.beginGroup("general");
   settings.beginGroup("finder");
   settings.setValue("platform", static_cast<int>(m_generalTab->getPlatform()));
   settings.setValue("rtcMarginError", m_generalTab->getRtcMarginError());
+  settings.setValue("rtcMarginError", m_generalTab->getRtcMarginError());
+  settings.endGroup();
+  settings.beginGroup("predictor");
+  settings.setValue("time", m_generalTab->getPredictionTime());
+  settings.endGroup();
   settings.endGroup();
 
   settings.beginGroup("colosseumPredictor");

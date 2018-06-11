@@ -14,11 +14,14 @@ public:
 
   GUICommon::platform getPlatform();
   int getRtcMarginError();
+  int getPredictionTime();
 
   void setPlatform(GUICommon::platform platform);
   void setRtcMarginError(int rtcMarginError);
+  void setPredictionTime(int predictionTime);
 
 private:
   QComboBox* m_cmbPlatform;
   QSpinBox* m_spbRtcMarginError;
+  QSpinBox* m_spbPredictionsTime;
 };

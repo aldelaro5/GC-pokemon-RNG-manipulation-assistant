@@ -1,6 +1,7 @@
 #include "GeneralTab.h"
 
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QLabel>
 
 GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
@@ -38,14 +39,35 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
       "will make the procedure faster, but less forgiving when booting the console."));
   lblNoteMarginError->setWordWrap(true);
 
+  QVBoxLayout* seedFinderLayout = new QVBoxLayout;
+  seedFinderLayout->addWidget(lblWarning);
+  seedFinderLayout->addSpacing(25);
+  seedFinderLayout->addLayout(inputLayout);
+  seedFinderLayout->addSpacing(25);
+  seedFinderLayout->addWidget(lblNoteMarginError);
+
+  QGroupBox* gbSeedFinder = new QGroupBox(tr("Seed finder"));
+  gbSeedFinder->setLayout(seedFinderLayout);
+
+  QLabel* lblPredictionsTime =
+      new QLabel(tr("Amount of time to geenrate predictions (in seconds): "));
+  m_spbPredictionsTime = new QSpinBox();
+  m_spbPredictionsTime->setMinimum(0);
+  m_spbPredictionsTime->setValue(10);
+  m_spbPredictionsTime->setMaximumWidth(150);
+
+  QFormLayout* predictionTimeLayout = new QFormLayout;
+  predictionTimeLayout->setLabelAlignment(Qt::AlignRight);
+  predictionTimeLayout->addRow(lblPredictionsTime, m_spbPredictionsTime);
+
+  QGroupBox* gbPredictor = new QGroupBox(tr("Starters predictor"));
+  gbPredictor->setLayout(predictionTimeLayout);
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
-  mainLayout->addSpacing(25);
-  mainLayout->addWidget(lblWarning);
-  mainLayout->addSpacing(25);
-  mainLayout->addLayout(inputLayout);
-  mainLayout->addSpacing(25);
-  mainLayout->addWidget(lblNoteMarginError);
+  mainLayout->addWidget(gbSeedFinder);
+  mainLayout->addWidget(gbPredictor);
   mainLayout->addStretch();
+
   setLayout(mainLayout);
 }
 
@@ -67,4 +89,14 @@ void GeneralTab::setPlatform(GUICommon::platform platform)
 void GeneralTab::setRtcMarginError(int rtcMarginError)
 {
   m_spbRtcMarginError->setValue(rtcMarginError);
+}
+
+int GeneralTab::getPredictionTime()
+{
+  return m_spbPredictionsTime->value();
+}
+
+void GeneralTab::setPredictionTime(int predictionTime)
+{
+  m_spbPredictionsTime->setValue(predictionTime);
 }

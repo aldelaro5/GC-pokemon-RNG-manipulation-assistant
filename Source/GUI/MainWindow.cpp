@@ -76,10 +76,10 @@ void MainWindow::startSeedFinder()
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   QSettings settings("settings.ini", QSettings::IniFormat);
-  int rtcMarginError = settings.value("finder/rtcMarginError", 5).toInt();
+  int rtcMarginError = settings.value("general/finder/rtcMarginError", 5).toInt();
   bool useWii =
-      settings.value("finder/platform", static_cast<int>(GUICommon::platform::GameCube)).toInt() ==
-      static_cast<int>(GUICommon::platform::Wii);
+      settings.value("general/finder/platform", static_cast<int>(GUICommon::platform::GameCube))
+          .toInt() == static_cast<int>(GUICommon::platform::Wii);
   SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, rtcMarginError, useWii);
   if (wizard->exec() == QDialog::Accepted)
   {
