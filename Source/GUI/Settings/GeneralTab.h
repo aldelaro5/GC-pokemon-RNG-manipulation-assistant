@@ -7,10 +7,10 @@
 
 #include "../GUICommon.h"
 
-class SeedFinderTab : public QWidget
+class GeneralTab : public QWidget
 {
 public:
-  SeedFinderTab(QWidget* parent = nullptr);
+  GeneralTab(QWidget* parent = nullptr);
 
   GUICommon::platform getPlatform();
   int getRtcMarginError();

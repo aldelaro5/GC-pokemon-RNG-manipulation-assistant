@@ -8,8 +8,8 @@
 DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
 {
   m_tabWidget = new QTabWidget(this);
-  m_seedFinderTab = new SeedFinderTab(this);
-  m_tabWidget->addTab(m_seedFinderTab, tr("Seed Finder"));
+  m_generalTab = new GeneralTab(this);
+  m_tabWidget->addTab(m_generalTab, tr("General"));
   m_coloTab = new ColosseumTab(this);
   m_tabWidget->addTab(
       m_coloTab, "Predictor (" + GUICommon::gamesStr[GUICommon::gameSelection::Colosseum] + ")");
@@ -46,9 +46,9 @@ void DlgSettings::loadSettings()
   QSettings settings("settings.ini", QSettings::IniFormat);
 
   settings.beginGroup("finder");
-  m_seedFinderTab->setPlatform(static_cast<GUICommon::platform>(
+  m_generalTab->setPlatform(static_cast<GUICommon::platform>(
       settings.value("platform", static_cast<int>(GUICommon::platform::GameCube)).toInt()));
-  m_seedFinderTab->setRtcMarginError(settings.value("rtcMarginError", 5).toInt());
+  m_generalTab->setRtcMarginError(settings.value("rtcMarginError", 5).toInt());
   settings.endGroup();
 
   settings.beginGroup("colosseumPredictor");
@@ -125,8 +125,8 @@ void DlgSettings::saveSettings()
   QSettings settings("settings.ini", QSettings::IniFormat);
 
   settings.beginGroup("finder");
-  settings.setValue("platform", static_cast<int>(m_seedFinderTab->getPlatform()));
-  settings.setValue("rtcMarginError", m_seedFinderTab->getRtcMarginError());
+  settings.setValue("platform", static_cast<int>(m_generalTab->getPlatform()));
+  settings.setValue("rtcMarginError", m_generalTab->getRtcMarginError());
   settings.endGroup();
 
   settings.beginGroup("colosseumPredictor");

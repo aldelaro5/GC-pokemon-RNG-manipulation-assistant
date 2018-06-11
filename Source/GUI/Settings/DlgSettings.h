@@ -7,7 +7,7 @@
 
 #include "ColosseumTab.h"
 #include "GaleDarknessTab.h"
-#include "SeedFinderTab.h"
+#include "GeneralTab.h"
 
 class DlgSettings : public QDialog
 {
@@ -19,7 +19,7 @@ public:
 
 private:
   QTabWidget* m_tabWidget;
-  SeedFinderTab* m_seedFinderTab;
+  GeneralTab* m_generalTab;
   ColosseumTab* m_coloTab;
   GaleDarknessTab* m_xdTab;
   QDialogButtonBox* m_buttonsDlg;

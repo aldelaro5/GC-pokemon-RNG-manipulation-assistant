@@ -1,9 +1,9 @@
-#include "SeedFinderTab.h"
+#include "GeneralTab.h"
 
 #include <QFormLayout>
 #include <QLabel>
 
-SeedFinderTab::SeedFinderTab(QWidget* parent) : QWidget(parent)
+GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
 {
   QLabel* lblPlatform = new QLabel(tr("Platform: "));
   m_cmbPlatform = new QComboBox();
@@ -49,22 +49,22 @@ SeedFinderTab::SeedFinderTab(QWidget* parent) : QWidget(parent)
   setLayout(mainLayout);
 }
 
-GUICommon::platform SeedFinderTab::getPlatform()
+GUICommon::platform GeneralTab::getPlatform()
 {
   return static_cast<GUICommon::platform>(m_cmbPlatform->currentIndex());
 }
 
-int SeedFinderTab::getRtcMarginError()
+int GeneralTab::getRtcMarginError()
 {
   return m_spbRtcMarginError->value();
 }
 
-void SeedFinderTab::setPlatform(GUICommon::platform platform)
+void GeneralTab::setPlatform(GUICommon::platform platform)
 {
   m_cmbPlatform->setCurrentIndex(static_cast<int>(platform));
 }
 
-void SeedFinderTab::setRtcMarginError(int rtcMarginError)
+void GeneralTab::setRtcMarginError(int rtcMarginError)
 {
   m_spbRtcMarginError->setValue(rtcMarginError);
 }

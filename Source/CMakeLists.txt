@@ -14,7 +14,7 @@ set(SRCS PokemonRNGSystem/BaseRNGSystem.cpp
          GUI/SPokemonRNG.cpp
          GUI/GUICommon.cpp
          GUI/Settings/CommonPredictorFiltersWidget.cpp
-         GUI/Settings/SeedFinderTab.cpp
+         GUI/Settings/GeneralTab.cpp
          GUI/Settings/CommonPredictorFiltersWidget.cpp
          GUI/Settings/ColosseumTab.cpp
          GUI/Settings/GaleDarknessTab.cpp
