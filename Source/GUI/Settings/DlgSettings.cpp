@@ -45,7 +45,7 @@ void DlgSettings::loadSettings()
 {
   QSettings settings("settings.ini", QSettings::IniFormat);
 
-  settings.beginGroup("general");
+  settings.beginGroup("generalSettings");
   settings.beginGroup("finder");
   m_generalTab->setPlatform(static_cast<GUICommon::platform>(
       settings.value("platform", static_cast<int>(GUICommon::platform::GameCube)).toInt()));
@@ -129,7 +129,7 @@ void DlgSettings::saveSettings()
 {
   QSettings settings("settings.ini", QSettings::IniFormat);
 
-  settings.beginGroup("general");
+  settings.beginGroup("generalSettings");
   settings.beginGroup("finder");
   settings.setValue("platform", static_cast<int>(m_generalTab->getPlatform()));
   settings.setValue("rtcMarginError", m_generalTab->getRtcMarginError());
