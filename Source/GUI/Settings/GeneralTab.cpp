@@ -54,6 +54,8 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   m_spbPredictionsTime = new QSpinBox();
   m_spbPredictionsTime->setMinimum(0);
   m_spbPredictionsTime->setValue(10);
+  // Let's put a crazy time like 10 hours cause Qt puts 99 at default for no reaosns
+  m_spbPredictionsTime->setMaximum(36000);
   m_spbPredictionsTime->setMaximumWidth(150);
 
   QFormLayout* predictionTimeLayout = new QFormLayout;
