@@ -202,11 +202,11 @@ bool inline GaleDarknessRNGSystem::generateBattleTeam(u32& seed, std::vector<int
   LCG(seed);
   // Player team index
   int playerTeamIndex = (LCG(seed) >> 16) % 5;
-  if (playerTeamIndex != criteria[0])
+  if (playerTeamIndex != criteria[0] && criteria[0] != -1)
     return false;
   // Enemy team index
   int enemyTeamIndex = (LCG(seed) >> 16) % 5;
-  if (enemyTeamIndex != criteria[1])
+  if (enemyTeamIndex != criteria[1] && criteria[1] != -1)
     return false;
   // modulo 6 ???
   LCG(seed);
@@ -233,7 +233,8 @@ bool inline GaleDarknessRNGSystem::generateBattleTeam(u32& seed, std::vector<int
     std::array<u8, 6> EVs = generateEVs(seed, false, false, nullptr);
     // Here, we have the true stats, so let's check the HP
     if (EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[enemyTeamIndex + 5][i] !=
-        criteria[4 + i])
+            criteria[4 + i] &&
+        criteria[4 + i] != -1)
       return false;
   }
 
@@ -261,7 +262,8 @@ bool inline GaleDarknessRNGSystem::generateBattleTeam(u32& seed, std::vector<int
     generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
     std::array<u8, 6> EVs = generateEVs(seed, false, false, nullptr);
     // Here, we have the true stats, so let's check the HP
-    if (EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[playerTeamIndex][i] != criteria[2 + i])
+    if (EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[playerTeamIndex][i] != criteria[2 + i] &&
+        criteria[2 + i] != -1)
       return false;
   }
   return true;

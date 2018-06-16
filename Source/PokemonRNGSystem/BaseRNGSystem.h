@@ -54,6 +54,9 @@ public:
                   int rtcErrorMarginSeconds, bool usePrecalc,
                   std::function<void(int)> progressUpdate, std::function<bool()> shouldCancelNow);
   std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, int nbrSeconds);
+  // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
+  // outcome got
+  virtual bool generateBattleTeam(u32& seed, std::vector<int> criteria) = 0;
 
 protected:
   // By TASing on Dolphin to get the fastest time to set the clock and have the game init its seed,
@@ -65,9 +68,6 @@ protected:
   // The number of time the game polls the input per second on the naming screen
   static const int pollingRateNamingScreenPerSec = 60;
   virtual u32 rollRNGToBattleMenu(u32 seed, u16* counter = nullptr) = 0;
-  // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
-  // outcome got
-  virtual bool generateBattleTeam(u32& seed, std::vector<int> criteria) = 0;
   virtual int getMinFramesAmountNamingScreen() = 0;
   // Do all the RNG calls to get to before the first possible frame of confirming the name on the
   // naming screen using a preset name

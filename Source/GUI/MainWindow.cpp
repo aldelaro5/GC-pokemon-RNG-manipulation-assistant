@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 
+#include <vector>
+
 #include <QHBoxLayout>
 #include <QSettings>
 #include <QVBoxLayout>
@@ -40,6 +42,10 @@ void MainWindow::initialiseWidgets()
   connect(m_btnReset, &QPushButton::clicked, this, &MainWindow::resetPredictor);
   m_btnReset->setEnabled(false);
 
+  m_btnRerollPrediciton = new QPushButton(tr("Reroll"));
+  connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
+  m_btnRerollPrediciton->setEnabled(false);
+
   m_predictorWidget = new PredictorWidget(this);
 }
 
@@ -54,6 +60,7 @@ void MainWindow::makeLayouts()
   mainLayout->addWidget(m_cmbGame);
   mainLayout->addLayout(buttonsLayout);
   mainLayout->addWidget(m_predictorWidget);
+  mainLayout->addWidget(m_btnRerollPrediciton);
 
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);
@@ -75,6 +82,7 @@ void MainWindow::gameChanged()
     m_btnStartSeedFinder->setEnabled(true);
   }
   m_btnReset->setEnabled(false);
+  m_btnRerollPrediciton->setEnabled(false);
 }
 
 void MainWindow::startSeedFinder()
@@ -90,11 +98,13 @@ void MainWindow::startSeedFinder()
   SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, rtcMarginError, useWii);
   if (wizard->exec() == QDialog::Accepted)
   {
+    m_currentSeed = wizard->getSeeds()[0];
     std::vector<BaseRNGSystem::StartersPrediction> predictions =
         SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
-            wizard->getSeeds()[0], settings.value("generalSettings/predictor/time", 10).toInt());
+            m_currentSeed, settings.value("generalSettings/predictor/time", 10).toInt());
     m_predictorWidget->setStartersPrediction(predictions, selection);
     m_btnReset->setEnabled(true);
+    m_btnRerollPrediciton->setEnabled(true);
   }
 }
 
@@ -104,6 +114,23 @@ void MainWindow::resetPredictor()
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   m_predictorWidget->resetPredictor(selection);
   m_btnReset->setEnabled(false);
+  m_btnRerollPrediciton->setEnabled(false);
+}
+
+void MainWindow::rerollPredictor()
+{
+  std::vector<int> dummyCriteria;
+  for (int i = 0; i < 6; i++)
+    dummyCriteria.push_back(-1);
+
+  GUICommon::gameSelection selection =
+      static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
+  QSettings settings("settings.ini", QSettings::IniFormat);
+  SPokemonRNG::getInstance()->getSystem()->generateBattleTeam(m_currentSeed, dummyCriteria);
+  std::vector<BaseRNGSystem::StartersPrediction> predictions =
+      SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
+          m_currentSeed, settings.value("generalSettings/predictor/time", 10).toInt());
+  m_predictorWidget->setStartersPrediction(predictions, selection);
 }
 
 void MainWindow::openSettings()

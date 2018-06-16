@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QTableWidget>
 
+#include "../Common/CommonTypes.h"
 #include "../PokemonRNGSystem/BaseRNGSystem.h"
 #include "Predictor/PredictorWidget.h"
 
@@ -17,6 +18,8 @@ public:
   void gameChanged();
   void startSeedFinder();
   void resetPredictor();
+  ;
+  void rerollPredictor();
   void openSettings();
 
 private:
@@ -29,5 +32,7 @@ private:
   QPushButton* m_btnStartSeedFinder;
   QPushButton* m_btnSettings;
   QPushButton* m_btnReset;
+  QPushButton* m_btnRerollPrediciton;
   PredictorWidget* m_predictorWidget;
+  u32 m_currentSeed = 0;
 };

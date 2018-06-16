@@ -190,7 +190,7 @@ bool inline ColosseumRNGSystem::generateBattleTeam(u32& seed, std::vector<int> c
     playerTeamIndex = (LCG(seed) >> 16) & 7;
   } while (enemyTeamIndex == playerTeamIndex);
 
-  if (playerTeamIndex != criteria[0])
+  if (playerTeamIndex != criteria[0] && criteria[0] != -1)
     return false;
 
   // The enemy trainer ID is generated as candidate, low then high 16 bits
@@ -214,7 +214,7 @@ bool inline ColosseumRNGSystem::generateBattleTeam(u32& seed, std::vector<int> c
         s_genderRatioTeamsData[enemyTeamIndex][i], s_natureTeamsData[enemyTeamIndex][i]);
   }
 
-  if ((LCG(seed) >> 16) % 3 != criteria[1])
+  if ((LCG(seed) >> 16) % 3 != criteria[1] && criteria[1] != -1)
     return false;
 
   // The player trainer ID is generated, low then high 16 bits
