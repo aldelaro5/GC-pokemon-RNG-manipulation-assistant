@@ -36,14 +36,19 @@ void MainWindow::initialiseWidgets()
   connect(m_btnStartSeedFinder, &QPushButton::clicked, this, &MainWindow::startSeedFinder);
   m_btnStartSeedFinder->setEnabled(false);
 
+  m_btnReset = new QPushButton(tr("Reset"));
+  connect(m_btnReset, &QPushButton::clicked, this, &MainWindow::resetPredictor);
+  m_btnReset->setEnabled(false);
+
   m_predictorWidget = new PredictorWidget(this);
 }
 
 void MainWindow::makeLayouts()
 {
   QHBoxLayout* buttonsLayout = new QHBoxLayout;
-  buttonsLayout->addWidget(m_btnStartSeedFinder);
   buttonsLayout->addWidget(m_btnSettings);
+  buttonsLayout->addWidget(m_btnStartSeedFinder);
+  buttonsLayout->addWidget(m_btnReset);
 
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_cmbGame);
@@ -69,6 +74,7 @@ void MainWindow::gameChanged()
     m_cmbGame->removeItem(static_cast<int>(GUICommon::gameSelection::Unselected));
     m_btnStartSeedFinder->setEnabled(true);
   }
+  m_btnReset->setEnabled(false);
 }
 
 void MainWindow::startSeedFinder()
@@ -88,7 +94,16 @@ void MainWindow::startSeedFinder()
         SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
             wizard->getSeeds()[0], settings.value("generalSettings/predictor/time", 10).toInt());
     m_predictorWidget->setStartersPrediction(predictions, selection);
+    m_btnReset->setEnabled(true);
   }
+}
+
+void MainWindow::resetPredictor()
+{
+  GUICommon::gameSelection selection =
+      static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
+  m_predictorWidget->resetPredictor(selection);
+  m_btnReset->setEnabled(false);
 }
 
 void MainWindow::openSettings()

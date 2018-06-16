@@ -16,6 +16,7 @@ public:
 
   void gameChanged();
   void startSeedFinder();
+  void resetPredictor();
   void openSettings();
 
 private:
@@ -27,5 +28,6 @@ private:
   QComboBox* m_cmbGame;
   QPushButton* m_btnStartSeedFinder;
   QPushButton* m_btnSettings;
+  QPushButton* m_btnReset;
   PredictorWidget* m_predictorWidget;
 };

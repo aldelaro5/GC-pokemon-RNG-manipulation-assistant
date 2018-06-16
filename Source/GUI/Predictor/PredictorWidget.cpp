@@ -43,6 +43,11 @@ void PredictorWidget::makeLayouts()
   setLayout(mainLayout);
 }
 
+void PredictorWidget::resetPredictor(GUICommon::gameSelection currentGame)
+{
+  switchGame(currentGame);
+}
+
 void PredictorWidget::clearLabels()
 {
   m_lblStartersNames.clear();
@@ -85,6 +90,12 @@ void PredictorWidget::switchGame(GUICommon::gameSelection game)
   m_tblStartersPrediction->setColumnCount(m_tblHeaderLabels.count());
   m_tblStartersPrediction->setHorizontalHeaderLabels(m_tblHeaderLabels);
   m_tblStartersPrediction->resizeColumnsToContents();
+
+  if (game == GUICommon::gameSelection::Colosseum)
+    setMinimumWidth(1150);
+  if (game == GUICommon::gameSelection::XD)
+    setMinimumWidth(900);
+  setMinimumHeight(500);
 }
 
 void PredictorWidget::setStartersPrediction(

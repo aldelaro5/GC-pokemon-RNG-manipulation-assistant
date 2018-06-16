@@ -15,6 +15,7 @@ public:
   PredictorWidget(QWidget* parent = nullptr);
   void setStartersPrediction(std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
                              GUICommon::gameSelection game);
+  void resetPredictor(GUICommon::gameSelection currentGame);
 
 private:
   void clearLabels();
