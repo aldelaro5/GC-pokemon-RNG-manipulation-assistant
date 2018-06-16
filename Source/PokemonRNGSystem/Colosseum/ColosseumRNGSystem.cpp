@@ -290,6 +290,8 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
   // The trainer ID is generated, low then high 16 bits
   u32 lBaseId = LCG(seed) >> 16;
   u32 hBaseId = LCG(seed) >> 16;
+  result.trainerId = lBaseId;
+
   // For each starter pokemon
   for (int i = 0; i < 2; i++)
   {

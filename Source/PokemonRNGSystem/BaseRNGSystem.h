@@ -30,6 +30,7 @@ public:
     std::vector<StarterGen> starters;
     u32 startingSeed = 0;
     int frameNumber = 0;
+    int trainerId = 0;
   };
 
   struct seedRange

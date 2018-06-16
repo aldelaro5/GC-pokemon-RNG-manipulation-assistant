@@ -321,6 +321,7 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   // The trainer ID is generated, low then high 16 bits
   u32 lTrainerId = LCG(seed) >> 16;
   u32 hTrainerId = LCG(seed) >> 16;
+  result.trainerId = lTrainerId;
 
   // Dummy personality ID (doesn't matter)
   LCG(seed);
