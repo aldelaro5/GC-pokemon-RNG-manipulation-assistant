@@ -237,11 +237,27 @@ void PredictorWidget::setStartersPrediction(
           i, 9 + j * nbrColPerStarter,
           new QTableWidgetItem(GUICommon::typesStr[starter.hiddenPowerTypeIndex] + " " +
                                QString::number(starter.hiddenPowerPower)));
+      bool enableHiddenPowerTypeFilters =
+          settings.value("enableHiddenPowerTypeFilter", false).toBool();
+      int minPowerHiddenPower = settings.value("minPowerHiddenPower", 30).toInt();
+      settings.beginReadArray("hiddenPowerTypesFilter");
+      settings.setArrayIndex(starter.hiddenPowerTypeIndex);
+      if ((settings.value(GUICommon::typesStr[starter.hiddenPowerTypeIndex], true).toBool() &&
+           starter.hiddenPowerPower >= minPowerHiddenPower) ||
+          !enableHiddenPowerTypeFilters)
+      {
+        m_tblStartersPrediction->item(i, 9 + j * nbrColPerStarter)->setBackground(greenBrush);
+      }
+      else
+      {
+        m_tblStartersPrediction->item(i, 9 + j * nbrColPerStarter)->setBackground(redBrush);
+        passAllFilters = false;
+      }
+      settings.endArray();
 
       m_tblStartersPrediction->setItem(
           i, 10 + j * nbrColPerStarter,
           new QTableWidgetItem(GUICommon::naturesStr[starter.natureIndex]));
-
       bool enableNatureFilters = settings.value("enableNatureFilter", false).toBool();
       settings.beginReadArray("naturesFilter");
       settings.setArrayIndex(starter.natureIndex);
