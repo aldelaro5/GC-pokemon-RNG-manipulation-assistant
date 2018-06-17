@@ -64,6 +64,9 @@ void DlgSettings::loadSettings()
   m_coloTab->getUmbreonFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
   m_coloTab->getUmbreonFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
   m_coloTab->getUmbreonFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
+  m_coloTab->getUmbreonFiltersWidget()->setMinPowerHiddenPower(
+      settings.value("minPowerHiddenPower", 30).toInt());
+
   m_coloTab->getUmbreonFiltersWidget()->setEnableNatureFilter(
       settings.value("enableNatureFilter", false).toBool());
   QVector<bool> naturesFilterUmbreon;
@@ -75,6 +78,19 @@ void DlgSettings::loadSettings()
   }
   settings.endArray();
   m_coloTab->getUmbreonFiltersWidget()->setNatureFilters(naturesFilterUmbreon);
+
+  m_coloTab->getUmbreonFiltersWidget()->setEnableHiddenPowerTypesFilter(
+      settings.value("enableHiddenPowerTypeFilter", false).toBool());
+  QVector<bool> hiddenPowerTypesFilterUmbreon;
+  int sizeHiddenPowerTypesUmbreon = settings.beginReadArray("hiddenPowerTypesFilter");
+  for (int i = 0; i < sizeHiddenPowerTypesUmbreon; i++)
+  {
+    settings.setArrayIndex(i);
+    hiddenPowerTypesFilterUmbreon.append(settings.value(GUICommon::typesStr[i], false).toBool());
+  }
+  settings.endArray();
+
+  m_coloTab->getUmbreonFiltersWidget()->setHiddenPowerTypesFilters(hiddenPowerTypesFilterUmbreon);
   settings.endGroup();
 
   settings.beginGroup("espeon");
@@ -84,6 +100,9 @@ void DlgSettings::loadSettings()
   m_coloTab->getEspeonFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
   m_coloTab->getEspeonFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
   m_coloTab->getEspeonFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
+  m_coloTab->getEspeonFiltersWidget()->setMinPowerHiddenPower(
+      settings.value("minPowerHiddenPower", 30).toInt());
+
   m_coloTab->getEspeonFiltersWidget()->setEnableNatureFilter(
       settings.value("enableNatureFilter", false).toBool());
   QVector<bool> naturesFilterEspeon;
@@ -95,6 +114,19 @@ void DlgSettings::loadSettings()
   }
   settings.endArray();
   m_coloTab->getEspeonFiltersWidget()->setNatureFilters(naturesFilterEspeon);
+
+  m_coloTab->getEspeonFiltersWidget()->setEnableHiddenPowerTypesFilter(
+      settings.value("enableHiddenPowerTypeFilter", false).toBool());
+  QVector<bool> hiddenPowerTypesFilterEspeon;
+  int sizeHiddenPowerTypesEspeon = settings.beginReadArray("hiddenPowerTypesFilter");
+  for (int i = 0; i < sizeHiddenPowerTypesEspeon; i++)
+  {
+    settings.setArrayIndex(i);
+    hiddenPowerTypesFilterEspeon.append(settings.value(GUICommon::typesStr[i], false).toBool());
+  }
+  settings.endArray();
+
+  m_coloTab->getEspeonFiltersWidget()->setHiddenPowerTypesFilters(hiddenPowerTypesFilterEspeon);
   settings.endGroup();
   settings.endGroup();
 
@@ -106,6 +138,9 @@ void DlgSettings::loadSettings()
   m_xdTab->getEeveeFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
   m_xdTab->getEeveeFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
   m_xdTab->getEeveeFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
+  m_xdTab->getEeveeFiltersWidget()->setMinPowerHiddenPower(
+      settings.value("minPowerHiddenPower", 30).toInt());
+
   m_xdTab->getEeveeFiltersWidget()->setEnableNatureFilter(
       settings.value("enableNatureFilter", false).toBool());
   QVector<bool> naturesFilterEevee;
@@ -117,6 +152,19 @@ void DlgSettings::loadSettings()
   }
   settings.endArray();
   m_xdTab->getEeveeFiltersWidget()->setNatureFilters(naturesFilterEevee);
+
+  m_xdTab->getEeveeFiltersWidget()->setEnableHiddenPowerTypesFilter(
+      settings.value("enableHiddenPowerTypeFilter", false).toBool());
+  QVector<bool> hiddenPowerTypesFilterEevee;
+  int sizeHiddenPowerTypesEevee = settings.beginReadArray("hiddenPowerTypesFilter");
+  for (int i = 0; i < sizeHiddenPowerTypesEevee; i++)
+  {
+    settings.setArrayIndex(i);
+    hiddenPowerTypesFilterEevee.append(settings.value(GUICommon::typesStr[i], false).toBool());
+  }
+  settings.endArray();
+  m_xdTab->getEeveeFiltersWidget()->setHiddenPowerTypesFilters(hiddenPowerTypesFilterEevee);
+
   m_xdTab->setShininess(static_cast<GUICommon::shininess>(
       settings.value("shininess", static_cast<int>(GUICommon::shininess::AnyShininess)).toInt()));
   m_xdTab->setGender(static_cast<GUICommon::gender>(
@@ -158,6 +206,20 @@ void DlgSettings::saveSettings()
     settings.setValue(GUICommon::naturesStr[i], naturesFilterUmbreon[i]);
   }
   settings.endArray();
+
+  settings.setValue("minPowerHiddenPower",
+                    m_coloTab->getUmbreonFiltersWidget()->getMinPowerHiddenPower());
+  settings.setValue("enableHiddenPowerTypeFilter",
+                    m_coloTab->getUmbreonFiltersWidget()->getEnableHiddenPowerTypesFilter());
+  QVector<bool> hiddenPowerTypesFilterUmbreon =
+      m_coloTab->getUmbreonFiltersWidget()->getHiddenPowerTypesFilters();
+  settings.beginWriteArray("hiddenPowerTypesFilter");
+  for (int i = 0; i < hiddenPowerTypesFilterUmbreon.size(); i++)
+  {
+    settings.setArrayIndex(i);
+    settings.setValue(GUICommon::typesStr[i], hiddenPowerTypesFilterUmbreon[i]);
+  }
+  settings.endArray();
   settings.endGroup();
 
   settings.beginGroup("espeon");
@@ -175,6 +237,20 @@ void DlgSettings::saveSettings()
   {
     settings.setArrayIndex(i);
     settings.setValue(GUICommon::naturesStr[i], naturesFilterEspeon[i]);
+  }
+  settings.endArray();
+
+  settings.setValue("minPowerHiddenPower",
+                    m_coloTab->getEspeonFiltersWidget()->getMinPowerHiddenPower());
+  settings.setValue("enableHiddenPowerTypeFilter",
+                    m_coloTab->getEspeonFiltersWidget()->getEnableHiddenPowerTypesFilter());
+  QVector<bool> hiddenPowerTypesFilterEspeon =
+      m_coloTab->getEspeonFiltersWidget()->getHiddenPowerTypesFilters();
+  settings.beginWriteArray("hiddenPowerTypesFilter");
+  for (int i = 0; i < hiddenPowerTypesFilterEspeon.size(); i++)
+  {
+    settings.setArrayIndex(i);
+    settings.setValue(GUICommon::typesStr[i], hiddenPowerTypesFilterEspeon[i]);
   }
   settings.endArray();
   settings.endGroup();
@@ -198,6 +274,21 @@ void DlgSettings::saveSettings()
     settings.setValue(GUICommon::naturesStr[i], naturesFilterEevee[i]);
   }
   settings.endArray();
+
+  settings.setValue("minPowerHiddenPower",
+                    m_xdTab->getEeveeFiltersWidget()->getMinPowerHiddenPower());
+  settings.setValue("enableHiddenPowerTypeFilter",
+                    m_xdTab->getEeveeFiltersWidget()->getEnableHiddenPowerTypesFilter());
+  QVector<bool> hiddenPowerTypesFilterEevee =
+      m_xdTab->getEeveeFiltersWidget()->getHiddenPowerTypesFilters();
+  settings.beginWriteArray("hiddenPowerTypesFilter");
+  for (int i = 0; i < hiddenPowerTypesFilterEevee.size(); i++)
+  {
+    settings.setArrayIndex(i);
+    settings.setValue(GUICommon::typesStr[i], hiddenPowerTypesFilterEevee[i]);
+  }
+  settings.endArray();
+
   settings.setValue("shininess", static_cast<int>(m_xdTab->getShininess()));
   settings.setValue("gender", static_cast<int>(m_xdTab->getGender()));
   settings.endGroup();

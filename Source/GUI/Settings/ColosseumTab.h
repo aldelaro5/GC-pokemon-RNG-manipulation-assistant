@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QTabWidget>
 #include <QWidget>
 
 #include "CommonPredictorFiltersWidget.h"
@@ -15,4 +16,5 @@ public:
 private:
   CommonPredictorFiltersWidget* m_predictorFiltersUmbreon;
   CommonPredictorFiltersWidget* m_predictorFiltersEspeon;
+  QTabWidget* m_starterTabs;
 };

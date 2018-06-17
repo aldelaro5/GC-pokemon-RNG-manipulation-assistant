@@ -54,6 +54,17 @@ CommonPredictorFiltersWidget::CommonPredictorFiltersWidget(QWidget* parent) : QW
   m_spnMinSpeedIv->setValue(0);
   m_spnMinSpeedIv->setMaximumWidth(75);
 
+  QLabel* lblHiddenPowerPower = new QLabel(tr("Minimum power of Hidden power: "));
+  m_spnMinPowerHiddenPower = new QSpinBox();
+  m_spnMinPowerHiddenPower->setMinimum(30);
+  m_spnMinPowerHiddenPower->setMaximum(70);
+  m_spnMinPowerHiddenPower->setValue(30);
+  m_spnMinPowerHiddenPower->setMaximumWidth(75);
+
+  QHBoxLayout* hiddenPowerPowerLayout = new QHBoxLayout;
+  hiddenPowerPowerLayout->addWidget(lblHiddenPowerPower);
+  hiddenPowerPowerLayout->addWidget(m_spnMinPowerHiddenPower);
+
   QFormLayout* IvInputLayout = new QFormLayout();
   IvInputLayout->setLabelAlignment(Qt::AlignRight);
   IvInputLayout->addRow(lblHpIv, m_spnMinHpIv);
@@ -80,18 +91,42 @@ CommonPredictorFiltersWidget::CommonPredictorFiltersWidget(QWidget* parent) : QW
   connect(m_chkEnableNatureFilter, &QCheckBox::stateChanged, this,
           [=](int state) { m_naturesWidget->setEnabled(state == Qt::CheckState::Checked); });
 
-  QVBoxLayout* IvLayout = new QVBoxLayout;
-  IvLayout->addWidget(lblIvs);
-  IvLayout->addLayout(IvInputLayout);
+  QGridLayout* typesChkLayout = new QGridLayout;
+  for (int i = 0; i < GUICommon::typesStr.size(); i++)
+  {
+    QCheckBox* chk = new QCheckBox(GUICommon::typesStr[i]);
+    chk->setChecked(false);
+    m_chkHiddenPowerTypes.append(chk);
+    typesChkLayout->addWidget(chk, i / 4, i % 4);
+  }
 
-  QVBoxLayout* naturesLayout = new QVBoxLayout;
-  naturesLayout->addWidget(m_chkEnableNatureFilter);
-  naturesLayout->addWidget(m_naturesWidget);
+  m_typesWidget = new QWidget;
+  m_typesWidget->setLayout(typesChkLayout);
+  m_typesWidget->setEnabled(false);
+
+  m_chkEnableHiddenPowerTypeFilter =
+      new QCheckBox(tr("Filter wanted predictions by hidden power type"), this);
+  connect(m_chkEnableHiddenPowerTypeFilter, &QCheckBox::stateChanged, this,
+          [=](int state) { m_typesWidget->setEnabled(state == Qt::CheckState::Checked); });
+
+  QVBoxLayout* leftLayout = new QVBoxLayout;
+  leftLayout->addWidget(lblIvs);
+  leftLayout->addLayout(IvInputLayout);
+  leftLayout->addSpacing(30);
+  leftLayout->addLayout(hiddenPowerPowerLayout);
+  leftLayout->addStretch();
+
+  QVBoxLayout* rigthLayout = new QVBoxLayout;
+  rigthLayout->addWidget(m_chkEnableNatureFilter);
+  rigthLayout->addWidget(m_naturesWidget);
+  rigthLayout->addWidget(m_chkEnableHiddenPowerTypeFilter);
+  rigthLayout->addWidget(m_typesWidget);
+  rigthLayout->addStretch();
 
   QHBoxLayout* mainLayout = new QHBoxLayout;
-  mainLayout->addLayout(IvLayout);
-  mainLayout->addSpacing(50);
-  mainLayout->addLayout(naturesLayout);
+  mainLayout->addLayout(leftLayout);
+  mainLayout->addSpacing(30);
+  mainLayout->addLayout(rigthLayout);
 
   setLayout(mainLayout);
 }
@@ -126,6 +161,11 @@ int CommonPredictorFiltersWidget::getMinSpeedIv()
   return m_spnMinSpeedIv->value();
 }
 
+int CommonPredictorFiltersWidget::getMinPowerHiddenPower()
+{
+  return m_spnMinPowerHiddenPower->value();
+}
+
 bool CommonPredictorFiltersWidget::getEnableNatureFilter()
 {
   return m_chkEnableNatureFilter->isChecked();
@@ -137,6 +177,19 @@ QVector<bool> CommonPredictorFiltersWidget::getNatureFilters()
   for (auto i : m_chkNatures)
     naturesFilter.append(i->isChecked());
   return naturesFilter;
+}
+
+bool CommonPredictorFiltersWidget::getEnableHiddenPowerTypesFilter()
+{
+  return m_chkEnableHiddenPowerTypeFilter->isChecked();
+}
+
+QVector<bool> CommonPredictorFiltersWidget::getHiddenPowerTypesFilters()
+{
+  QVector<bool> typesFilter;
+  for (auto i : m_chkHiddenPowerTypes)
+    typesFilter.append(i->isChecked());
+  return typesFilter;
 }
 
 void CommonPredictorFiltersWidget::setMinHpIv(int minHpIv)
@@ -169,6 +222,11 @@ void CommonPredictorFiltersWidget::setMinSpeedIv(int minSpeedIv)
   m_spnMinSpeedIv->setValue(minSpeedIv);
 }
 
+void CommonPredictorFiltersWidget::setMinPowerHiddenPower(int minPowerHiddenPower)
+{
+  m_spnMinPowerHiddenPower->setValue(minPowerHiddenPower);
+}
+
 void CommonPredictorFiltersWidget::setEnableNatureFilter(bool enableNatureFilter)
 {
   m_chkEnableNatureFilter->setChecked(enableNatureFilter);
@@ -178,4 +236,15 @@ void CommonPredictorFiltersWidget::setNatureFilters(QVector<bool> natureFilters)
 {
   for (int i = 0; i < natureFilters.size(); i++)
     m_chkNatures[i]->setChecked(natureFilters[i]);
+}
+
+void CommonPredictorFiltersWidget::setEnableHiddenPowerTypesFilter(bool enableHiddenPowerTypeFilter)
+{
+  m_chkEnableHiddenPowerTypeFilter->setChecked(enableHiddenPowerTypeFilter);
+}
+
+void CommonPredictorFiltersWidget::setHiddenPowerTypesFilters(QVector<bool> hiddenPowerTypeFilters)
+{
+  for (int i = 0; i < hiddenPowerTypeFilters.size(); i++)
+    m_chkHiddenPowerTypes[i]->setChecked(hiddenPowerTypeFilters[i]);
 }
