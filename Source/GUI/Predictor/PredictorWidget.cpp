@@ -30,6 +30,18 @@ void PredictorWidget::initialiseWidgets()
   m_tblStartersPrediction->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
+void PredictorWidget::filterUnwanted(bool filterUnwanted)
+{
+  for (int i = 0; i < m_tblStartersPrediction->rowCount(); i++)
+  {
+    bool showRow =
+        !filterUnwanted || m_tblStartersPrediction->item(i, 2)->background().color().name() ==
+                               greenBrush.color().name();
+
+    m_tblStartersPrediction->setRowHidden(i, !showRow);
+  }
+}
+
 void PredictorWidget::makeLayouts()
 {
   m_startersNamesLayout = new QHBoxLayout;
@@ -158,8 +170,6 @@ void PredictorWidget::setStartersPrediction(
     if (game == GUICommon::gameSelection::XD)
       nbrColPerStarter = 10;
 
-    QBrush greenBrush = QBrush(QColor("#32CD32"));
-    QBrush redBrush = QBrush(QColor("#B22222"));
     for (int j = 0; j < startersPrediction[i].starters.size(); j++)
     {
       settings.beginGroup(QString::fromStdString(names[j]).toLower());

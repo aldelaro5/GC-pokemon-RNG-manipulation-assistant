@@ -42,6 +42,11 @@ void MainWindow::initialiseWidgets()
   connect(m_btnReset, &QPushButton::clicked, this, &MainWindow::resetPredictor);
   m_btnReset->setEnabled(false);
 
+  m_chkFilterUnwantedPredictions = new QCheckBox(tr("Hide unwanted predictions"));
+  m_chkFilterUnwantedPredictions->setChecked(false);
+  connect(m_chkFilterUnwantedPredictions, &QCheckBox::stateChanged, this,
+          [=](int state) { m_predictorWidget->filterUnwanted(state == Qt::Checked); });
+
   m_btnRerollPrediciton = new QPushButton(tr("Reroll"));
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
@@ -56,9 +61,15 @@ void MainWindow::makeLayouts()
   buttonsLayout->addWidget(m_btnStartSeedFinder);
   buttonsLayout->addWidget(m_btnReset);
 
+  QHBoxLayout* filterUnwantedLayout = new QHBoxLayout;
+  filterUnwantedLayout->addStretch();
+  filterUnwantedLayout->addWidget(m_chkFilterUnwantedPredictions);
+  filterUnwantedLayout->addStretch();
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_cmbGame);
   mainLayout->addLayout(buttonsLayout);
+  mainLayout->addLayout(filterUnwantedLayout);
   mainLayout->addWidget(m_predictorWidget);
   mainLayout->addWidget(m_btnRerollPrediciton);
 
@@ -103,6 +114,7 @@ void MainWindow::startSeedFinder()
         SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
             m_currentSeed, settings.value("generalSettings/predictor/time", 10).toInt());
     m_predictorWidget->setStartersPrediction(predictions, selection);
+    m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
     m_btnReset->setEnabled(true);
     m_btnRerollPrediciton->setEnabled(true);
   }
@@ -131,6 +143,7 @@ void MainWindow::rerollPredictor()
       SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
           m_currentSeed, settings.value("generalSettings/predictor/time", 10).toInt());
   m_predictorWidget->setStartersPrediction(predictions, selection);
+  m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
 }
 
 void MainWindow::openSettings()

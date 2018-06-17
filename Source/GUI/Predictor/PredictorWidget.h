@@ -16,8 +16,12 @@ public:
   void setStartersPrediction(std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
                              GUICommon::gameSelection game);
   void resetPredictor(GUICommon::gameSelection currentGame);
+  void filterUnwanted(bool filterUnwanted);
 
 private:
+  const QBrush greenBrush = QBrush(QColor("#32CD32"));
+  const QBrush redBrush = QBrush(QColor("#B22222"));
+
   void clearLabels();
   void initialiseWidgets();
   void makeLayouts();
