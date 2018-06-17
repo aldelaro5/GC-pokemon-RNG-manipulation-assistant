@@ -312,6 +312,9 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     starter.spDefIV = (seed >> 26) & 31;
     // Ability, doesn't matter
     LCG(seed);
+
+    fillStarterGenHiddenPowerInfo(starter);
+
     // Generates the true perosnality ID with any nature, but the gender has to be male.
     u32 personalityID = generatePokemonPID(seed, hBaseId, lBaseId, dummyId, nullptr, 0,
                                            s_genderRatioStarters[i], -1);

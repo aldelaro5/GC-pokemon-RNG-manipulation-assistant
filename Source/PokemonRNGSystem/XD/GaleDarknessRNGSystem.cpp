@@ -340,6 +340,8 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   // Ability, doesn't matter
   LCG(seed);
 
+  fillStarterGenHiddenPowerInfo(starter);
+
   // Generates the true perosnality ID with no criteria
   u32 personalityID = generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr);
   starter.isShiny = isPidShiny(lTrainerId, hTrainerId, personalityID);

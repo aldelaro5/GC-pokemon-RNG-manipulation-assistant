@@ -17,7 +17,11 @@ QStringList naturesStr = QStringList(
      QObject::tr("Calm"),    QObject::tr("Gentle"), QObject::tr("Sassy"),   QObject::tr("Careful"),
      QObject::tr("Quirky")});
 
-QStringList typesStr = QStringList({""});
+QStringList typesStr = QStringList(
+    {QObject::tr("Fighting"), QObject::tr("Flying"), QObject::tr("Poison"), QObject::tr("Ground"),
+     QObject::tr("Rock"), QObject::tr("Bug"), QObject::tr("Ghost"), QObject::tr("Steel"),
+     QObject::tr("Fire"), QObject::tr("Water"), QObject::tr("Grass"), QObject::tr("Electric"),
+     QObject::tr("Psychic"), QObject::tr("Ice"), QObject::tr("Dragon"), QObject::tr("Dark")});
 
 QStringList shininessStr =
     QStringList({QObject::tr("Shiny"), QObject::tr("Not shiny"), QObject::tr("Any")});

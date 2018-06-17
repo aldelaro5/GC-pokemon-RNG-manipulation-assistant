@@ -20,6 +20,8 @@ public:
     int spAtkIV = 0;
     int spDefIV = 0;
     int speedIV = 0;
+    int hiddenPowerTypeIndex = 0;
+    int hiddenPowerPower = 0;
     int genderIndex = 0;
     int natureIndex = 0;
     bool isShiny = false;
@@ -115,6 +117,18 @@ protected:
   bool inline isPidShiny(u16 TID, u16 SID, u32 PID)
   {
     return ((TID ^ SID ^ (PID & 0xFFFF) ^ (PID >> 16)) < 8);
+  }
+
+  void inline fillStarterGenHiddenPowerInfo(StarterGen& starter)
+  {
+    int typeSum = (starter.hpIV & 1) + 2 * (starter.atkIV & 1) + 4 * (starter.defIV & 1) +
+                  8 * (starter.speedIV & 1) + 16 * (starter.spAtkIV & 1) +
+                  32 * (starter.spDefIV & 1);
+    starter.hiddenPowerTypeIndex = typeSum * 15 / 63;
+    int powerSum = ((starter.hpIV & 2) >> 1) + 2 * ((starter.atkIV & 2) >> 1) +
+                   4 * ((starter.defIV & 2) >> 1) + 8 * ((starter.speedIV & 2) >> 1) +
+                   16 * ((starter.spAtkIV & 2) >> 1) + 32 * ((starter.spDefIV & 2) >> 1);
+    starter.hiddenPowerPower = (powerSum * 40 / 63) + 30;
   }
 
   int inline getPidGender(u8 genderRatio, u32 pid)

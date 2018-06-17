@@ -74,12 +74,13 @@ void PredictorWidget::switchGame(GUICommon::gameSelection game)
   m_tblHeaderLabels.append(tr("Frame (seconds)"));
   for (int i = 0; i < SPokemonRNG::getInstance()->getSystem()->getNbrStartersPrediction(); i++)
   {
-    m_tblHeaderLabels.append(tr("HP"));
-    m_tblHeaderLabels.append(tr("Atk"));
-    m_tblHeaderLabels.append(tr("Def"));
-    m_tblHeaderLabels.append(tr("SpAtk"));
-    m_tblHeaderLabels.append(tr("SpDef"));
-    m_tblHeaderLabels.append(tr("Speed"));
+    m_tblHeaderLabels.append(tr("HP IV"));
+    m_tblHeaderLabels.append(tr("Atk IV"));
+    m_tblHeaderLabels.append(tr("Def IV"));
+    m_tblHeaderLabels.append(tr("Sp. Atk IV"));
+    m_tblHeaderLabels.append(tr("Sp. Def IV"));
+    m_tblHeaderLabels.append(tr("Speed IV"));
+    m_tblHeaderLabels.append(tr("Hidden power"));
     m_tblHeaderLabels.append(tr("Nature"));
 
     if (game == GUICommon::gameSelection::XD)
@@ -153,9 +154,9 @@ void PredictorWidget::setStartersPrediction(
                                QString::number(startersPrediction[i].frameNumber / 60.0) + ")"));
     }
 
-    int nbrColPerStarter = 7;
+    int nbrColPerStarter = 8;
     if (game == GUICommon::gameSelection::XD)
-      nbrColPerStarter = 9;
+      nbrColPerStarter = 10;
 
     QBrush greenBrush = QBrush(QColor("#32CD32"));
     QBrush redBrush = QBrush(QColor("#B22222"));
@@ -231,8 +232,14 @@ void PredictorWidget::setStartersPrediction(
         m_tblStartersPrediction->item(i, 8 + j * nbrColPerStarter)->setBackground(redBrush);
         passAllFilters = false;
       }
+
       m_tblStartersPrediction->setItem(
           i, 9 + j * nbrColPerStarter,
+          new QTableWidgetItem(GUICommon::typesStr[starter.hiddenPowerTypeIndex] + " " +
+                               QString::number(starter.hiddenPowerPower)));
+
+      m_tblStartersPrediction->setItem(
+          i, 10 + j * nbrColPerStarter,
           new QTableWidgetItem(GUICommon::naturesStr[starter.natureIndex]));
 
       bool enableNatureFilters = settings.value("enableNatureFilter", false).toBool();
@@ -241,11 +248,11 @@ void PredictorWidget::setStartersPrediction(
       if (settings.value(GUICommon::naturesStr[starter.natureIndex], true).toBool() ||
           !enableNatureFilters)
       {
-        m_tblStartersPrediction->item(i, 9 + j * nbrColPerStarter)->setBackground(greenBrush);
+        m_tblStartersPrediction->item(i, 10 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
       else
       {
-        m_tblStartersPrediction->item(i, 9 + j * nbrColPerStarter)->setBackground(redBrush);
+        m_tblStartersPrediction->item(i, 10 + j * nbrColPerStarter)->setBackground(redBrush);
         passAllFilters = false;
       }
       settings.endArray();
@@ -253,21 +260,21 @@ void PredictorWidget::setStartersPrediction(
       if (game == GUICommon::gameSelection::XD)
       {
         m_tblStartersPrediction->setItem(
-            i, 10 + j * nbrColPerStarter,
+            i, 11 + j * nbrColPerStarter,
             new QTableWidgetItem(GUICommon::genderStr[starter.genderIndex]));
         int genderIndex =
             settings.value("gender", static_cast<int>(GUICommon::gender::AnyGender)).toInt();
         if (starter.genderIndex == genderIndex ||
             genderIndex == static_cast<int>(GUICommon::gender::AnyGender))
         {
-          m_tblStartersPrediction->item(i, 10 + j * nbrColPerStarter)->setBackground(greenBrush);
+          m_tblStartersPrediction->item(i, 11 + j * nbrColPerStarter)->setBackground(greenBrush);
         }
         else
         {
-          m_tblStartersPrediction->item(i, 10 + j * nbrColPerStarter)->setBackground(redBrush);
+          m_tblStartersPrediction->item(i, 11 + j * nbrColPerStarter)->setBackground(redBrush);
           passAllFilters = false;
         }
-        m_tblStartersPrediction->setItem(i, 11 + j * nbrColPerStarter,
+        m_tblStartersPrediction->setItem(i, 12 + j * nbrColPerStarter,
                                          new QTableWidgetItem(tr(starter.isShiny ? "Yes" : "No")));
         int shinynessIndex =
             settings.value("shininess", static_cast<int>(GUICommon::shininess::AnyShininess))
@@ -277,11 +284,11 @@ void PredictorWidget::setStartersPrediction(
         if (isShinyInt == shinynessIndex ||
             shinynessIndex == static_cast<int>(GUICommon::shininess::AnyShininess))
         {
-          m_tblStartersPrediction->item(i, 11 + j * nbrColPerStarter)->setBackground(greenBrush);
+          m_tblStartersPrediction->item(i, 12 + j * nbrColPerStarter)->setBackground(greenBrush);
         }
         else
         {
-          m_tblStartersPrediction->item(i, 11 + j * nbrColPerStarter)->setBackground(redBrush);
+          m_tblStartersPrediction->item(i, 12 + j * nbrColPerStarter)->setBackground(redBrush);
           passAllFilters = false;
         }
       }
@@ -294,9 +301,4 @@ void PredictorWidget::setStartersPrediction(
   }
   settings.endGroup();
   m_tblStartersPrediction->resizeColumnsToContents();
-  if (game == GUICommon::gameSelection::Colosseum)
-    setMinimumWidth(1250);
-  if (game == GUICommon::gameSelection::XD)
-    setMinimumWidth(1000);
-  setMinimumHeight(500);
 }
