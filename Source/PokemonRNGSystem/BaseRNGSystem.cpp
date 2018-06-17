@@ -1,12 +1,9 @@
 #include "BaseRNGSystem.h"
 
 #include <algorithm>
-#include <cstdio>
 #include <cstring>
 #include <fstream>
-#include <iostream>
 #include <sstream>
-#include <thread>
 
 std::string BaseRNGSystem::getPrecalcFilenameForSettings(bool useWii, int rtcErrorMarginSeconds)
 {
@@ -95,10 +92,6 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
     precalc = new u16[range.max - range.min];
     precalcFile.read(reinterpret_cast<char*>(precalc), (range.max - range.min) * sizeof(u16));
   }
-  std::cout << "Simulating " << range.max - range.min << " seeds "
-            << (usePrecalc ? "with" : "without") << " precalculation using "
-            << std::thread::hardware_concurrency() << " thread(s)...\n";
-  std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
   int nbrSeedsSimulatedTotal = 0;
   int seedsSimulatedCurrentBlock = 0;
 #pragma omp parallel for
@@ -146,18 +139,12 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
     }
   }
   std::swap(newSeeds, seeds);
-  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  std::cout << "done in " << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-            << " seconds" << std::endl;
   // As the number of calls differs depending on the starting seed, it may happen that some seeds
   // may end up being the same as another one, this gets rid of the duplicates so the program can
   // only have one unique result at the end
   std::sort(seeds.begin(), seeds.end());
   auto last = std::unique(seeds.begin(), seeds.end());
   seeds.erase(last, seeds.end());
-
-  std::cout << seeds.size() << " result(s)" << std::endl;
-  std::cout << std::endl;
   delete[] precalc;
 }
 
