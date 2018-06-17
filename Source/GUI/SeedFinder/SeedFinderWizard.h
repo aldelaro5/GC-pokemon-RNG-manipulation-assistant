@@ -68,6 +68,7 @@ public:
   StartPage(QWidget* parent, GUICommon::gameSelection game);
 
   int nextId() const override;
+  QCheckBox* m_chkSkipInstructionPage;
 };
 
 class InstructionsPage : public QWizardPage

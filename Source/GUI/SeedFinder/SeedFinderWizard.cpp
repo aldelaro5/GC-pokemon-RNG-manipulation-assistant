@@ -229,14 +229,25 @@ StartPage::StartPage(QWidget* parent, GUICommon::gameSelection game) : QWizardPa
                              GUICommon::gamesStr[game] + ".\n\nPress \"Next\" to continue.");
   label->setWordWrap(true);
 
+  m_chkSkipInstructionPage = new QCheckBox(tr("Skip the instruction page"));
+  QSettings settings("settings.ini", QSettings::IniFormat);
+  m_chkSkipInstructionPage->setChecked(
+      settings.value("generalSettings/skipInstructionPage", false).toBool());
+
   QVBoxLayout* mainlayout = new QVBoxLayout;
   mainlayout->addWidget(label);
+  mainlayout->addWidget(m_chkSkipInstructionPage);
   setLayout(mainlayout);
 }
 
 int StartPage::nextId() const
 {
-  return SeedFinderWizard::pageID::Instructions;
+  QSettings settings("settings.ini", QSettings::IniFormat);
+  settings.setValue("generalSettings/skipInstructionPage", m_chkSkipInstructionPage->isChecked());
+  if (m_chkSkipInstructionPage->isChecked())
+    return SeedFinderWizard::pageID::SeedFinderPass;
+  else
+    return SeedFinderWizard::pageID::Instructions;
 }
 
 InstructionsPage::InstructionsPage(QWidget* parent, GUICommon::gameSelection game, bool useWii)
