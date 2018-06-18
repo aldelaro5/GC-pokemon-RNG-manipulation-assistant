@@ -2,9 +2,6 @@
 
 #include "CommonTypes.h"
 
-#include <array>
-#include <string>
-
 namespace Common
 {
 // The GameCube RTC does 40500000 ticks per second while the Wii is exactly 1.5 faster

@@ -173,7 +173,7 @@ void DlgSettings::loadSettings()
   settings.endGroup();
 }
 
-void DlgSettings::saveSettings()
+void DlgSettings::saveSettings() const
 {
   QSettings settings("settings.ini", QSettings::IniFormat);
 

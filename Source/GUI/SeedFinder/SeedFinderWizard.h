@@ -28,8 +28,8 @@ public:
     End = 1000
   };
 
-  SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game, int rtcErrorMarginSeconds,
-                   bool useWii);
+  SeedFinderWizard(QWidget* parent, const GUICommon::gameSelection game,
+                   const int rtcErrorMarginSeconds, const bool useWii);
 
   void accept() override;
   void reject() override;
@@ -43,7 +43,7 @@ public:
   static int numberPass;
 
 signals:
-  void onUpdateSeedFinderProgress(int value);
+  void onUpdateSeedFinderProgress(const int value);
   void onSeedFinderPassDone();
   void onPrecalcDone();
 
@@ -65,7 +65,7 @@ private:
 class StartPage : public QWizardPage
 {
 public:
-  StartPage(QWidget* parent, GUICommon::gameSelection game);
+  StartPage(QWidget* parent, const GUICommon::gameSelection game);
 
   int nextId() const override;
   QCheckBox* m_chkSkipInstructionPage;
@@ -74,7 +74,7 @@ public:
 class InstructionsPage : public QWizardPage
 {
 public:
-  InstructionsPage(QWidget* parent, GUICommon::gameSelection game, bool useWii);
+  InstructionsPage(QWidget* parent, const GUICommon::gameSelection game, const bool useWii);
 
   int nextId() const override;
 
@@ -86,7 +86,7 @@ private:
 class EndPage : public QWizardPage
 {
 public:
-  EndPage(QWidget* parent, bool sucess, u32 seed = 0);
+  EndPage(QWidget* parent, const bool sucess, u32 seed = 0);
 
   int nextId() const override;
 

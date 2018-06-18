@@ -1,7 +1,5 @@
 #include "GaleDarknessRNGSystem.h"
 
-#include "../../Common/Common.h"
-
 // HP stat of the quick battle team pokemon without IV and EV at level 100
 static const std::array<std::array<int, 2>, 10> s_quickBattleTeamMaxBaseHPStat = {{{{322, 340}},
                                                                                    {{310, 290}},
@@ -23,16 +21,17 @@ static const int minNamingScreenAnimRenderCalls = 725;
 // preset name WES on the naming screen, obtained by TASing.
 static const int minNamingScreenFrames = 103;
 
-std::string GaleDarknessRNGSystem::getPrecalcFilenameForSettings(bool useWii,
-                                                                 int rtcErrorMarginSeconds)
+std::string GaleDarknessRNGSystem::getPrecalcFilenameForSettings(const bool useWii,
+                                                                 const int rtcErrorMarginSeconds)
 {
   return BaseRNGSystem::getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds) + ".xd";
 }
 
-u32 inline GaleDarknessRNGSystem::generatePokemonPID(u32& seed, u32 hTrainerId, u32 lTrainerId,
-                                                     u32 dummyId, u16* counter,
-                                                     WantedShininess shininess, s8 wantedGender,
-                                                     u32 genderRatio, s8 wantedNature)
+u32 inline GaleDarknessRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerId,
+                                                     const u32 lTrainerId, const u32 dummyId,
+                                                     u16* counter, const WantedShininess shininess,
+                                                     const s8 wantedGender, const u32 genderRatio,
+                                                     const s8 wantedNature)
 {
   u32 pid = 0;
   bool goodId = false;
@@ -88,8 +87,8 @@ u32 inline GaleDarknessRNGSystem::generatePokemonPID(u32& seed, u32 hTrainerId, 
   return pid;
 }
 
-std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, bool allowUnfilledEV,
-                                                            bool endPrematurely, u16* counter)
+std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const bool allowUnfilledEV,
+                                                            const bool endPrematurely, u16* counter)
 {
   std::array<u8, 6> EVs = {0};
   int sumEV = 0;
@@ -196,7 +195,7 @@ u32 inline GaleDarknessRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
   return seed;
 }
 
-bool inline GaleDarknessRNGSystem::generateBattleTeam(u32& seed, std::vector<int> criteria)
+bool inline GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> criteria)
 {
   // Player trainer name generation
   LCG(seed);

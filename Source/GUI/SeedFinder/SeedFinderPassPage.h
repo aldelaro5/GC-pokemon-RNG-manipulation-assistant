@@ -8,13 +8,11 @@
 #include <QSpinBox>
 #include <QWizardPage>
 
-#include "../GUICommon.h"
-
 class SeedFinderPassPage : public QWizardPage
 {
 public:
-  SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds, bool useWii,
-                     bool usePrecalc);
+  SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds, const int rtcErrorMarginSeconds,
+                     const bool useWii, const bool usePrecalc);
 
   int nextId() const override;
 
@@ -40,8 +38,8 @@ private:
 class SeedFinderPassColosseum : public SeedFinderPassPage
 {
 public:
-  SeedFinderPassColosseum(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds,
-                          bool useWii, bool usePrecalc);
+  SeedFinderPassColosseum(QWidget* parent, const int nbrFoundSeeds, const int rtcErrorMarginSeconds,
+                          const bool useWii, const bool usePrecalc);
 
   std::vector<int> obtainCriteria() override;
 
@@ -53,8 +51,8 @@ private:
 class SeedFinderPassXD : public SeedFinderPassPage
 {
 public:
-  SeedFinderPassXD(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds, bool useWii,
-                   bool usePrecalc);
+  SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds, const int rtcErrorMarginSeconds,
+                   const bool useWii, const bool usePrecalc);
 
   std::vector<int> obtainCriteria() override;
 

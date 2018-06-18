@@ -12,29 +12,29 @@ class CommonPredictorFiltersWidget : public QWidget
 public:
   CommonPredictorFiltersWidget(QWidget* parent = nullptr);
 
-  int getMinHpIv();
-  int getMinAtkIv();
-  int getMinDefIv();
-  int getMinSpAtkIv();
-  int getMinSpDefIv();
-  int getMinSpeedIv();
-  int getMinPowerHiddenPower();
-  bool getEnableNatureFilter();
-  QVector<bool> getNatureFilters();
-  bool getEnableHiddenPowerTypesFilter();
-  QVector<bool> getHiddenPowerTypesFilters();
+  int getMinHpIv() const;
+  int getMinAtkIv() const;
+  int getMinDefIv() const;
+  int getMinSpAtkIv() const;
+  int getMinSpDefIv() const;
+  int getMinSpeedIv() const;
+  int getMinPowerHiddenPower() const;
+  bool getEnableNatureFilter() const;
+  QVector<bool> getNatureFilters() const;
+  bool getEnableHiddenPowerTypesFilter() const;
+  QVector<bool> getHiddenPowerTypesFilters() const;
 
-  void setMinHpIv(int minHpIv);
-  void setMinAtkIv(int minAtkIv);
-  void setMinDefIv(int minDefIv);
-  void setMinSpAtkIv(int minSpAtkIv);
-  void setMinSpDefIv(int minSpDefIv);
-  void setMinSpeedIv(int minSpeedIv);
-  void setMinPowerHiddenPower(int minPowerHiddenPower);
-  void setEnableNatureFilter(bool enableNatureFilter);
-  void setNatureFilters(QVector<bool> natureFilters);
-  void setEnableHiddenPowerTypesFilter(bool enableHiddenPowerTypeFilter);
-  void setHiddenPowerTypesFilters(QVector<bool> hiddenPowerTypeFilters);
+  void setMinHpIv(const int minHpIv);
+  void setMinAtkIv(const int minAtkIv);
+  void setMinDefIv(const int minDefIv);
+  void setMinSpAtkIv(const int minSpAtkIv);
+  void setMinSpDefIv(const int minSpDefIv);
+  void setMinSpeedIv(const int minSpeedIv);
+  void setMinPowerHiddenPower(const int minPowerHiddenPower);
+  void setEnableNatureFilter(const bool enableNatureFilter);
+  void setNatureFilters(const QVector<bool> natureFilters);
+  void setEnableHiddenPowerTypesFilter(const bool enableHiddenPowerTypeFilter);
+  void setHiddenPowerTypesFilters(const QVector<bool> hiddenPowerTypeFilters);
 
 private:
   QSpinBox* m_spnMinHpIv;

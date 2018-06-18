@@ -131,47 +131,47 @@ CommonPredictorFiltersWidget::CommonPredictorFiltersWidget(QWidget* parent) : QW
   setLayout(mainLayout);
 }
 
-int CommonPredictorFiltersWidget::getMinHpIv()
+int CommonPredictorFiltersWidget::getMinHpIv() const
 {
   return m_spnMinHpIv->value();
 }
 
-int CommonPredictorFiltersWidget::getMinAtkIv()
+int CommonPredictorFiltersWidget::getMinAtkIv() const
 {
   return m_spnMinAtkIv->value();
 }
 
-int CommonPredictorFiltersWidget::getMinDefIv()
+int CommonPredictorFiltersWidget::getMinDefIv() const
 {
   return m_spnMinDefIv->value();
 }
 
-int CommonPredictorFiltersWidget::getMinSpAtkIv()
+int CommonPredictorFiltersWidget::getMinSpAtkIv() const
 {
   return m_spnMinSpAtkIv->value();
 }
 
-int CommonPredictorFiltersWidget::getMinSpDefIv()
+int CommonPredictorFiltersWidget::getMinSpDefIv() const
 {
   return m_spnMinSpDefIv->value();
 }
 
-int CommonPredictorFiltersWidget::getMinSpeedIv()
+int CommonPredictorFiltersWidget::getMinSpeedIv() const
 {
   return m_spnMinSpeedIv->value();
 }
 
-int CommonPredictorFiltersWidget::getMinPowerHiddenPower()
+int CommonPredictorFiltersWidget::getMinPowerHiddenPower() const
 {
   return m_spnMinPowerHiddenPower->value();
 }
 
-bool CommonPredictorFiltersWidget::getEnableNatureFilter()
+bool CommonPredictorFiltersWidget::getEnableNatureFilter() const
 {
   return m_chkEnableNatureFilter->isChecked();
 }
 
-QVector<bool> CommonPredictorFiltersWidget::getNatureFilters()
+QVector<bool> CommonPredictorFiltersWidget::getNatureFilters() const
 {
   QVector<bool> naturesFilter;
   for (auto i : m_chkNatures)
@@ -179,12 +179,12 @@ QVector<bool> CommonPredictorFiltersWidget::getNatureFilters()
   return naturesFilter;
 }
 
-bool CommonPredictorFiltersWidget::getEnableHiddenPowerTypesFilter()
+bool CommonPredictorFiltersWidget::getEnableHiddenPowerTypesFilter() const
 {
   return m_chkEnableHiddenPowerTypeFilter->isChecked();
 }
 
-QVector<bool> CommonPredictorFiltersWidget::getHiddenPowerTypesFilters()
+QVector<bool> CommonPredictorFiltersWidget::getHiddenPowerTypesFilters() const
 {
   QVector<bool> typesFilter;
   for (auto i : m_chkHiddenPowerTypes)
@@ -192,58 +192,60 @@ QVector<bool> CommonPredictorFiltersWidget::getHiddenPowerTypesFilters()
   return typesFilter;
 }
 
-void CommonPredictorFiltersWidget::setMinHpIv(int minHpIv)
+void CommonPredictorFiltersWidget::setMinHpIv(const int minHpIv)
 {
   m_spnMinHpIv->setValue(minHpIv);
 }
 
-void CommonPredictorFiltersWidget::setMinAtkIv(int minAtkIv)
+void CommonPredictorFiltersWidget::setMinAtkIv(const int minAtkIv)
 {
   m_spnMinAtkIv->setValue(minAtkIv);
 }
 
-void CommonPredictorFiltersWidget::setMinDefIv(int minDefIv)
+void CommonPredictorFiltersWidget::setMinDefIv(const int minDefIv)
 {
   m_spnMinDefIv->setValue(minDefIv);
 }
 
-void CommonPredictorFiltersWidget::setMinSpAtkIv(int minSpAtkIv)
+void CommonPredictorFiltersWidget::setMinSpAtkIv(const int minSpAtkIv)
 {
   m_spnMinSpAtkIv->setValue(minSpAtkIv);
 }
 
-void CommonPredictorFiltersWidget::setMinSpDefIv(int minSpDefIv)
+void CommonPredictorFiltersWidget::setMinSpDefIv(const int minSpDefIv)
 {
   m_spnMinSpDefIv->setValue(minSpDefIv);
 }
 
-void CommonPredictorFiltersWidget::setMinSpeedIv(int minSpeedIv)
+void CommonPredictorFiltersWidget::setMinSpeedIv(const int minSpeedIv)
 {
   m_spnMinSpeedIv->setValue(minSpeedIv);
 }
 
-void CommonPredictorFiltersWidget::setMinPowerHiddenPower(int minPowerHiddenPower)
+void CommonPredictorFiltersWidget::setMinPowerHiddenPower(const int minPowerHiddenPower)
 {
   m_spnMinPowerHiddenPower->setValue(minPowerHiddenPower);
 }
 
-void CommonPredictorFiltersWidget::setEnableNatureFilter(bool enableNatureFilter)
+void CommonPredictorFiltersWidget::setEnableNatureFilter(const bool enableNatureFilter)
 {
   m_chkEnableNatureFilter->setChecked(enableNatureFilter);
 }
 
-void CommonPredictorFiltersWidget::setNatureFilters(QVector<bool> natureFilters)
+void CommonPredictorFiltersWidget::setNatureFilters(const QVector<bool> natureFilters)
 {
   for (int i = 0; i < natureFilters.size(); i++)
     m_chkNatures[i]->setChecked(natureFilters[i]);
 }
 
-void CommonPredictorFiltersWidget::setEnableHiddenPowerTypesFilter(bool enableHiddenPowerTypeFilter)
+void CommonPredictorFiltersWidget::setEnableHiddenPowerTypesFilter(
+    const bool enableHiddenPowerTypeFilter)
 {
   m_chkEnableHiddenPowerTypeFilter->setChecked(enableHiddenPowerTypeFilter);
 }
 
-void CommonPredictorFiltersWidget::setHiddenPowerTypesFilters(QVector<bool> hiddenPowerTypeFilters)
+void CommonPredictorFiltersWidget::setHiddenPowerTypesFilters(
+    const QVector<bool> hiddenPowerTypeFilters)
 {
   for (int i = 0; i < hiddenPowerTypeFilters.size(); i++)
     m_chkHiddenPowerTypes[i]->setChecked(hiddenPowerTypeFilters[i]);

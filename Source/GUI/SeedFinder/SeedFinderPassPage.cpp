@@ -13,8 +13,9 @@
 #include "../SPokemonRNG.h"
 #include "SeedFinderWizard.h"
 
-SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, int nbrFoundSeeds,
-                                       int rtcErrorMarginSeconds, bool useWii, bool usePrecalc)
+SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds,
+                                       const int rtcErrorMarginSeconds, const bool useWii,
+                                       const bool usePrecalc)
     : QWizardPage(parent), m_rtcMarginErrorSeconds(rtcErrorMarginSeconds), m_useWii(useWii),
       m_usePrecalc(usePrecalc)
 {
@@ -88,9 +89,9 @@ int SeedFinderPassPage::nextId() const
     return SeedFinderWizard::numberPass + SeedFinderWizard::pageID::SeedFinderPass;
 }
 
-SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, int nbrFoundSeeds,
-                                                 int rtcErrorMarginSeconds, bool useWii,
-                                                 bool usePrecalc)
+SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, const int nbrFoundSeeds,
+                                                 const int rtcErrorMarginSeconds, const bool useWii,
+                                                 const bool usePrecalc)
     : SeedFinderPassPage(parent, nbrFoundSeeds, rtcErrorMarginSeconds, useWii, usePrecalc)
 {
   m_playerNameIndexBtnGroup = new QButtonGroup(this);
@@ -202,8 +203,9 @@ std::vector<int> SeedFinderPassColosseum::obtainCriteria()
   return criteria;
 }
 
-SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, int nbrFoundSeeds, int rtcErrorMarginSeconds,
-                                   bool useWii, bool usePrecalc)
+SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds,
+                                   const int rtcErrorMarginSeconds, const bool useWii,
+                                   const bool usePrecalc)
     : SeedFinderPassPage(parent, nbrFoundSeeds, rtcErrorMarginSeconds, useWii, usePrecalc)
 {
   m_playerTeamIndexBtnGroup = new QButtonGroup(this);

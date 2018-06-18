@@ -1,6 +1,5 @@
 #include "ColosseumTab.h"
 
-#include <QGroupBox>
 #include <QVBoxLayout>
 
 ColosseumTab::ColosseumTab(QWidget* parent) : QWidget(parent)
@@ -19,12 +18,12 @@ ColosseumTab::ColosseumTab(QWidget* parent) : QWidget(parent)
   setLayout(mainLayout);
 }
 
-CommonPredictorFiltersWidget* ColosseumTab::getUmbreonFiltersWidget()
+CommonPredictorFiltersWidget* ColosseumTab::getUmbreonFiltersWidget() const
 {
   return m_predictorFiltersUmbreon;
 }
 
-CommonPredictorFiltersWidget* ColosseumTab::getEspeonFiltersWidget()
+CommonPredictorFiltersWidget* ColosseumTab::getEspeonFiltersWidget() const
 {
   return m_predictorFiltersEspeon;
 }

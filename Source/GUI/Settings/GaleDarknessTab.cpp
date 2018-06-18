@@ -36,27 +36,27 @@ GaleDarknessTab::GaleDarknessTab(QWidget* parent) : QWidget(parent)
   setLayout(mainLayout);
 }
 
-CommonPredictorFiltersWidget* GaleDarknessTab::getEeveeFiltersWidget()
+CommonPredictorFiltersWidget* GaleDarknessTab::getEeveeFiltersWidget() const
 {
   return m_predictorFiltersEevee;
 }
 
-GUICommon::shininess GaleDarknessTab::getShininess()
+GUICommon::shininess GaleDarknessTab::getShininess() const
 {
   return static_cast<GUICommon::shininess>(m_cmbShininess->currentIndex());
 }
 
-GUICommon::gender GaleDarknessTab::getGender()
+GUICommon::gender GaleDarknessTab::getGender() const
 {
   return static_cast<GUICommon::gender>(m_cmbGender->currentIndex());
 }
 
-void GaleDarknessTab::setShininess(GUICommon::shininess shininess)
+void GaleDarknessTab::setShininess(const GUICommon::shininess shininess)
 {
   m_cmbShininess->setCurrentIndex(static_cast<int>(shininess));
 }
 
-void GaleDarknessTab::setGender(GUICommon::gender gender)
+void GaleDarknessTab::setGender(const GUICommon::gender gender)
 {
   m_cmbGender->setCurrentIndex(static_cast<int>(gender));
 }

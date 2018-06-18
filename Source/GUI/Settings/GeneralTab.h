@@ -12,13 +12,13 @@ class GeneralTab : public QWidget
 public:
   GeneralTab(QWidget* parent = nullptr);
 
-  GUICommon::platform getPlatform();
-  int getRtcMarginError();
-  int getPredictionTime();
+  GUICommon::platform getPlatform() const;
+  int getRtcMarginError() const;
+  int getPredictionTime() const;
 
-  void setPlatform(GUICommon::platform platform);
-  void setRtcMarginError(int rtcMarginError);
-  void setPredictionTime(int predictionTime);
+  void setPlatform(const GUICommon::platform platform);
+  void setRtcMarginError(const int rtcMarginError);
+  void setPredictionTime(const int predictionTime);
 
 private:
   QComboBox* m_cmbPlatform;

@@ -4,7 +4,6 @@
 #include <QLabel>
 #include <QTableWidget>
 #include <QVector>
-#include <QWidget>
 
 #include "../../PokemonRNGSystem/BaseRNGSystem.h"
 #include "../GUICommon.h"
@@ -13,10 +12,11 @@ class PredictorWidget : public QWidget
 {
 public:
   PredictorWidget(QWidget* parent = nullptr);
-  void setStartersPrediction(std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
-                             GUICommon::gameSelection game);
-  void resetPredictor(GUICommon::gameSelection currentGame);
-  void filterUnwanted(bool filterUnwanted);
+  void
+  setStartersPrediction(const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
+                        const GUICommon::gameSelection game);
+  void resetPredictor(const GUICommon::gameSelection currentGame);
+  void filterUnwanted(const bool filterUnwanted);
 
 private:
   const QBrush greenBrush = QBrush(QColor("#32CD32"));
@@ -25,7 +25,7 @@ private:
   void clearLabels();
   void initialiseWidgets();
   void makeLayouts();
-  void switchGame(GUICommon::gameSelection game);
+  void switchGame(const GUICommon::gameSelection game);
 
   BaseRNGSystem::StartersPrediction m_startersPrediction;
   QHBoxLayout* m_startersNamesLayout;

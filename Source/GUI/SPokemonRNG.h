@@ -2,8 +2,8 @@
 
 #include <QObject>
 
-#include "GUICommon.h"
 #include "../PokemonRNGSystem/BaseRNGSystem.h"
+#include "GUICommon.h"
 
 // Singleton wrapper arround BaseRNGSystem, to use from UI
 class SPokemonRNG : public QObject
@@ -20,11 +20,11 @@ public:
 
   static SPokemonRNG* getInstance();
 
-  BaseRNGSystem* getSystem();
-  void switchGame(GCPokemonGame game);
+  BaseRNGSystem* getSystem() const;
+  void switchGame(const GCPokemonGame game);
 
 signals:
-  void onSwitchGame(GUICommon::gameSelection game);
+  void onSwitchGame(const GUICommon::gameSelection game);
 
 private:
   SPokemonRNG();

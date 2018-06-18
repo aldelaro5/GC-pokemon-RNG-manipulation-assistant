@@ -11,8 +11,8 @@
 
 int SeedFinderWizard::numberPass = 1;
 
-SeedFinderWizard::SeedFinderWizard(QWidget* parent, GUICommon::gameSelection game,
-                                   int rtcErrorMarginSeconds, bool useWii)
+SeedFinderWizard::SeedFinderWizard(QWidget* parent, const GUICommon::gameSelection game,
+                                   const int rtcErrorMarginSeconds, const bool useWii)
     : QWizard(parent), m_game(game), m_rtcErrorMarginSeconds(rtcErrorMarginSeconds),
       m_useWii(useWii)
 {
@@ -221,7 +221,7 @@ void SeedFinderWizard::reject()
   }
 }
 
-StartPage::StartPage(QWidget* parent, GUICommon::gameSelection game) : QWizardPage(parent)
+StartPage::StartPage(QWidget* parent, const GUICommon::gameSelection game) : QWizardPage(parent)
 {
   setTitle(tr("Introduction"));
 
@@ -250,7 +250,8 @@ int StartPage::nextId() const
     return SeedFinderWizard::pageID::Instructions;
 }
 
-InstructionsPage::InstructionsPage(QWidget* parent, GUICommon::gameSelection game, bool useWii)
+InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelection game,
+                                   const bool useWii)
     : QWizardPage(parent)
 {
   setTitle(tr("Instructions"));
@@ -361,7 +362,7 @@ int InstructionsPage::nextId() const
   return SeedFinderWizard::pageID::SeedFinderPass;
 }
 
-EndPage::EndPage(QWidget* parent, bool sucess, u32 seed) : QWizardPage(parent)
+EndPage::EndPage(QWidget* parent, const bool sucess, const u32 seed) : QWizardPage(parent)
 {
   setTitle(tr("End"));
 

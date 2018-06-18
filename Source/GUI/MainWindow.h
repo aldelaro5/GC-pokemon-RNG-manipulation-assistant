@@ -4,17 +4,14 @@
 #include <QComboBox>
 #include <QMainWindow>
 #include <QPushButton>
-#include <QTableWidget>
 
 #include "../Common/CommonTypes.h"
-#include "../PokemonRNGSystem/BaseRNGSystem.h"
 #include "Predictor/PredictorWidget.h"
 
 class MainWindow : public QMainWindow
 {
 public:
   MainWindow();
-  ~MainWindow();
 
   void gameChanged();
   void startSeedFinder();
@@ -25,8 +22,6 @@ public:
 private:
   void initialiseWidgets();
   void makeLayouts();
-
-  BaseRNGSystem* m_system = nullptr;
 
   QComboBox* m_cmbGame;
   QPushButton* m_btnStartSeedFinder;

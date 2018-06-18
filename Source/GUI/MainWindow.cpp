@@ -1,7 +1,5 @@
 #include "MainWindow.h"
 
-#include <vector>
-
 #include <QHBoxLayout>
 #include <QSettings>
 #include <QVBoxLayout>
@@ -15,11 +13,6 @@ MainWindow::MainWindow()
 {
   initialiseWidgets();
   makeLayouts();
-}
-
-MainWindow::~MainWindow()
-{
-  delete m_system;
 }
 
 void MainWindow::initialiseWidgets()

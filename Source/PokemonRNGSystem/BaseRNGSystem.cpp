@@ -5,7 +5,8 @@
 #include <fstream>
 #include <sstream>
 
-std::string BaseRNGSystem::getPrecalcFilenameForSettings(bool useWii, int rtcErrorMarginSeconds)
+std::string BaseRNGSystem::getPrecalcFilenameForSettings(const bool useWii,
+                                                         const int rtcErrorMarginSeconds)
 {
   std::stringstream ss;
   ss << (useWii ? "Wii" : "GC");
@@ -14,7 +15,8 @@ std::string BaseRNGSystem::getPrecalcFilenameForSettings(bool useWii, int rtcErr
   return ss.str();
 }
 
-BaseRNGSystem::seedRange BaseRNGSystem::getRangeForSettings(bool useWii, int rtcErrorMarginSeconds)
+BaseRNGSystem::seedRange BaseRNGSystem::getRangeForSettings(const bool useWii,
+                                                            const int rtcErrorMarginSeconds)
 {
   seedRange range;
   int ticksPerSecond = useWii ? Common::ticksPerSecondWii : Common::ticksPerSecondGC;
@@ -31,14 +33,14 @@ BaseRNGSystem::seedRange BaseRNGSystem::getRangeForSettings(bool useWii, int rtc
   return range;
 }
 
-size_t BaseRNGSystem::getPracalcFileSize(bool useWii, int rtcErrorMarginSeconds)
+size_t BaseRNGSystem::getPracalcFileSize(const bool useWii, const int rtcErrorMarginSeconds)
 {
   seedRange range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
   return (range.max - range.min) * sizeof(u16);
 }
 
 void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
-    bool useWii, int rtcErrorMarginSeconds, std::function<void(int)> progressUpdate,
+    const bool useWii, const int rtcErrorMarginSeconds, std::function<void(int)> progressUpdate,
     std::function<bool()> shouldCancelNow)
 {
   std::string filename = getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds);
@@ -73,9 +75,9 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
     std::remove(filename.c_str());
 }
 
-void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seeds, bool useWii,
-                               int rtcErrorMarginSeconds, bool usePrecalc,
-                               std::function<void(int)> progressUpdate,
+void BaseRNGSystem::seedFinder(const std::vector<int> criteria, std::vector<u32>& seeds,
+                               const bool useWii, const int rtcErrorMarginSeconds,
+                               const bool usePrecalc, std::function<void(int)> progressUpdate,
                                std::function<bool()> shouldCancelNow)
 {
   std::vector<u32> newSeeds;
@@ -85,9 +87,9 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
     range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
   std::ifstream precalcFile(getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds),
                             std::ios::binary | std::ios::in);
-  usePrecalc = usePrecalc && precalcFile.good();
+  bool actuallyUsePrecalc = usePrecalc && precalcFile.good();
   u16* precalc = nullptr;
-  if (usePrecalc)
+  if (actuallyUsePrecalc)
   {
     precalc = new u16[range.max - range.min];
     precalcFile.read(reinterpret_cast<char*>(precalc), (range.max - range.min) * sizeof(u16));
@@ -109,7 +111,7 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
     u32 seed = 0;
     if (seeds.size() == 0)
     {
-      if (usePrecalc)
+      if (actuallyUsePrecalc)
       {
         u16 nbrRngCalls = 0;
         std::memcpy(&nbrRngCalls, precalc + (i - range.min), sizeof(u16));
@@ -149,7 +151,7 @@ void BaseRNGSystem::seedFinder(std::vector<int> criteria, std::vector<u32>& seed
 }
 
 std::vector<BaseRNGSystem::StartersPrediction>
-BaseRNGSystem::predictStartersForNbrSeconds(u32 seed, int nbrSeconds)
+BaseRNGSystem::predictStartersForNbrSeconds(u32 seed, const int nbrSeconds)
 {
   std::vector<StartersPrediction> predictionsResult;
   seed = rollRNGNamingScreenInit(seed);

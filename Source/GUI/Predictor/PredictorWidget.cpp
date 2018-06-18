@@ -2,10 +2,8 @@
 
 #include <QHeaderView>
 #include <QSettings>
-#include <QStringList>
 #include <QVBoxLayout>
 
-#include "../GUICommon.h"
 #include "../SPokemonRNG.h"
 
 PredictorWidget::PredictorWidget(QWidget* parent) : QWidget(parent)
@@ -30,7 +28,7 @@ void PredictorWidget::initialiseWidgets()
   m_tblStartersPrediction->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
-void PredictorWidget::filterUnwanted(bool filterUnwanted)
+void PredictorWidget::filterUnwanted(const bool filterUnwanted)
 {
   for (int i = 0; i < m_tblStartersPrediction->rowCount(); i++)
   {
@@ -55,7 +53,7 @@ void PredictorWidget::makeLayouts()
   setLayout(mainLayout);
 }
 
-void PredictorWidget::resetPredictor(GUICommon::gameSelection currentGame)
+void PredictorWidget::resetPredictor(const GUICommon::gameSelection currentGame)
 {
   switchGame(currentGame);
 }
@@ -71,7 +69,7 @@ void PredictorWidget::clearLabels()
   }
 }
 
-void PredictorWidget::switchGame(GUICommon::gameSelection game)
+void PredictorWidget::switchGame(const GUICommon::gameSelection game)
 {
   clearLabels();
   QLabel* lblSeedFinder = new QLabel(tr("Find your seed for predictions"));
@@ -113,8 +111,8 @@ void PredictorWidget::switchGame(GUICommon::gameSelection game)
 }
 
 void PredictorWidget::setStartersPrediction(
-    std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
-    GUICommon::gameSelection game)
+    const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
+    const GUICommon::gameSelection game)
 {
   clearLabels();
   std::vector<std::string> names = SPokemonRNG::getInstance()->getSystem()->getStartersName();

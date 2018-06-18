@@ -15,7 +15,7 @@ public:
   DlgSettings(QWidget* parent = nullptr);
 
   void loadSettings();
-  void saveSettings();
+  void saveSettings() const;
 
 private:
   QTabWidget* m_tabWidget;

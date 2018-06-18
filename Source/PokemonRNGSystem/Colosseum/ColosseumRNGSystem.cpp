@@ -1,7 +1,5 @@
 #include "ColosseumRNGSystem.h"
 
-#include "../../Common/Common.h"
-
 // The natures wanted for all Pokemon of all ultimate teams
 static const std::array<std::array<u8, 6>, 8> s_natureTeamsData = {
     {{{0x16, 0x15, 0x0f, 0x13, 0x04, 0x04}},
@@ -58,15 +56,16 @@ static const int minNamingScreenAnimRenderCalls = 689;
 // preset name WES on the naming screen, obtained by TASing.
 static const int minNamingScreenFrames = 107;
 
-std::string ColosseumRNGSystem::getPrecalcFilenameForSettings(bool useWii,
-                                                              int rtcErrorMarginSeconds)
+std::string ColosseumRNGSystem::getPrecalcFilenameForSettings(const bool useWii,
+                                                              const int rtcErrorMarginSeconds)
 {
   return BaseRNGSystem::getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds) + ".colo";
 }
 
-u32 inline ColosseumRNGSystem::generatePokemonPID(u32& seed, u32 hTrainerId, u32 lTrainerId,
-                                                  u32 dummyId, u16* counter, s8 wantedGender,
-                                                  u32 genderRatio, s8 wantedNature)
+u32 inline ColosseumRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerId,
+                                                  const u32 lTrainerId, const u32 dummyId,
+                                                  u16* counter, const s8 wantedGender,
+                                                  const u32 genderRatio, const s8 wantedNature)
 {
   u32 id = 0;
   bool goodId = false;
@@ -180,7 +179,7 @@ u32 inline ColosseumRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
   return rollRNGEnteringBattleMenu(seed, counter);
 }
 
-bool inline ColosseumRNGSystem::generateBattleTeam(u32& seed, std::vector<int> criteria)
+bool inline ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> criteria)
 {
   int enemyTeamIndex = (LCG(seed) >> 16) & 7;
   int playerTeamIndex = -1;

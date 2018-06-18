@@ -11,12 +11,12 @@ class GaleDarknessTab : public QWidget
 public:
   GaleDarknessTab(QWidget* parent = nullptr);
 
-  CommonPredictorFiltersWidget* getEeveeFiltersWidget();
-  GUICommon::shininess getShininess();
-  GUICommon::gender getGender();
+  CommonPredictorFiltersWidget* getEeveeFiltersWidget() const;
+  GUICommon::shininess getShininess() const;
+  GUICommon::gender getGender() const;
 
-  void setShininess(GUICommon::shininess shininess);
-  void setGender(GUICommon::gender gender);
+  void setShininess(const GUICommon::shininess shininess);
+  void setGender(const GUICommon::gender gender);
 
 private:
   CommonPredictorFiltersWidget* m_predictorFiltersEevee;

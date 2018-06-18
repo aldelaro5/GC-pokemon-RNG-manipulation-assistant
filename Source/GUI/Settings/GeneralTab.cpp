@@ -73,32 +73,32 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   setLayout(mainLayout);
 }
 
-GUICommon::platform GeneralTab::getPlatform()
+GUICommon::platform GeneralTab::getPlatform() const
 {
   return static_cast<GUICommon::platform>(m_cmbPlatform->currentIndex());
 }
 
-int GeneralTab::getRtcMarginError()
+int GeneralTab::getRtcMarginError() const
 {
   return m_spbRtcMarginError->value();
 }
 
-void GeneralTab::setPlatform(GUICommon::platform platform)
+void GeneralTab::setPlatform(const GUICommon::platform platform)
 {
   m_cmbPlatform->setCurrentIndex(static_cast<int>(platform));
 }
 
-void GeneralTab::setRtcMarginError(int rtcMarginError)
+void GeneralTab::setRtcMarginError(const int rtcMarginError)
 {
   m_spbRtcMarginError->setValue(rtcMarginError);
 }
 
-int GeneralTab::getPredictionTime()
+int GeneralTab::getPredictionTime() const
 {
   return m_spbPredictionsTime->value();
 }
 
-void GeneralTab::setPredictionTime(int predictionTime)
+void GeneralTab::setPredictionTime(const int predictionTime)
 {
   m_spbPredictionsTime->setValue(predictionTime);
 }

@@ -8,7 +8,7 @@
 
 // This class manages all the backend and the implementation details of the RNG of a GameCube
 // Pokemon game, it consists of a seed finder with precalculation to improve performances and a stat
-// predictor based on the frame of confirming a preset name on the naming screen.
+// predictor based on the frame of confirming a preset name on the naming screen
 class BaseRNGSystem
 {
 public:
@@ -41,25 +41,26 @@ public:
     s64 max = 0;
   };
 
-  BaseRNGSystem::seedRange getRangeForSettings(bool useWii, int rtcErrorMarginSeconds);
-  virtual std::string getPrecalcFilenameForSettings(bool useWii, int rtcErrorMarginSeconds);
-  size_t getPracalcFileSize(bool useWii, int rtcErrorMarginSeconds);
+  BaseRNGSystem::seedRange getRangeForSettings(const bool useWii, const int rtcErrorMarginSeconds);
+  virtual std::string getPrecalcFilenameForSettings(const bool useWii,
+                                                    const int rtcErrorMarginSeconds);
+  size_t getPracalcFileSize(const bool useWii, const int rtcErrorMarginSeconds);
   virtual int getNbrStartersPrediction() = 0;
   virtual std::vector<std::string> getStartersName() = 0;
   // Does the precalculation which consist of outputing to a file the number of RNG calls done
   // before getting to the battle menu, this improves performance significantly thanks to the LCGn
-  // function and this file can be reused in subsequent seed finding.
-  void precalculateNbrRollsBeforeTeamGeneration(bool useWii, int rtcErrorMarginSeconds,
+  // function and this file can be reused in subsequent seed finding
+  void precalculateNbrRollsBeforeTeamGeneration(const bool useWii, const int rtcErrorMarginSeconds,
                                                 std::function<void(int)> progressUpdate,
                                                 std::function<bool()> shouldCancelNow);
   // Seed finding algorithm, this does only one pass with parellelism
-  void seedFinder(std::vector<int> criteria, std::vector<u32>& seeds, bool useWii,
-                  int rtcErrorMarginSeconds, bool usePrecalc,
+  void seedFinder(const std::vector<int> criteria, std::vector<u32>& seeds, const bool useWii,
+                  const int rtcErrorMarginSeconds, const bool usePrecalc,
                   std::function<void(int)> progressUpdate, std::function<bool()> shouldCancelNow);
-  std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, int nbrSeconds);
+  std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, const int nbrSeconds);
   // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
   // outcome got
-  virtual bool generateBattleTeam(u32& seed, std::vector<int> criteria) = 0;
+  virtual bool generateBattleTeam(u32& seed, const std::vector<int> criteria) = 0;
 
 protected:
   // By TASing on Dolphin to get the fastest time to set the clock and have the game init its seed,
@@ -70,16 +71,16 @@ protected:
   static const u32 minRTCTicksToBootWii = (Common::ticksPerSecondWii / 60) * 860;
   // The number of time the game polls the input per second on the naming screen
   static const int pollingRateNamingScreenPerSec = 60;
-  virtual u32 rollRNGToBattleMenu(u32 seed, u16* counter = nullptr) = 0;
+  virtual u32 rollRNGToBattleMenu(const u32 seed, u16* counter = nullptr) = 0;
   virtual int getMinFramesAmountNamingScreen() = 0;
   // Do all the RNG calls to get to before the first possible frame of confirming the name on the
   // naming screen using a preset name
-  virtual u32 rollRNGNamingScreenInit(u32 seed) = 0;
+  virtual u32 rollRNGNamingScreenInit(const u32 seed) = 0;
   // Do a single naming screen render call to get the next frame's seed, must use a seed that was
   // the output of rollRNGNamingScreenInit
-  virtual u32 rollRNGNamingScreenNext(u32 seed) = 0;
+  virtual u32 rollRNGNamingScreenNext(const u32 seed) = 0;
   // Generates the starters with a given seed, the seed must have passed the naming screen
-  virtual StartersPrediction generateStarterPokemons(u32 seed) = 0;
+  virtual StartersPrediction generateStarterPokemons(const u32 seed) = 0;
 
   // The LCG used in both Pokemon games
   u32 inline LCG(u32& seed, u16* counter = nullptr)
@@ -91,7 +92,7 @@ protected:
   }
 
   // Apply the LCG n times in O(log n) complexity
-  u32 inline LCGn(u32 seed, u32 n, u16* counter = nullptr)
+  u32 inline LCGn(u32 seed, const u32 n, u16* counter = nullptr)
   {
     u32 ex = n - 1;
     u32 q = 0x343fd;
@@ -114,7 +115,7 @@ protected:
     return seed;
   }
 
-  bool inline isPidShiny(u16 TID, u16 SID, u32 PID)
+  bool inline isPidShiny(const u16 TID, const u16 SID, const u32 PID)
   {
     return ((TID ^ SID ^ (PID & 0xFFFF) ^ (PID >> 16)) < 8);
   }
@@ -131,7 +132,7 @@ protected:
     starter.hiddenPowerPower = (powerSum * 40 / 63) + 30;
   }
 
-  int inline getPidGender(u8 genderRatio, u32 pid)
+  int inline getPidGender(const u8 genderRatio, const u32 pid)
   {
     return genderRatio > (pid & 0xff) ? 1 : 0;
   }
