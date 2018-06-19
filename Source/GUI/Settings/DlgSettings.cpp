@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 
 #include "../GUICommon.h"
+#include "SConfig.h"
 
 DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
 {

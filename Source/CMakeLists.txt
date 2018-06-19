@@ -13,6 +13,7 @@ set(SRCS PokemonRNGSystem/BaseRNGSystem.cpp
          PokemonRNGSystem/XD/GaleDarknessRNGSystem.cpp
          GUI/SPokemonRNG.cpp
          GUI/GUICommon.cpp
+         GUI/Settings/SConfig.cpp
          GUI/Settings/CommonPredictorFiltersWidget.cpp
          GUI/Settings/GeneralTab.cpp
          GUI/Settings/CommonPredictorFiltersWidget.cpp

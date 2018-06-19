@@ -11,6 +11,13 @@ enum gameSelection
   Unselected
 };
 
+enum starter
+{
+  Umbreon = 0,
+  Espeon,
+  Eevee
+};
+
 enum platform
 {
   GameCube = 0,
