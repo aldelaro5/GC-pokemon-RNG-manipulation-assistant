@@ -44,254 +44,187 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
 
 void DlgSettings::loadSettings()
 {
-  QSettings settings("settings.ini", QSettings::IniFormat);
+  m_generalTab->setPlatform(SConfig::getInstance().getPlatform());
+  m_generalTab->setRtcMarginError(SConfig::getInstance().getRtcMarginError());
+  m_generalTab->setPredictionTime(SConfig::getInstance().getPredictionTime());
 
-  settings.beginGroup("generalSettings");
-  settings.beginGroup("finder");
-  m_generalTab->setPlatform(static_cast<GUICommon::platform>(
-      settings.value("platform", static_cast<int>(GUICommon::platform::GameCube)).toInt()));
-  m_generalTab->setRtcMarginError(settings.value("rtcMarginError", 5).toInt());
-  settings.endGroup();
-  settings.beginGroup("predictor");
-  m_generalTab->setPredictionTime(settings.value("time", 10).toInt());
-  settings.endGroup();
-  settings.endGroup();
-
-  settings.beginGroup("colosseumPredictor");
-  settings.beginGroup("umbreon");
-  m_coloTab->getUmbreonFiltersWidget()->setMinHpIv(settings.value("minHpIv", 0).toInt());
-  m_coloTab->getUmbreonFiltersWidget()->setMinAtkIv(settings.value("minAtkIv", 0).toInt());
-  m_coloTab->getUmbreonFiltersWidget()->setMinDefIv(settings.value("minDefIv", 0).toInt());
-  m_coloTab->getUmbreonFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
-  m_coloTab->getUmbreonFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
-  m_coloTab->getUmbreonFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
-  m_coloTab->getUmbreonFiltersWidget()->setMinPowerHiddenPower(
-      settings.value("minPowerHiddenPower", 30).toInt());
-
-  m_coloTab->getUmbreonFiltersWidget()->setEnableNatureFilter(
-      settings.value("enableNatureFilter", false).toBool());
-  QVector<bool> naturesFilterUmbreon;
-  int sizeNaturesUmbreon = settings.beginReadArray("naturesFilter");
-  for (int i = 0; i < sizeNaturesUmbreon; i++)
-  {
-    settings.setArrayIndex(i);
-    naturesFilterUmbreon.append(settings.value(GUICommon::naturesStr[i], false).toBool());
-  }
-  settings.endArray();
-  m_coloTab->getUmbreonFiltersWidget()->setNatureFilters(naturesFilterUmbreon);
-
-  m_coloTab->getUmbreonFiltersWidget()->setEnableHiddenPowerTypesFilter(
-      settings.value("enableHiddenPowerTypeFilter", false).toBool());
-  QVector<bool> hiddenPowerTypesFilterUmbreon;
-  int sizeHiddenPowerTypesUmbreon = settings.beginReadArray("hiddenPowerTypesFilter");
-  for (int i = 0; i < sizeHiddenPowerTypesUmbreon; i++)
-  {
-    settings.setArrayIndex(i);
-    hiddenPowerTypesFilterUmbreon.append(settings.value(GUICommon::typesStr[i], false).toBool());
-  }
-  settings.endArray();
-
-  m_coloTab->getUmbreonFiltersWidget()->setHiddenPowerTypesFilters(hiddenPowerTypesFilterUmbreon);
-  settings.endGroup();
-
-  settings.beginGroup("espeon");
-  m_coloTab->getEspeonFiltersWidget()->setMinHpIv(settings.value("minHpIv", 0).toInt());
-  m_coloTab->getEspeonFiltersWidget()->setMinAtkIv(settings.value("minAtkIv", 0).toInt());
-  m_coloTab->getEspeonFiltersWidget()->setMinDefIv(settings.value("minDefIv", 0).toInt());
-  m_coloTab->getEspeonFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
-  m_coloTab->getEspeonFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
-  m_coloTab->getEspeonFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
-  m_coloTab->getEspeonFiltersWidget()->setMinPowerHiddenPower(
-      settings.value("minPowerHiddenPower", 30).toInt());
-
-  m_coloTab->getEspeonFiltersWidget()->setEnableNatureFilter(
-      settings.value("enableNatureFilter", false).toBool());
-  QVector<bool> naturesFilterEspeon;
-  int sizeNaturesEspeon = settings.beginReadArray("naturesFilter");
-  for (int i = 0; i < sizeNaturesEspeon; i++)
-  {
-    settings.setArrayIndex(i);
-    naturesFilterEspeon.append(settings.value(GUICommon::naturesStr[i], false).toBool());
-  }
-  settings.endArray();
-  m_coloTab->getEspeonFiltersWidget()->setNatureFilters(naturesFilterEspeon);
-
-  m_coloTab->getEspeonFiltersWidget()->setEnableHiddenPowerTypesFilter(
-      settings.value("enableHiddenPowerTypeFilter", false).toBool());
-  QVector<bool> hiddenPowerTypesFilterEspeon;
-  int sizeHiddenPowerTypesEspeon = settings.beginReadArray("hiddenPowerTypesFilter");
-  for (int i = 0; i < sizeHiddenPowerTypesEspeon; i++)
-  {
-    settings.setArrayIndex(i);
-    hiddenPowerTypesFilterEspeon.append(settings.value(GUICommon::typesStr[i], false).toBool());
-  }
-  settings.endArray();
-
-  m_coloTab->getEspeonFiltersWidget()->setHiddenPowerTypesFilters(hiddenPowerTypesFilterEspeon);
-  settings.endGroup();
-  settings.endGroup();
-
-  settings.beginGroup("galeDarknessPredictor");
-  settings.beginGroup("eevee");
-  m_xdTab->getEeveeFiltersWidget()->setMinHpIv(settings.value("minHpIv", 0).toInt());
-  m_xdTab->getEeveeFiltersWidget()->setMinAtkIv(settings.value("minAtkIv", 0).toInt());
-  m_xdTab->getEeveeFiltersWidget()->setMinDefIv(settings.value("minDefIv", 0).toInt());
-  m_xdTab->getEeveeFiltersWidget()->setMinSpAtkIv(settings.value("minSpAtkIv", 0).toInt());
-  m_xdTab->getEeveeFiltersWidget()->setMinSpDefIv(settings.value("minSpDefIv", 0).toInt());
-  m_xdTab->getEeveeFiltersWidget()->setMinSpeedIv(settings.value("minSpeedIv", 0).toInt());
-  m_xdTab->getEeveeFiltersWidget()->setMinPowerHiddenPower(
-      settings.value("minPowerHiddenPower", 30).toInt());
-
-  m_xdTab->getEeveeFiltersWidget()->setEnableNatureFilter(
-      settings.value("enableNatureFilter", false).toBool());
-  QVector<bool> naturesFilterEevee;
-  int sizeNaturesEevee = settings.beginReadArray("naturesFilter");
-  for (int i = 0; i < sizeNaturesEevee; i++)
-  {
-    settings.setArrayIndex(i);
-    naturesFilterEevee.append(settings.value(GUICommon::naturesStr[i], false).toBool());
-  }
-  settings.endArray();
-  m_xdTab->getEeveeFiltersWidget()->setNatureFilters(naturesFilterEevee);
-
-  m_xdTab->getEeveeFiltersWidget()->setEnableHiddenPowerTypesFilter(
-      settings.value("enableHiddenPowerTypeFilter", false).toBool());
-  QVector<bool> hiddenPowerTypesFilterEevee;
-  int sizeHiddenPowerTypesEevee = settings.beginReadArray("hiddenPowerTypesFilter");
-  for (int i = 0; i < sizeHiddenPowerTypesEevee; i++)
-  {
-    settings.setArrayIndex(i);
-    hiddenPowerTypesFilterEevee.append(settings.value(GUICommon::typesStr[i], false).toBool());
-  }
-  settings.endArray();
-  m_xdTab->getEeveeFiltersWidget()->setHiddenPowerTypesFilters(hiddenPowerTypesFilterEevee);
-
-  m_xdTab->setShininess(static_cast<GUICommon::shininess>(
-      settings.value("shininess", static_cast<int>(GUICommon::shininess::AnyShininess)).toInt()));
-  m_xdTab->setGender(static_cast<GUICommon::gender>(
-      settings.value("gender", static_cast<int>(GUICommon::gender::AnyGender)).toInt()));
-  settings.endGroup();
-  settings.endGroup();
+  loadUmbreonSettings();
+  loadEspeonSettings();
+  loadEeveeSettings();
 }
 
 void DlgSettings::saveSettings() const
 {
-  QSettings settings("settings.ini", QSettings::IniFormat);
+  SConfig::getInstance().setPlatform(m_generalTab->getPlatform());
+  SConfig::getInstance().setRtcMarginError(m_generalTab->getRtcMarginError());
+  SConfig::getInstance().setPredictionTime(m_generalTab->getPredictionTime());
 
-  settings.beginGroup("generalSettings");
-  settings.beginGroup("finder");
-  settings.setValue("platform", static_cast<int>(m_generalTab->getPlatform()));
-  settings.setValue("rtcMarginError", m_generalTab->getRtcMarginError());
-  settings.setValue("rtcMarginError", m_generalTab->getRtcMarginError());
-  settings.endGroup();
-  settings.beginGroup("predictor");
-  settings.setValue("time", m_generalTab->getPredictionTime());
-  settings.endGroup();
-  settings.endGroup();
+  saveUmbreonSettings();
+  saveEspeonSettings();
+  saveEeveeSettings();
+}
 
-  settings.beginGroup("colosseumPredictor");
-  settings.beginGroup("umbreon");
-  settings.setValue("minHpIv", m_coloTab->getUmbreonFiltersWidget()->getMinHpIv());
-  settings.setValue("minAtkIv", m_coloTab->getUmbreonFiltersWidget()->getMinAtkIv());
-  settings.setValue("minDefIv", m_coloTab->getUmbreonFiltersWidget()->getMinDefIv());
-  settings.setValue("minSpAtkIv", m_coloTab->getUmbreonFiltersWidget()->getMinSpAtkIv());
-  settings.setValue("minSpDefIv", m_coloTab->getUmbreonFiltersWidget()->getMinSpDefIv());
-  settings.setValue("minSpeedIv", m_coloTab->getUmbreonFiltersWidget()->getMinSpeedIv());
-  settings.setValue("enableNatureFilter",
-                    m_coloTab->getUmbreonFiltersWidget()->getEnableNatureFilter());
-  QVector<bool> naturesFilterUmbreon = m_coloTab->getUmbreonFiltersWidget()->getNatureFilters();
-  settings.beginWriteArray("naturesFilter");
-  for (int i = 0; i < naturesFilterUmbreon.size(); i++)
-  {
-    settings.setArrayIndex(i);
-    settings.setValue(GUICommon::naturesStr[i], naturesFilterUmbreon[i]);
-  }
-  settings.endArray();
+void DlgSettings::loadUmbreonSettings()
+{
+  m_coloTab->getUmbreonFiltersWidget()->setMinHpIv(
+      SConfig::getInstance().getMinHpIv(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setMinAtkIv(
+      SConfig::getInstance().getMinAtkIv(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setMinDefIv(
+      SConfig::getInstance().getMinDefIv(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setMinSpAtkIv(
+      SConfig::getInstance().getMinSpAtkIv(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setMinSpDefIv(
+      SConfig::getInstance().getMinSpDefIv(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setMinSpeedIv(
+      SConfig::getInstance().getMinSpeedIv(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setMinPowerHiddenPower(
+      SConfig::getInstance().getMinPowerHiddenPower(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setEnableNatureFilter(
+      SConfig::getInstance().getEnableNatureFilter(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setNatureFilters(
+      SConfig::getInstance().getNatureFilters(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setEnableHiddenPowerTypesFilter(
+      SConfig::getInstance().getEnableHiddenPowerTypesFilter(GUICommon::starter::Umbreon));
+  m_coloTab->getUmbreonFiltersWidget()->setHiddenPowerTypesFilters(
+      SConfig::getInstance().getHiddenPowerTypesFilters(GUICommon::starter::Umbreon));
+}
 
-  settings.setValue("minPowerHiddenPower",
-                    m_coloTab->getUmbreonFiltersWidget()->getMinPowerHiddenPower());
-  settings.setValue("enableHiddenPowerTypeFilter",
-                    m_coloTab->getUmbreonFiltersWidget()->getEnableHiddenPowerTypesFilter());
-  QVector<bool> hiddenPowerTypesFilterUmbreon =
-      m_coloTab->getUmbreonFiltersWidget()->getHiddenPowerTypesFilters();
-  settings.beginWriteArray("hiddenPowerTypesFilter");
-  for (int i = 0; i < hiddenPowerTypesFilterUmbreon.size(); i++)
-  {
-    settings.setArrayIndex(i);
-    settings.setValue(GUICommon::typesStr[i], hiddenPowerTypesFilterUmbreon[i]);
-  }
-  settings.endArray();
-  settings.endGroup();
+void DlgSettings::loadEspeonSettings()
+{
+  m_coloTab->getEspeonFiltersWidget()->setMinHpIv(
+      SConfig::getInstance().getMinHpIv(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setMinAtkIv(
+      SConfig::getInstance().getMinAtkIv(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setMinDefIv(
+      SConfig::getInstance().getMinDefIv(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setMinSpAtkIv(
+      SConfig::getInstance().getMinSpAtkIv(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setMinSpDefIv(
+      SConfig::getInstance().getMinSpDefIv(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setMinSpeedIv(
+      SConfig::getInstance().getMinSpeedIv(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setMinPowerHiddenPower(
+      SConfig::getInstance().getMinPowerHiddenPower(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setEnableNatureFilter(
+      SConfig::getInstance().getEnableNatureFilter(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setNatureFilters(
+      SConfig::getInstance().getNatureFilters(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setEnableHiddenPowerTypesFilter(
+      SConfig::getInstance().getEnableHiddenPowerTypesFilter(GUICommon::starter::Espeon));
+  m_coloTab->getEspeonFiltersWidget()->setHiddenPowerTypesFilters(
+      SConfig::getInstance().getHiddenPowerTypesFilters(GUICommon::starter::Espeon));
+}
 
-  settings.beginGroup("espeon");
-  settings.setValue("minHpIv", m_coloTab->getEspeonFiltersWidget()->getMinHpIv());
-  settings.setValue("minAtkIv", m_coloTab->getEspeonFiltersWidget()->getMinAtkIv());
-  settings.setValue("minDefIv", m_coloTab->getEspeonFiltersWidget()->getMinDefIv());
-  settings.setValue("minSpAtkIv", m_coloTab->getEspeonFiltersWidget()->getMinSpAtkIv());
-  settings.setValue("minSpDefIv", m_coloTab->getEspeonFiltersWidget()->getMinSpDefIv());
-  settings.setValue("minSpeedIv", m_coloTab->getEspeonFiltersWidget()->getMinSpeedIv());
-  settings.setValue("enableNatureFilter",
-                    m_coloTab->getEspeonFiltersWidget()->getEnableNatureFilter());
-  QVector<bool> naturesFilterEspeon = m_coloTab->getEspeonFiltersWidget()->getNatureFilters();
-  settings.beginWriteArray("naturesFilter");
-  for (int i = 0; i < naturesFilterEspeon.size(); i++)
-  {
-    settings.setArrayIndex(i);
-    settings.setValue(GUICommon::naturesStr[i], naturesFilterEspeon[i]);
-  }
-  settings.endArray();
+void DlgSettings::loadEeveeSettings()
+{
+  m_xdTab->getEeveeFiltersWidget()->setMinHpIv(
+      SConfig::getInstance().getMinHpIv(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setMinAtkIv(
+      SConfig::getInstance().getMinAtkIv(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setMinDefIv(
+      SConfig::getInstance().getMinDefIv(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setMinSpAtkIv(
+      SConfig::getInstance().getMinSpAtkIv(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setMinSpDefIv(
+      SConfig::getInstance().getMinSpDefIv(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setMinSpeedIv(
+      SConfig::getInstance().getMinSpeedIv(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setMinPowerHiddenPower(
+      SConfig::getInstance().getMinPowerHiddenPower(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setEnableNatureFilter(
+      SConfig::getInstance().getEnableNatureFilter(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setNatureFilters(
+      SConfig::getInstance().getNatureFilters(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setEnableHiddenPowerTypesFilter(
+      SConfig::getInstance().getEnableHiddenPowerTypesFilter(GUICommon::starter::Eevee));
+  m_xdTab->getEeveeFiltersWidget()->setHiddenPowerTypesFilters(
+      SConfig::getInstance().getHiddenPowerTypesFilters(GUICommon::starter::Eevee));
+  m_xdTab->setShininess(SConfig::getInstance().getEeveeShininess());
+  m_xdTab->setGender(SConfig::getInstance().getEeveeGender());
+}
 
-  settings.setValue("minPowerHiddenPower",
-                    m_coloTab->getEspeonFiltersWidget()->getMinPowerHiddenPower());
-  settings.setValue("enableHiddenPowerTypeFilter",
-                    m_coloTab->getEspeonFiltersWidget()->getEnableHiddenPowerTypesFilter());
-  QVector<bool> hiddenPowerTypesFilterEspeon =
-      m_coloTab->getEspeonFiltersWidget()->getHiddenPowerTypesFilters();
-  settings.beginWriteArray("hiddenPowerTypesFilter");
-  for (int i = 0; i < hiddenPowerTypesFilterEspeon.size(); i++)
-  {
-    settings.setArrayIndex(i);
-    settings.setValue(GUICommon::typesStr[i], hiddenPowerTypesFilterEspeon[i]);
-  }
-  settings.endArray();
-  settings.endGroup();
-  settings.endGroup();
+void DlgSettings::saveUmbreonSettings() const
+{
+  SConfig::getInstance().setMinHpIv(GUICommon::starter::Umbreon,
+                                    m_coloTab->getUmbreonFiltersWidget()->getMinHpIv());
+  SConfig::getInstance().setMinAtkIv(GUICommon::starter::Umbreon,
+                                     m_coloTab->getUmbreonFiltersWidget()->getMinAtkIv());
+  SConfig::getInstance().setMinDefIv(GUICommon::starter::Umbreon,
+                                     m_coloTab->getUmbreonFiltersWidget()->getMinDefIv());
+  SConfig::getInstance().setMinSpAtkIv(GUICommon::starter::Umbreon,
+                                       m_coloTab->getUmbreonFiltersWidget()->getMinSpAtkIv());
+  SConfig::getInstance().setMinSpDefIv(GUICommon::starter::Umbreon,
+                                       m_coloTab->getUmbreonFiltersWidget()->getMinSpDefIv());
+  SConfig::getInstance().setMinSpeedIv(GUICommon::starter::Umbreon,
+                                       m_coloTab->getUmbreonFiltersWidget()->getMinSpeedIv());
+  SConfig::getInstance().setMinPowerHiddenPower(
+      GUICommon::starter::Umbreon, m_coloTab->getUmbreonFiltersWidget()->getMinPowerHiddenPower());
+  SConfig::getInstance().setEnableNatureFilter(
+      GUICommon::starter::Umbreon, m_coloTab->getUmbreonFiltersWidget()->getEnableNatureFilter());
+  SConfig::getInstance().setEnableHiddenPowerTypesFilter(
+      GUICommon::starter::Umbreon,
+      m_coloTab->getUmbreonFiltersWidget()->getEnableHiddenPowerTypesFilter());
+  SConfig::getInstance().setNatureFilters(GUICommon::starter::Umbreon,
+                                          m_coloTab->getUmbreonFiltersWidget()->getNatureFilters());
+  SConfig::getInstance().setHiddenPowerTypesFilters(
+      GUICommon::starter::Umbreon,
+      m_coloTab->getUmbreonFiltersWidget()->getHiddenPowerTypesFilters());
+}
 
-  settings.beginGroup("galeDarknessPredictor");
-  settings.beginGroup("eevee");
-  settings.setValue("minHpIv", m_xdTab->getEeveeFiltersWidget()->getMinHpIv());
-  settings.setValue("minAtkIv", m_xdTab->getEeveeFiltersWidget()->getMinAtkIv());
-  settings.setValue("minDefIv", m_xdTab->getEeveeFiltersWidget()->getMinDefIv());
-  settings.setValue("minSpAtkIv", m_xdTab->getEeveeFiltersWidget()->getMinSpAtkIv());
-  settings.setValue("minSpDefIv", m_xdTab->getEeveeFiltersWidget()->getMinSpDefIv());
-  settings.setValue("minSpeedIv", m_xdTab->getEeveeFiltersWidget()->getMinSpeedIv());
-  settings.setValue("enableNatureFilter",
-                    m_xdTab->getEeveeFiltersWidget()->getEnableNatureFilter());
-  QVector<bool> naturesFilterEevee = m_xdTab->getEeveeFiltersWidget()->getNatureFilters();
-  settings.beginWriteArray("naturesFilter");
-  for (int i = 0; i < naturesFilterEevee.size(); i++)
-  {
-    settings.setArrayIndex(i);
-    settings.setValue(GUICommon::naturesStr[i], naturesFilterEevee[i]);
-  }
-  settings.endArray();
+void DlgSettings::saveEspeonSettings() const
+{
+  SConfig::getInstance().setMinHpIv(GUICommon::starter::Espeon,
+                                    m_coloTab->getEspeonFiltersWidget()->getMinHpIv());
+  SConfig::getInstance().setMinAtkIv(GUICommon::starter::Espeon,
+                                     m_coloTab->getEspeonFiltersWidget()->getMinAtkIv());
+  SConfig::getInstance().setMinDefIv(GUICommon::starter::Espeon,
+                                     m_coloTab->getEspeonFiltersWidget()->getMinDefIv());
+  SConfig::getInstance().setMinSpAtkIv(GUICommon::starter::Espeon,
+                                       m_coloTab->getEspeonFiltersWidget()->getMinSpAtkIv());
+  SConfig::getInstance().setMinSpDefIv(GUICommon::starter::Espeon,
+                                       m_coloTab->getEspeonFiltersWidget()->getMinSpDefIv());
+  SConfig::getInstance().setMinSpeedIv(GUICommon::starter::Espeon,
+                                       m_coloTab->getEspeonFiltersWidget()->getMinSpeedIv());
+  SConfig::getInstance().setMinPowerHiddenPower(
+      GUICommon::starter::Espeon, m_coloTab->getEspeonFiltersWidget()->getMinPowerHiddenPower());
+  SConfig::getInstance().setEnableNatureFilter(
+      GUICommon::starter::Espeon, m_coloTab->getEspeonFiltersWidget()->getEnableNatureFilter());
+  SConfig::getInstance().setEnableHiddenPowerTypesFilter(
+      GUICommon::starter::Espeon,
+      m_coloTab->getEspeonFiltersWidget()->getEnableHiddenPowerTypesFilter());
+  SConfig::getInstance().setNatureFilters(GUICommon::starter::Espeon,
+                                          m_coloTab->getEspeonFiltersWidget()->getNatureFilters());
+  SConfig::getInstance().setHiddenPowerTypesFilters(
+      GUICommon::starter::Espeon,
+      m_coloTab->getEspeonFiltersWidget()->getHiddenPowerTypesFilters());
+}
 
-  settings.setValue("minPowerHiddenPower",
-                    m_xdTab->getEeveeFiltersWidget()->getMinPowerHiddenPower());
-  settings.setValue("enableHiddenPowerTypeFilter",
-                    m_xdTab->getEeveeFiltersWidget()->getEnableHiddenPowerTypesFilter());
-  QVector<bool> hiddenPowerTypesFilterEevee =
-      m_xdTab->getEeveeFiltersWidget()->getHiddenPowerTypesFilters();
-  settings.beginWriteArray("hiddenPowerTypesFilter");
-  for (int i = 0; i < hiddenPowerTypesFilterEevee.size(); i++)
-  {
-    settings.setArrayIndex(i);
-    settings.setValue(GUICommon::typesStr[i], hiddenPowerTypesFilterEevee[i]);
-  }
-  settings.endArray();
-
-  settings.setValue("shininess", static_cast<int>(m_xdTab->getShininess()));
-  settings.setValue("gender", static_cast<int>(m_xdTab->getGender()));
-  settings.endGroup();
-  settings.endGroup();
+void DlgSettings::saveEeveeSettings() const
+{
+  SConfig::getInstance().setMinHpIv(GUICommon::starter::Eevee,
+                                    m_xdTab->getEeveeFiltersWidget()->getMinHpIv());
+  SConfig::getInstance().setMinAtkIv(GUICommon::starter::Eevee,
+                                     m_xdTab->getEeveeFiltersWidget()->getMinAtkIv());
+  SConfig::getInstance().setMinDefIv(GUICommon::starter::Eevee,
+                                     m_xdTab->getEeveeFiltersWidget()->getMinDefIv());
+  SConfig::getInstance().setMinSpAtkIv(GUICommon::starter::Eevee,
+                                       m_xdTab->getEeveeFiltersWidget()->getMinSpAtkIv());
+  SConfig::getInstance().setMinSpDefIv(GUICommon::starter::Eevee,
+                                       m_xdTab->getEeveeFiltersWidget()->getMinSpDefIv());
+  SConfig::getInstance().setMinSpeedIv(GUICommon::starter::Eevee,
+                                       m_xdTab->getEeveeFiltersWidget()->getMinSpeedIv());
+  SConfig::getInstance().setMinPowerHiddenPower(
+      GUICommon::starter::Eevee, m_xdTab->getEeveeFiltersWidget()->getMinPowerHiddenPower());
+  SConfig::getInstance().setEnableNatureFilter(
+      GUICommon::starter::Eevee, m_xdTab->getEeveeFiltersWidget()->getEnableNatureFilter());
+  SConfig::getInstance().setEnableHiddenPowerTypesFilter(
+      GUICommon::starter::Eevee,
+      m_xdTab->getEeveeFiltersWidget()->getEnableHiddenPowerTypesFilter());
+  SConfig::getInstance().setNatureFilters(GUICommon::starter::Eevee,
+                                          m_xdTab->getEeveeFiltersWidget()->getNatureFilters());
+  SConfig::getInstance().setHiddenPowerTypesFilters(
+      GUICommon::starter::Eevee, m_xdTab->getEeveeFiltersWidget()->getHiddenPowerTypesFilters());
+  SConfig::getInstance().setEeveeShininess(m_xdTab->getShininess());
+  SConfig::getInstance().setEeveeGender(m_xdTab->getGender());
 }

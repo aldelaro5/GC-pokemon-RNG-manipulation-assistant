@@ -15,7 +15,13 @@ public:
   DlgSettings(QWidget* parent = nullptr);
 
   void loadSettings();
+  void loadUmbreonSettings();
+  void loadEspeonSettings();
+  void loadEeveeSettings();
   void saveSettings() const;
+  void saveUmbreonSettings() const;
+  void saveEspeonSettings() const;
+  void saveEeveeSettings() const;
 
 private:
   QTabWidget* m_tabWidget;

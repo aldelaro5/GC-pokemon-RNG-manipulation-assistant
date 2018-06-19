@@ -28,6 +28,9 @@ public:
   bool getEnableHiddenPowerTypesFilter(const GUICommon::starter starter) const;
   QVector<bool> getHiddenPowerTypesFilters(const GUICommon::starter starter) const;
 
+  GUICommon::shininess getEeveeShininess() const;
+  GUICommon::gender getEeveeGender() const;
+
   void setPlatform(const GUICommon::platform platform);
   void setRtcMarginError(const int rtcMarginError);
   void setPredictionTime(const int predictionTime);
@@ -45,6 +48,9 @@ public:
                                        const bool enableHiddenPowerTypeFilter);
   void setHiddenPowerTypesFilters(const GUICommon::starter starter,
                                   const QVector<bool> hiddenPowerTypeFilters);
+
+  void setEeveeShininess(const GUICommon::shininess shininess) const;
+  void setEeveeGender(const GUICommon::gender gender) const;
 
 private:
   SConfig();

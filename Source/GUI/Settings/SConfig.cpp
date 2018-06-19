@@ -1,7 +1,5 @@
 #include "SConfig.h"
 
-#include <QStringList>
-
 SConfig::SConfig()
 {
   m_settings = new QSettings("settings.ini", QSettings::IniFormat);
@@ -148,6 +146,23 @@ QVector<bool> SConfig::getHiddenPowerTypesFilters(const GUICommon::starter start
   return hiddenPowerTypeFilters;
 }
 
+GUICommon::shininess SConfig::getEeveeShininess() const
+{
+  return static_cast<GUICommon::shininess>(
+      m_settings
+          ->value("galeDarknessPredictor/eevee/shininess",
+                  static_cast<int>(GUICommon::shininess::AnyShininess))
+          .toInt());
+}
+
+GUICommon::gender SConfig::getEeveeGender() const
+{
+  return static_cast<GUICommon::gender>(m_settings
+                                            ->value("galeDarknessPredictor/eevee/gender",
+                                                    static_cast<int>(GUICommon::gender::AnyGender))
+                                            .toInt());
+}
+
 void SConfig::setPlatform(const GUICommon::platform platform)
 {
   m_settings->setValue("generalSettings/finder/platform", static_cast<int>(platform));
@@ -261,4 +276,14 @@ void SConfig::setHiddenPowerTypesFilters(const GUICommon::starter starter,
     m_settings->setValue(GUICommon::typesStr[i], hiddenPowerTypeFilters[i]);
   }
   m_settings->endArray();
+}
+
+void SConfig::setEeveeShininess(const GUICommon::shininess shininess) const
+{
+  m_settings->setValue("galeDarknessPredictor/eevee/shininess", static_cast<int>(shininess));
+}
+
+void SConfig::setEeveeGender(const GUICommon::gender gender) const
+{
+  m_settings->setValue("galeDarknessPredictor/eevee/gender", static_cast<int>(gender));
 }
