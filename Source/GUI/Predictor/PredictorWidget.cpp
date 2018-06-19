@@ -1,10 +1,10 @@
 #include "PredictorWidget.h"
 
 #include <QHeaderView>
-#include <QSettings>
 #include <QVBoxLayout>
 
 #include "../SPokemonRNG.h"
+#include "../Settings/SConfig.h"
 
 PredictorWidget::PredictorWidget(QWidget* parent) : QWidget(parent)
 {
@@ -134,13 +134,17 @@ void PredictorWidget::setStartersPrediction(
     m_startersNamesLayout->addStretch();
 
   m_tblStartersPrediction->setRowCount(startersPrediction.size());
-  QSettings settings("settings.ini", QSettings::IniFormat);
-
-  int test = settings.value("colosseumPredictor/espeon/minAtkIv").toInt();
+  QVector<GUICommon::starter> startersSettings;
   if (game == GUICommon::gameSelection::Colosseum)
-    settings.beginGroup("colosseumPredictor");
+  {
+    startersSettings.append(GUICommon::starter::Umbreon);
+    startersSettings.append(GUICommon::starter::Espeon);
+  }
   else if (game == GUICommon::gameSelection::XD)
-    settings.beginGroup("galeDarknessPredictor");
+  {
+    startersSettings.append(GUICommon::starter::Eevee);
+  }
+
   for (int i = 0; i < startersPrediction.size(); i++)
   {
     bool passAllFilters = true;
@@ -170,12 +174,11 @@ void PredictorWidget::setStartersPrediction(
 
     for (int j = 0; j < startersPrediction[i].starters.size(); j++)
     {
-      settings.beginGroup(QString::fromStdString(names[j]).toLower());
       BaseRNGSystem::StarterGen starter = startersPrediction[i].starters[j];
 
       m_tblStartersPrediction->setItem(i, 3 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.hpIV)));
-      if (starter.hpIV >= settings.value("minHpIv", 0).toInt())
+      if (starter.hpIV >= SConfig::getInstance().getMinHpIv(startersSettings[j]))
       {
         m_tblStartersPrediction->item(i, 3 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
@@ -187,7 +190,7 @@ void PredictorWidget::setStartersPrediction(
 
       m_tblStartersPrediction->setItem(i, 4 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.atkIV)));
-      if (starter.atkIV >= settings.value("minAtkIv", 0).toInt())
+      if (starter.atkIV >= SConfig::getInstance().getMinAtkIv(startersSettings[j]))
       {
         m_tblStartersPrediction->item(i, 4 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
@@ -198,7 +201,7 @@ void PredictorWidget::setStartersPrediction(
       }
       m_tblStartersPrediction->setItem(i, 5 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.defIV)));
-      if (starter.defIV >= settings.value("minDefIv", 0).toInt())
+      if (starter.defIV >= SConfig::getInstance().getMinDefIv(startersSettings[j]))
       {
         m_tblStartersPrediction->item(i, 5 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
@@ -209,7 +212,7 @@ void PredictorWidget::setStartersPrediction(
       }
       m_tblStartersPrediction->setItem(i, 6 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.spAtkIV)));
-      if (starter.spAtkIV >= settings.value("minSpAtkIv", 0).toInt())
+      if (starter.spAtkIV >= SConfig::getInstance().getMinSpAtkIv(startersSettings[j]))
       {
         m_tblStartersPrediction->item(i, 6 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
@@ -220,7 +223,7 @@ void PredictorWidget::setStartersPrediction(
       }
       m_tblStartersPrediction->setItem(i, 7 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.spDefIV)));
-      if (starter.spDefIV >= settings.value("minSpDefIv", 0).toInt())
+      if (starter.spDefIV >= SConfig::getInstance().getMinSpDefIv(startersSettings[j]))
       {
         m_tblStartersPrediction->item(i, 7 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
@@ -231,7 +234,7 @@ void PredictorWidget::setStartersPrediction(
       }
       m_tblStartersPrediction->setItem(i, 8 + j * nbrColPerStarter,
                                        new QTableWidgetItem(QString::number(starter.speedIV)));
-      if (starter.speedIV >= settings.value("minSpeedIv", 0).toInt())
+      if (starter.speedIV >= SConfig::getInstance().getMinSpeedIv(startersSettings[j]))
       {
         m_tblStartersPrediction->item(i, 8 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
@@ -246,11 +249,11 @@ void PredictorWidget::setStartersPrediction(
           new QTableWidgetItem(GUICommon::typesStr[starter.hiddenPowerTypeIndex] + " " +
                                QString::number(starter.hiddenPowerPower)));
       bool enableHiddenPowerTypeFilters =
-          settings.value("enableHiddenPowerTypeFilter", false).toBool();
-      int minPowerHiddenPower = settings.value("minPowerHiddenPower", 30).toInt();
-      settings.beginReadArray("hiddenPowerTypesFilter");
-      settings.setArrayIndex(starter.hiddenPowerTypeIndex);
-      if ((settings.value(GUICommon::typesStr[starter.hiddenPowerTypeIndex], true).toBool() &&
+          SConfig::getInstance().getEnableHiddenPowerTypesFilter(startersSettings[j]);
+      int minPowerHiddenPower = SConfig::getInstance().getMinPowerHiddenPower(startersSettings[j]);
+      QVector<bool> hiddenPowerTypeFilters =
+          SConfig::getInstance().getHiddenPowerTypesFilters(startersSettings[j]);
+      if ((hiddenPowerTypeFilters[starter.hiddenPowerTypeIndex] &&
            starter.hiddenPowerPower >= minPowerHiddenPower) ||
           !enableHiddenPowerTypeFilters)
       {
@@ -261,16 +264,13 @@ void PredictorWidget::setStartersPrediction(
         m_tblStartersPrediction->item(i, 9 + j * nbrColPerStarter)->setBackground(redBrush);
         passAllFilters = false;
       }
-      settings.endArray();
 
       m_tblStartersPrediction->setItem(
           i, 10 + j * nbrColPerStarter,
           new QTableWidgetItem(GUICommon::naturesStr[starter.natureIndex]));
-      bool enableNatureFilters = settings.value("enableNatureFilter", false).toBool();
-      settings.beginReadArray("naturesFilter");
-      settings.setArrayIndex(starter.natureIndex);
-      if (settings.value(GUICommon::naturesStr[starter.natureIndex], true).toBool() ||
-          !enableNatureFilters)
+      bool enableNatureFilters = SConfig::getInstance().getEnableNatureFilter(startersSettings[j]);
+      QVector<bool> natureFilters = SConfig::getInstance().getNatureFilters(startersSettings[j]);
+      if (natureFilters[starter.natureIndex] || !enableNatureFilters)
       {
         m_tblStartersPrediction->item(i, 10 + j * nbrColPerStarter)->setBackground(greenBrush);
       }
@@ -279,15 +279,13 @@ void PredictorWidget::setStartersPrediction(
         m_tblStartersPrediction->item(i, 10 + j * nbrColPerStarter)->setBackground(redBrush);
         passAllFilters = false;
       }
-      settings.endArray();
 
       if (game == GUICommon::gameSelection::XD)
       {
         m_tblStartersPrediction->setItem(
             i, 11 + j * nbrColPerStarter,
             new QTableWidgetItem(GUICommon::genderStr[starter.genderIndex]));
-        int genderIndex =
-            settings.value("gender", static_cast<int>(GUICommon::gender::AnyGender)).toInt();
+        int genderIndex = static_cast<int>(SConfig::getInstance().getEeveeGender());
         if (starter.genderIndex == genderIndex ||
             genderIndex == static_cast<int>(GUICommon::gender::AnyGender))
         {
@@ -300,9 +298,7 @@ void PredictorWidget::setStartersPrediction(
         }
         m_tblStartersPrediction->setItem(i, 12 + j * nbrColPerStarter,
                                          new QTableWidgetItem(tr(starter.isShiny ? "Yes" : "No")));
-        int shinynessIndex =
-            settings.value("shininess", static_cast<int>(GUICommon::shininess::AnyShininess))
-                .toInt();
+        int shinynessIndex = static_cast<int>(SConfig::getInstance().getEeveeShininess());
         int isShinyInt = starter.isShiny ? static_cast<int>(GUICommon::shininess::Shiny)
                                          : static_cast<int>(GUICommon::shininess::NotShiny);
         if (isShinyInt == shinynessIndex ||
@@ -316,13 +312,11 @@ void PredictorWidget::setStartersPrediction(
           passAllFilters = false;
         }
       }
-      settings.endGroup();
     }
     if (passAllFilters)
       m_tblStartersPrediction->item(i, 2)->setBackground(greenBrush);
     else
       m_tblStartersPrediction->item(i, 2)->setBackground(redBrush);
   }
-  settings.endGroup();
   m_tblStartersPrediction->resizeColumnsToContents();
 }

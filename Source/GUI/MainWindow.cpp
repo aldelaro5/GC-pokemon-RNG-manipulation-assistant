@@ -1,13 +1,13 @@
 #include "MainWindow.h"
 
 #include <QHBoxLayout>
-#include <QSettings>
 #include <QVBoxLayout>
 
 #include "GUICommon.h"
 #include "SPokemonRNG.h"
 #include "SeedFinder/SeedFinderWizard.h"
 #include "Settings/DlgSettings.h"
+#include "Settings/SConfig.h"
 
 MainWindow::MainWindow()
 {
@@ -93,19 +93,15 @@ void MainWindow::startSeedFinder()
 {
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
-  QSettings settings("settings.ini", QSettings::IniFormat);
-  int rtcMarginError = settings.value("generalSettings/finder/rtcMarginError", 5).toInt();
-  bool useWii =
-      settings
-          .value("generalSettings/finder/platform", static_cast<int>(GUICommon::platform::GameCube))
-          .toInt() == static_cast<int>(GUICommon::platform::Wii);
+  int rtcMarginError = SConfig::getInstance().getRtcMarginError();
+  bool useWii = SConfig::getInstance().getPlatform() == GUICommon::platform::Wii;
   SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, rtcMarginError, useWii);
   if (wizard->exec() == QDialog::Accepted)
   {
     m_currentSeed = wizard->getSeeds()[0];
     std::vector<BaseRNGSystem::StartersPrediction> predictions =
         SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
-            m_currentSeed, settings.value("generalSettings/predictor/time", 10).toInt());
+            m_currentSeed, SConfig::getInstance().getPredictionTime());
     m_predictorWidget->setStartersPrediction(predictions, selection);
     m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
     m_btnReset->setEnabled(true);
@@ -130,11 +126,10 @@ void MainWindow::rerollPredictor()
 
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
-  QSettings settings("settings.ini", QSettings::IniFormat);
   SPokemonRNG::getInstance()->getSystem()->generateBattleTeam(m_currentSeed, dummyCriteria);
   std::vector<BaseRNGSystem::StartersPrediction> predictions =
       SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
-          m_currentSeed, settings.value("generalSettings/predictor/time", 10).toInt());
+          m_currentSeed, SConfig::getInstance().getPredictionTime());
   m_predictorWidget->setStartersPrediction(predictions, selection);
   m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
 }

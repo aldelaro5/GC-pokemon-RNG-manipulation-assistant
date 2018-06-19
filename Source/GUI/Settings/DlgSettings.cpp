@@ -1,6 +1,5 @@
 #include "DlgSettings.h"
 
-#include <QSettings>
 #include <QVBoxLayout>
 
 #include "../GUICommon.h"

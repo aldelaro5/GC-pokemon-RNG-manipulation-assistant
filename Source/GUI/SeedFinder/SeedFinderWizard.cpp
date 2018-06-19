@@ -8,6 +8,7 @@
 #include <QtConcurrent>
 
 #include "../SPokemonRNG.h"
+#include "../Settings/SConfig.h"
 
 int SeedFinderWizard::numberPass = 1;
 
@@ -230,9 +231,7 @@ StartPage::StartPage(QWidget* parent, const GUICommon::gameSelection game) : QWi
   label->setWordWrap(true);
 
   m_chkSkipInstructionPage = new QCheckBox(tr("Skip the instruction page"));
-  QSettings settings("settings.ini", QSettings::IniFormat);
-  m_chkSkipInstructionPage->setChecked(
-      settings.value("generalSettings/skipInstructionPage", false).toBool());
+  m_chkSkipInstructionPage->setChecked(SConfig::getInstance().getSkipInstructionPage());
 
   QVBoxLayout* mainlayout = new QVBoxLayout;
   mainlayout->addWidget(label);
@@ -242,8 +241,7 @@ StartPage::StartPage(QWidget* parent, const GUICommon::gameSelection game) : QWi
 
 int StartPage::nextId() const
 {
-  QSettings settings("settings.ini", QSettings::IniFormat);
-  settings.setValue("generalSettings/skipInstructionPage", m_chkSkipInstructionPage->isChecked());
+  SConfig::getInstance().setSkipInstructionPage(m_chkSkipInstructionPage->isChecked());
   if (m_chkSkipInstructionPage->isChecked())
     return SeedFinderWizard::pageID::SeedFinderPass;
   else
