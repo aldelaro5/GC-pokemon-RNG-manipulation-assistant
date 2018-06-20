@@ -47,7 +47,7 @@ void MainWindow::initialiseWidgets()
   connect(m_chkFilterUnwantedPredictions, &QCheckBox::stateChanged, this,
           [=](int state) { m_predictorWidget->filterUnwanted(state == Qt::Checked); });
 
-  m_btnRerollPrediciton = new QPushButton(tr("Reroll"));
+  m_btnRerollPrediciton = new QPushButton(tr("Reroll\n(requires an additional team generation)"));
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
 
