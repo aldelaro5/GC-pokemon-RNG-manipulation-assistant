@@ -3,6 +3,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
+#include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
+#include "../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
 #include "GUICommon.h"
 #include "SPokemonRNG.h"
 #include "SeedFinder/SeedFinderWizard.h"
@@ -13,6 +15,11 @@ MainWindow::MainWindow()
 {
   initialiseWidgets();
   makeLayouts();
+}
+
+MainWindow::~MainWindow()
+{
+  SPokemonRNG::deleteSystem();
 }
 
 void MainWindow::initialiseWidgets()
@@ -76,15 +83,16 @@ void MainWindow::gameChanged()
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   if (selection == GUICommon::gameSelection::Colosseum)
-    SPokemonRNG::getInstance()->switchGame(SPokemonRNG::GCPokemonGame::Colosseum);
+    SPokemonRNG::setCurrentSystem(new ColosseumRNGSystem());
   else if (selection = GUICommon::gameSelection::XD)
-    SPokemonRNG::getInstance()->switchGame(SPokemonRNG::GCPokemonGame::XD);
+    SPokemonRNG::setCurrentSystem(new GaleDarknessRNGSystem());
 
   if (m_cmbGame->count() == static_cast<int>(GUICommon::gameSelection::Unselected) + 1)
   {
     m_cmbGame->removeItem(static_cast<int>(GUICommon::gameSelection::Unselected));
     m_btnStartSeedFinder->setEnabled(true);
   }
+  m_predictorWidget->switchGame(selection);
   m_btnReset->setEnabled(false);
   m_btnRerollPrediciton->setEnabled(false);
 }
@@ -100,7 +108,7 @@ void MainWindow::startSeedFinder()
   {
     m_currentSeed = wizard->getSeeds()[0];
     std::vector<BaseRNGSystem::StartersPrediction> predictions =
-        SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
+        SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
             m_currentSeed, SConfig::getInstance().getPredictionTime());
     m_predictorWidget->setStartersPrediction(predictions, selection);
     m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
@@ -126,9 +134,9 @@ void MainWindow::rerollPredictor()
 
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
-  SPokemonRNG::getInstance()->getSystem()->generateBattleTeam(m_currentSeed, dummyCriteria);
+  SPokemonRNG::getCurrentSystem()->generateBattleTeam(m_currentSeed, dummyCriteria);
   std::vector<BaseRNGSystem::StartersPrediction> predictions =
-      SPokemonRNG::getInstance()->getSystem()->predictStartersForNbrSeconds(
+      SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
           m_currentSeed, SConfig::getInstance().getPredictionTime());
   m_predictorWidget->setStartersPrediction(predictions, selection);
   m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());

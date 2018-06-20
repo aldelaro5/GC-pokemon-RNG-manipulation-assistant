@@ -10,9 +10,6 @@ PredictorWidget::PredictorWidget(QWidget* parent) : QWidget(parent)
 {
   initialiseWidgets();
   makeLayouts();
-
-  connect(SPokemonRNG::getInstance(), &SPokemonRNG::onSwitchGame, this,
-          &PredictorWidget::switchGame);
 }
 
 void PredictorWidget::initialiseWidgets()
@@ -82,7 +79,7 @@ void PredictorWidget::switchGame(const GUICommon::gameSelection game)
   m_tblHeaderLabels.append(tr("Seed"));
   m_tblHeaderLabels.append(tr("Trainer ID"));
   m_tblHeaderLabels.append(tr("Frame (seconds)"));
-  for (int i = 0; i < SPokemonRNG::getInstance()->getSystem()->getNbrStartersPrediction(); i++)
+  for (int i = 0; i < SPokemonRNG::getCurrentSystem()->getNbrStartersPrediction(); i++)
   {
     m_tblHeaderLabels.append(tr("HP IV"));
     m_tblHeaderLabels.append(tr("Atk IV"));
@@ -115,7 +112,7 @@ void PredictorWidget::setStartersPrediction(
     const GUICommon::gameSelection game)
 {
   clearLabels();
-  std::vector<std::string> names = SPokemonRNG::getInstance()->getSystem()->getStartersName();
+  std::vector<std::string> names = SPokemonRNG::getCurrentSystem()->getStartersName();
   for (auto name : names)
   {
     QLabel* lblName = new QLabel(QString::fromStdString(name));

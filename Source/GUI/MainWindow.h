@@ -12,6 +12,7 @@ class MainWindow : public QMainWindow
 {
 public:
   MainWindow();
+  ~MainWindow();
 
   void gameChanged();
   void startSeedFinder();

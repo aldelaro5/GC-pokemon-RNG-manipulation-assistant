@@ -92,7 +92,7 @@ void SeedFinderWizard::nextSeedFinderPass()
 
   m_seedFinderFuture = QtConcurrent::run([=] {
     page->showSeedFinderProgress(true);
-    SPokemonRNG::getInstance()->getSystem()->seedFinder(
+    SPokemonRNG::getCurrentSystem()->seedFinder(
         page->obtainCriteria(), m_seeds, m_useWii, m_rtcErrorMarginSeconds, m_usePrecalc,
         [=](int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },
         [=] { return m_cancelSeedFinderPass; });
@@ -148,14 +148,14 @@ void SeedFinderWizard::pageChanged()
     layout << QWizard::Stretch << QWizard::CancelButton << QWizard::CustomButton1;
     setButtonLayout(layout);
 
-    QFileInfo info(QString::fromStdString(
-        SPokemonRNG::getInstance()->getSystem()->getPrecalcFilenameForSettings(
+    QFileInfo info(
+        QString::fromStdString(SPokemonRNG::getCurrentSystem()->getPrecalcFilenameForSettings(
             m_useWii, m_rtcErrorMarginSeconds)));
     m_usePrecalc = (info.exists() && info.isFile());
     if (!(info.exists() && info.isFile()))
     {
-      size_t fileSize = SPokemonRNG::getInstance()->getSystem()->getPracalcFileSize(
-          m_useWii, m_rtcErrorMarginSeconds);
+      size_t fileSize =
+          SPokemonRNG::getCurrentSystem()->getPracalcFileSize(m_useWii, m_rtcErrorMarginSeconds);
       QMessageBox* msg = new QMessageBox(
           QMessageBox::Question, "Precalculation file",
           "Do you want to generate a precalculation file? This file may take a while to generate "
@@ -172,15 +172,14 @@ void SeedFinderWizard::pageChanged()
       if (msg->result() == QMessageBox::Yes)
       {
         BaseRNGSystem::seedRange range =
-            SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(m_useWii,
-                                                                         m_rtcErrorMarginSeconds);
+            SPokemonRNG::getCurrentSystem()->getRangeForSettings(m_useWii, m_rtcErrorMarginSeconds);
         QProgressDialog* dlg = new QProgressDialog(
             "Precalculating " + QString::number(range.max - range.min) + " seeds...", "&Cancel", 0,
             range.max - range.min, this);
         connect(dlg, &QProgressDialog::canceled, this, [=]() { m_cancelPrecalc = true; });
 
         QtConcurrent::run([=]() {
-          SPokemonRNG::getInstance()->getSystem()->precalculateNbrRollsBeforeTeamGeneration(
+          SPokemonRNG::getCurrentSystem()->precalculateNbrRollsBeforeTeamGeneration(
               m_useWii, m_rtcErrorMarginSeconds, [=](int value) { dlg->setValue(value); },
               [=]() { return m_cancelPrecalc; });
           emit onPrecalcDone();

@@ -17,6 +17,7 @@ public:
                         const GUICommon::gameSelection game);
   void resetPredictor(const GUICommon::gameSelection currentGame);
   void filterUnwanted(const bool filterUnwanted);
+  void switchGame(const GUICommon::gameSelection game);
 
 private:
   const QBrush greenBrush = QBrush(QColor("#32CD32"));
@@ -25,7 +26,6 @@ private:
   void clearLabels();
   void initialiseWidgets();
   void makeLayouts();
-  void switchGame(const GUICommon::gameSelection game);
 
   BaseRNGSystem::StartersPrediction m_startersPrediction;
   QHBoxLayout* m_startersNamesLayout;

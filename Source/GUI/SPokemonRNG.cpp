@@ -1,44 +1,18 @@
 #include "SPokemonRNG.h"
 
-#include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
-#include "../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
+BaseRNGSystem* SPokemonRNG::m_currentSystem = nullptr;
 
-SPokemonRNG* SPokemonRNG::m_instance = nullptr;
-SPokemonRNG::GCPokemonGame SPokemonRNG::m_currentGame = SPokemonRNG::GCPokemonGame::None;
-BaseRNGSystem* SPokemonRNG::m_system = nullptr;
-
-SPokemonRNG::SPokemonRNG()
+BaseRNGSystem* SPokemonRNG::getCurrentSystem()
 {
+  return m_currentSystem;
 }
 
-SPokemonRNG* SPokemonRNG::getInstance()
+void SPokemonRNG::deleteSystem()
 {
-  if (m_instance == nullptr)
-    m_instance = new SPokemonRNG();
-  return m_instance;
+  delete m_currentSystem;
 }
 
-BaseRNGSystem* SPokemonRNG::getSystem() const
+void SPokemonRNG::setCurrentSystem(BaseRNGSystem* system)
 {
-  return m_system;
-}
-
-void SPokemonRNG::switchGame(const SPokemonRNG::GCPokemonGame game)
-{
-  if (m_currentGame == game || game == GCPokemonGame::None)
-    return;
-
-  delete m_system;
-  m_currentGame = game;
-  switch (m_currentGame)
-  {
-  case GCPokemonGame::Colosseum:
-    m_system = new ColosseumRNGSystem();
-    emit onSwitchGame(static_cast<GUICommon::gameSelection>(game));
-    break;
-  case GCPokemonGame::XD:
-    m_system = new GaleDarknessRNGSystem();
-    emit onSwitchGame(static_cast<GUICommon::gameSelection>(game));
-    break;
-  }
+  m_currentSystem = system;
 }

@@ -26,8 +26,8 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds,
   m_pbSeedFinder->setVisible(false);
   if (nbrFoundSeeds == 0)
   {
-    BaseRNGSystem::seedRange range = SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(
-        m_useWii, m_rtcMarginErrorSeconds);
+    BaseRNGSystem::seedRange range =
+        SPokemonRNG::getCurrentSystem()->getRangeForSettings(m_useWii, m_rtcMarginErrorSeconds);
     m_pbSeedFinder->setMinimum(0);
     m_pbSeedFinder->setMaximum(range.max - range.min);
     m_pbSeedFinder->setValue(0);
@@ -66,8 +66,8 @@ void SeedFinderPassPage::setSeedFinderProgress(const int nbrSeedsSimulated)
 void SeedFinderPassPage::setNewUsePrecalc(const bool newUsePrecalc)
 {
   m_usePrecalc = newUsePrecalc;
-  BaseRNGSystem::seedRange range = SPokemonRNG::getInstance()->getSystem()->getRangeForSettings(
-      m_useWii, m_rtcMarginErrorSeconds);
+  BaseRNGSystem::seedRange range =
+      SPokemonRNG::getCurrentSystem()->getRangeForSettings(m_useWii, m_rtcMarginErrorSeconds);
   m_lblSeedFinderStatus->setText(
       "Simulating " + QString::number(range.max - range.min) + " seeds using " +
       QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
