@@ -1,7 +1,11 @@
 #include "DlgSettings.h"
 
+#include <QFile>
+#include <QMessageBox>
 #include <QVBoxLayout>
 
+#include "../../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
+#include "../../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
 #include "../GUICommon.h"
 #include "SConfig.h"
 
@@ -39,6 +43,8 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
   setLayout(mainLayout);
 
   loadSettings();
+  m_oldRtcMarginError = m_generalTab->getRtcMarginError();
+  m_oldPlatform = m_generalTab->getPlatform();
 }
 
 void DlgSettings::loadSettings()
@@ -61,6 +67,39 @@ void DlgSettings::saveSettings() const
   saveUmbreonSettings();
   saveEspeonSettings();
   saveEeveeSettings();
+  precalcDeletePrompt();
+}
+
+void DlgSettings::precalcDeletePrompt() const
+{
+  if (m_oldPlatform != m_generalTab->getPlatform() ||
+      m_oldRtcMarginError != m_generalTab->getRtcMarginError())
+  {
+    ColosseumRNGSystem colo;
+    GaleDarknessRNGSystem xd;
+    QString oldColoFilename = QString::fromStdString(colo.getPrecalcFilenameForSettings(
+        m_oldPlatform == GUICommon::platform::Wii, m_oldRtcMarginError));
+    QFile coloFile(oldColoFilename);
+    QString oldXdFilename = QString::fromStdString(xd.getPrecalcFilenameForSettings(
+        m_oldPlatform == GUICommon::platform::Wii, m_oldRtcMarginError));
+    QFile xdFile(oldXdFilename);
+    if (coloFile.exists() || xdFile.exists())
+    {
+      QMessageBox* msg = new QMessageBox(
+          QMessageBox::Question, tr("Deleting old precalculation file"),
+          tr("The seed finder settings has been changed, this means the precalculation file(s) "
+             "associated with the old settings have been invalidated.\n\nDo you want to delete "
+             "them?"),
+          QMessageBox::Yes | QMessageBox::No);
+      if (msg->exec() == QMessageBox::Yes)
+      {
+        if (coloFile.exists())
+          coloFile.remove();
+        if (xdFile.exists())
+          xdFile.remove();
+      }
+    }
+  }
 }
 
 void DlgSettings::loadUmbreonSettings()
