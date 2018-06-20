@@ -130,7 +130,7 @@ void PredictorWidget::setStartersPrediction(
   if (m_lblStartersNames.size() > 1)
     m_startersNamesLayout->addStretch();
 
-  m_tblStartersPrediction->setRowCount(startersPrediction.size());
+  m_tblStartersPrediction->setRowCount(static_cast<int>(startersPrediction.size()));
   QVector<GUICommon::starter> startersSettings;
   if (game == GUICommon::gameSelection::Colosseum)
   {

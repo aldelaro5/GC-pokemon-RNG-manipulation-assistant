@@ -2,13 +2,11 @@ Source/[Bb]uild*/
 Source/[Bb]inary/
 Source/bin/
 Source/obj/
-Source/GeneratedFiles/
 Source/*.ini
 Source/*.ipch
 Source/*.opensdf
 Source/*.sdf
 Source/*.suo
-Source/*.vcxproj.user
 Source/*.obj
 Source/*.tlog
 Source/*.VC.opendb
@@ -17,4 +15,6 @@ Source/*.colo
 Source/*.xd
 Source/.vs/
 Source/.vscode/
+Source/x64/
+Source/x64/
 /.vs

@@ -64,12 +64,12 @@ SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
   switch (m_game)
   {
   case GUICommon::gameSelection::Colosseum:
-    page = new SeedFinderPassColosseum(this, m_seeds.size(), m_rtcErrorMarginSeconds, m_useWii,
-                                       m_usePrecalc);
+    page = new SeedFinderPassColosseum(this, static_cast<int>(m_seeds.size()),
+                                       m_rtcErrorMarginSeconds, m_useWii, m_usePrecalc);
     break;
   case GUICommon::gameSelection::XD:
-    page =
-        new SeedFinderPassXD(this, m_seeds.size(), m_rtcErrorMarginSeconds, m_useWii, m_usePrecalc);
+    page = new SeedFinderPassXD(this, static_cast<int>(m_seeds.size()), m_rtcErrorMarginSeconds,
+                                m_useWii, m_usePrecalc);
     break;
   default:
     return nullptr;
@@ -90,8 +90,8 @@ void SeedFinderWizard::nextSeedFinderPass()
   if (numberPass == 1)
     page->setNewUsePrecalc(m_usePrecalc);
 
+  page->showSeedFinderProgress(true);
   m_seedFinderFuture = QtConcurrent::run([=] {
-    page->showSeedFinderProgress(true);
     SPokemonRNG::getCurrentSystem()->seedFinder(
         page->obtainCriteria(), m_seeds, m_useWii, m_rtcErrorMarginSeconds, m_usePrecalc,
         [=](int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },

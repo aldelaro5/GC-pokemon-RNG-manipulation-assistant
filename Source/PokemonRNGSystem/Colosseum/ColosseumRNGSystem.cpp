@@ -1,5 +1,7 @@
 #include "ColosseumRNGSystem.h"
 
+#include <array>
+
 // The natures wanted for all Pokemon of all ultimate teams
 static const std::array<std::array<u8, 6>, 8> s_natureTeamsData = {
     {{{0x16, 0x15, 0x0f, 0x13, 0x04, 0x04}},
@@ -173,13 +175,13 @@ u32 inline ColosseumRNGSystem::rollRNGEnteringBattleMenu(u32 seed, u16* counter)
   return seed;
 }
 
-u32 inline ColosseumRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
+u32 ColosseumRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
 {
   seed = rollRNGToPokemonCompanyLogo(seed, counter);
   return rollRNGEnteringBattleMenu(seed, counter);
 }
 
-bool inline ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> criteria)
+bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> criteria)
 {
   int enemyTeamIndex = (LCG(seed) >> 16) & 7;
   int playerTeamIndex = -1;

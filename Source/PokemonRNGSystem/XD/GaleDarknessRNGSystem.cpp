@@ -1,5 +1,7 @@
 #include "GaleDarknessRNGSystem.h"
 
+#include <array>
+
 // HP stat of the quick battle team pokemon without IV and EV at level 100
 static const std::array<std::array<int, 2>, 10> s_quickBattleTeamMaxBaseHPStat = {{{{322, 340}},
                                                                                    {{310, 290}},
@@ -165,7 +167,7 @@ std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const boo
   return EVs;
 }
 
-u32 inline GaleDarknessRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
+u32 GaleDarknessRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
 {
   // Before getting to the quick battle menu, the reason this is deterministic is because the only
   // thing that is consequential is a dummy pokemon generation, but there's no criteria on the pid
@@ -195,7 +197,7 @@ u32 inline GaleDarknessRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
   return seed;
 }
 
-bool inline GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> criteria)
+bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> criteria)
 {
   // Player trainer name generation
   LCG(seed);
