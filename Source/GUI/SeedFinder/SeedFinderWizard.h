@@ -86,7 +86,7 @@ private:
 class EndPage : public QWizardPage
 {
 public:
-  EndPage(QWidget* parent, const bool sucess, u32 seed = 0);
+  EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelection game, u32 seed = 0);
 
   int nextId() const override;
 

@@ -112,9 +112,9 @@ void SeedFinderWizard::seedFinderPassDone()
     setButtonLayout(layout);
     m_seedFinderDone = true;
     if (m_seeds.size() == 1)
-      setPage(pageID::End, new EndPage(this, true, m_seeds[0]));
+      setPage(pageID::End, new EndPage(this, true, m_game, m_seeds[0]));
     else
-      setPage(pageID::End, new EndPage(this, false));
+      setPage(pageID::End, new EndPage(this, false, m_game));
     QWizard::next();
   }
   else
@@ -359,16 +359,30 @@ int InstructionsPage::nextId() const
   return SeedFinderWizard::pageID::SeedFinderPass;
 }
 
-EndPage::EndPage(QWidget* parent, const bool sucess, const u32 seed) : QWizardPage(parent)
+EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelection game,
+                 const u32 seed)
+    : QWizardPage(parent)
 {
   setTitle(tr("End"));
 
   if (sucess)
   {
+    QString additionalNotes("");
+    if (game == GUICommon::gameSelection::Colosseum)
+      additionalNotes = tr("You MUST use a preset name for the predictions to work.");
     m_lblResult = new QLabel(
         "The seed finding procedure completed sucessfully.\n\n" + QString("Your current seed is ") +
             QString::number(seed, 16).toUpper() +
-            QString("\n\nClick \"Finish\" to see your prediction in the previous window."),
+            QString("\n\nPredictions of the starters will appear depending on the amount of frames "
+                    "between pressing A on starting a new game and pressing A on the trainer name "
+                    "confirmation. Desired predictions will appear in green while undesired ones "
+                    "will appear in red (you may configure the filters in the settings). If you "
+                    "are unsatisfied with the predictions, generate another team and click the "
+                    "reroll button. You may only go back to the main menu of the game if you are "
+                    "satisfied with the predictions. ") +
+            additionalNotes +
+            QString("\n\nClick \"Finish\" to see your prediction in "
+                    "the previous window."),
         this);
   }
   else
