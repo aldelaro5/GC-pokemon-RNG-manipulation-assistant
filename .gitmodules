@@ -1,0 +1,3 @@
+[submodule "External/Qt"]
+	path = External/Qt
+	url = https://github.com/aldelaro5/win-qt5-GC-pokemon-RNG-manipulation-assistant.git
