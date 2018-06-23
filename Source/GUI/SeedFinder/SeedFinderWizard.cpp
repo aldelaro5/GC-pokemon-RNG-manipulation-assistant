@@ -341,12 +341,10 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
 
   QWidget* instructionsWidget = new QWidget(this);
   instructionsWidget->setLayout(instructionsLayout);
-  instructionsWidget->setMinimumHeight(1500);
-  instructionsWidget->setMaximumWidth(525);
 
   QScrollArea* mainWidget = new QScrollArea(this);
   mainWidget->setWidget(instructionsWidget);
-  mainWidget->setMaximumWidth(600);
+  mainWidget->setWidgetResizable(true);
 
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(mainWidget);

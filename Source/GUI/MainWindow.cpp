@@ -79,6 +79,9 @@ void MainWindow::makeLayouts()
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);
   setCentralWidget(mainWidget);
+
+  setWindowTitle("GameCube Pokémon RNG assistant");
+  setMinimumWidth(600);
 }
 
 void MainWindow::makeMenus()

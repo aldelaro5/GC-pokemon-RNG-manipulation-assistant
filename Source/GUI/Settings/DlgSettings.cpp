@@ -42,6 +42,8 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
   mainLayout->addWidget(m_buttonsDlg);
   setLayout(mainLayout);
 
+  setWindowTitle(tr("Settings"));
+
   loadSettings();
   m_oldRtcMarginError = m_generalTab->getRtcMarginError();
   m_oldPlatform = m_generalTab->getPlatform();
