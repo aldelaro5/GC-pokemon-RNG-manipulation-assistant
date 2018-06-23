@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 
 #include <QHBoxLayout>
+#include <QMenuBar>
+#include <QMessageBox>
 #include <QVBoxLayout>
 
 #include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
@@ -15,6 +17,7 @@ MainWindow::MainWindow()
 {
   initialiseWidgets();
   makeLayouts();
+  makeMenus();
 }
 
 MainWindow::~MainWindow()
@@ -76,6 +79,26 @@ void MainWindow::makeLayouts()
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);
   setCentralWidget(mainWidget);
+}
+
+void MainWindow::makeMenus()
+{
+  m_menuFile = menuBar()->addMenu(tr("&File"));
+  m_menuFile->addAction(tr("&Quit"), this, [=]() { close(); });
+
+  m_menuEdit = menuBar()->addMenu(tr("&Edit"));
+  m_menuEdit->addAction(tr("&Settings"), this, [=]() { openSettings(); });
+
+  m_menuHelp = menuBar()->addMenu(tr("&Help"));
+  m_menuHelp->addAction(tr("&About"), this, [=]() {
+    QString title = tr("About GameCube Pokémon RNG assistant");
+    QString text =
+        "Beta version 0.0.0\n\n" +
+        tr("A program to allow the manipulation of the starters RNG in Pokémon Colosseum and "
+           "Pokémon XD: Gale of darkness.\n\nThis program is licensed under the MIT license. "
+           "You should have received a copy of the MIT license along with this program");
+    QMessageBox::about(this, title, text);
+  });
 }
 
 void MainWindow::gameChanged()

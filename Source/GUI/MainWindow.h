@@ -3,6 +3,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QMainWindow>
+#include <QMenu>
 #include <QPushButton>
 
 #include "../Common/CommonTypes.h"
@@ -23,6 +24,11 @@ public:
 private:
   void initialiseWidgets();
   void makeLayouts();
+  void makeMenus();
+
+  QMenu* m_menuFile;
+  QMenu* m_menuEdit;
+  QMenu* m_menuHelp;
 
   QComboBox* m_cmbGame;
   QPushButton* m_btnStartSeedFinder;
