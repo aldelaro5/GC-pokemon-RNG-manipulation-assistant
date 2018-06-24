@@ -398,7 +398,9 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
 
   QVBoxLayout* mainlayout = new QVBoxLayout;
   mainlayout->addWidget(m_lblResult);
+  mainlayout->addStretch();
   setLayout(mainlayout);
+  setFixedHeight(550);
 }
 
 int EndPage::nextId() const
