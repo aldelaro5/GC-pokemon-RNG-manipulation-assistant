@@ -176,6 +176,8 @@ void SeedFinderWizard::pageChanged()
         QProgressDialog* dlg = new QProgressDialog(
             "Precalculating " + QString::number(range.max - range.min) + " seeds...", "&Cancel", 0,
             range.max - range.min, this);
+        dlg->setWindowTitle(tr("Precalculation file generation"));
+        dlg->setFixedWidth(500);
         connect(dlg, &QProgressDialog::canceled, this, [=]() { m_cancelPrecalc = true; });
 
         QtConcurrent::run([=]() {
