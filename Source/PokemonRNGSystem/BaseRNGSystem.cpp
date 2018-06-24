@@ -96,18 +96,14 @@ void BaseRNGSystem::seedFinder(const std::vector<int> criteria, std::vector<u32>
   }
   int nbrSeedsSimulatedTotal = 0;
   int seedsSimulatedCurrentBlock = 0;
-  s64 n = 1;
 #pragma omp parallel for
-  for (s64 i = range.min; i < range.max; i += n)
+  for (s64 i = range.min; i < range.max; i++)
   {
     // This is probably the most awkward way to do this, but it can't be done properly with OpenMP
     // because it requires to set an environement variable which cannot be set after the program is
     // started
     if (shouldCancelNow())
-    {
-      n = range.max;
       continue;
-    }
 
     u32 seed = 0;
     if (seeds.size() == 0)

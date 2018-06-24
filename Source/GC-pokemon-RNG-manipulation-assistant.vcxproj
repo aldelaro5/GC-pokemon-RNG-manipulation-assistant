@@ -111,6 +111,7 @@
     <ClInclude Include="gui\MainWindow.h" />
     <ClInclude Include="gui\predictor\PredictorWidget.h" />
     <ClInclude Include="gui\seedfinder\SeedFinderPassPage.h" />
+    <ClInclude Include="GUI\SeedFinder\SeedFinderWizard.h" />
     <ClInclude Include="gui\settings\ColosseumTab.h" />
     <ClInclude Include="gui\settings\CommonPredictorFiltersWidget.h" />
     <ClInclude Include="gui\settings\DlgSettings.h" />
