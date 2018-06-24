@@ -21,7 +21,7 @@ public:
 
 private:
   const QBrush greenBrush = QBrush(QColor("#32CD32"));
-  const QBrush redBrush = QBrush(QColor("#B22222"));
+  const QBrush redBrush = QBrush(QColor("#DC143C"));
 
   void clearLabels();
   void initialiseWidgets();
