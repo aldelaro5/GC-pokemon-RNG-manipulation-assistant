@@ -21,7 +21,7 @@ void PredictorWidget::initialiseWidgets()
   m_tblStartersPrediction = new QTableWidget();
   m_tblStartersPrediction->verticalHeader()->hide();
   m_tblStartersPrediction->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  m_tblStartersPrediction->setSelectionMode(QAbstractItemView::NoSelection);
+  m_tblStartersPrediction->setSelectionMode(QAbstractItemView::SingleSelection);
   m_tblStartersPrediction->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
