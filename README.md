@@ -11,7 +11,7 @@ This program allows this manipulation technique to work as it assists the runner
 For binary releases of this program, refer to [the "releases" page](https://github.com/aldelaro5/Dolphin-memory-engine/releases) on [the Github repository](https://github.com/aldelaro5/Dolphin-memory-engine).
 
 ## System requirements
-Any x86_64 based system should work, however, Mac OS will require the use of [Wine](https://www.winehq.org/) as I do not have the necessary tools to build for this OS.
+Any x86_64 based system should work, however, Mac OS will require the use of [Wine](https://www.winehq.org/) as I do not have the necessary tools to build for this OS. For Windows, you must have the [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-ca/help/2977003/the-latest-supported-visual-c-downloads) installed.
 
 For faster results, a CPU with high parallelism capabilities is recommended. This means that this program will benefit _greatly_ from having a CPU that has multiple cores/hreads.
 
