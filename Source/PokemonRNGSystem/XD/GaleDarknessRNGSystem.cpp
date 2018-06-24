@@ -16,12 +16,12 @@ static const std::array<std::array<int, 2>, 10> s_quickBattleTeamMaxBaseHPStat =
 static const int eeveeGenderRatio = 0x1f;
 
 // The minimum possible amount of naming screen animation render calls obtained by TASing the input
-// of the naming screen when using the WES preset name.
+// of the naming screen when using a custom name.
 static const int minNamingScreenAnimRenderCalls = 725;
 
-// The minimum possible amount of frames spending between confirming a new game and confirming the
-// preset name WES on the naming screen, obtained by TASing.
-static const int minNamingScreenFrames = 103;
+// The minimum possible amount of frames spending between confirming a new game and confirming
+// a custom name on the naming screen, obtained by TASing.
+static const int minNamingScreenFrames = 116;
 
 std::string GaleDarknessRNGSystem::getPrecalcFilenameForSettings(const bool useWii,
                                                                  const int rtcErrorMarginSeconds)
