@@ -11,4 +11,4 @@ build:
   verbosity: normal
 artifacts:
 - path: Source\bin\$(configuration)\
-name: $(configuration) build
+  name: $(configuration) build
