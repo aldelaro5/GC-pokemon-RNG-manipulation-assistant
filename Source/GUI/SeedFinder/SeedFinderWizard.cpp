@@ -369,6 +369,8 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
     QString additionalNotes("");
     if (game == GUICommon::gameSelection::Colosseum)
       additionalNotes = tr("You MUST use a preset name for the predictions to work.");
+    if (game == GUICommon::gameSelection::XD)
+      additionalNotes = tr("You MUST use a custom name for the predictions to work.");
     m_lblResult = new QLabel(
         "The seed finding procedure completed sucessfully.\n\n" + QString("Your current seed is ") +
             QString::number(seed, 16).toUpper() +
