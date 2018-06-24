@@ -32,14 +32,6 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Qt.props" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="Qt.props" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
@@ -47,14 +39,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\External\Qt\5.11.1\msvc2017_64\include;..\External\Qt\5.11.1\msvc2017_64\include\QtGui;..\External\Qt\5.11.1\msvc2017_64\include\QtWidgets;..\External\Qt\5.11.1\msvc2017_64\include\QtCore;..\External\Qt\5.11.1\msvc2017_64\include\QtConcurrent;$(IncludePath)</IncludePath>
+  <PropertyGroup>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\obj\$(configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\obj\$(configuration)\</IntDir>
+    <IntDir>$(SolutionDir)obj\$(configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
@@ -92,6 +79,9 @@
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Qt.props" />
+  </ImportGroup>
   <ItemGroup>
     <QtMoc Include="gui\seedfinder\SeedFinderWizard.h" />
   </ItemGroup>
@@ -133,8 +123,12 @@
     <ClInclude Include="pokemonrngsystem\xd\GaleDarknessRNGSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include=".clang-format"/>
+    <Text Include=".clang-format" />
     <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="qt.conf" />
+    <None Include="Qt.props" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
