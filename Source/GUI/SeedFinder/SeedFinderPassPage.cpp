@@ -180,7 +180,6 @@ SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, const int nbrF
   inputLayout->addWidget(lblTeam);
   inputLayout->addLayout(rbtnTeamLayout);
   inputLayout->addSpacing(10);
-  inputLayout->addStretch();
 
   m_inputWidget->setLayout(inputLayout);
 
@@ -193,6 +192,8 @@ SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, const int nbrF
   QWidget* mainWidget = new QWidget(this);
   mainWidget->setLayout(mainLayout);
   layout()->addWidget(mainWidget);
+  adjustSize();
+  setFixedHeight(height() + 100);
 }
 
 std::vector<int> SeedFinderPassColosseum::obtainCriteria()
@@ -355,7 +356,6 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds,
   inputLayout->addLayout(topPkmnHPLayout);
   inputLayout->addLayout(bottomPkmnHPLayout);
   inputLayout->addSpacing(10);
-  inputLayout->addStretch();
 
   m_inputWidget->setLayout(inputLayout);
 
@@ -368,6 +368,8 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds,
   QWidget* mainWidget = new QWidget(this);
   mainWidget->setLayout(mainLayout);
   layout()->addWidget(mainWidget);
+  adjustSize();
+  setFixedHeight(height() + 100);
 }
 
 std::vector<int> SeedFinderPassXD::obtainCriteria()

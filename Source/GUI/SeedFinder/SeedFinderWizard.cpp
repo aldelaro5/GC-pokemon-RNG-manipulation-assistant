@@ -44,13 +44,12 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, const GUICommon::gameSelecti
           &SeedFinderWizard::pageChanged);
 
   setWindowTitle(tr("Seed Finder Wizard"));
+  setWizardStyle(QWizard::ModernStyle);
 
   QList<QWizard::WizardButton> btnlayout;
   btnlayout << QWizard::Stretch << QWizard::CancelButton << QWizard::NextButton;
   setButtonLayout(btnlayout);
-
-  QSize size(600, 750);
-  setFixedSize(size);
+  setFixedWidth(650);
 }
 
 std::vector<u32> SeedFinderWizard::getSeeds() const
@@ -78,6 +77,7 @@ SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
   if (m_seeds.size() > 1)
     strResultStatus = QString::number(m_seeds.size()) + QString(" results");
   page->setTitle("Seed Finder Pass #" + QString::number(numberPass) + " (" + strResultStatus + ")");
+  adjustSize();
   return page;
 }
 
@@ -265,19 +265,19 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
   if (useWii)
   {
     m_lblConsoleInstructions = new QLabel(tr(
-        "After a hardware reset or boot, insert your disc then go to Wii settings -> calendar and "
-        "set the date to 01/01/2000. Then, set the time to 00:00, AS SOON AS you confirm the new "
-        "time, naviguate to the disc channel and boot the game as fast as possible. Depending on "
-        "your margin of error in your settings, this step may be more lenient in how fast you need "
-        "to be because the margin of error corespond to the time you can WASTE considering frame "
-        "perfect input. Note: when going to the disc channel, make sure you see the entire disc "
-        "spinning animation. To ensure you will see it, insert your disc before going to Wii "
+        "\nAfter a hardware reset or boot, insert your disc then go to Wii settings -> calendar "
+        "and set the date to 01/01/2000. Then, set the time to 00:00, AS SOON AS you confirm the "
+        "new time, naviguate to the disc channel and boot the game as fast as possible. Depending "
+        "on your margin of error in your settings, this step may be more lenient in how fast you "
+        "need to be because the margin of error corespond to the time you can WASTE considering "
+        "frame perfect input. Note: when going to the disc channel, make sure you see the entire "
+        "disc spinning animation. To ensure you will see it, insert your disc before going to Wii "
         "settings and wait you see the GameCube logo thumbnail on the disc channel."));
   }
   else
   {
     m_lblConsoleInstructions = new QLabel(tr(
-        "After a hardware reset or boot, insert your disc then go to the GameCube main menu by "
+        "\nAfter a hardware reset or boot, insert your disc then go to the GameCube main menu by "
         "holding A upon boot and go the the calendar settings. Set the date to 01/01/2000, then "
         "set the time to 00:00:00. AS SOON AS you press A to set the new time, naviguate to the "
         "gameplay menu and boot the game as fast as possible. Depending on your margin of error in "
@@ -292,7 +292,7 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
   {
   case GUICommon::gameSelection::Colosseum:
     m_lblGameInstructions = new QLabel(tr(
-        "Upon reaching the main menu in the game, naviguate to Battle Now -> Single Battle -> "
+        "\nUpon reaching the main menu in the game, naviguate to Battle Now -> Single Battle -> "
         "Ultimate. You should see a confirmation screen of a battle with a randomly generated "
         "team. The seed finder will ask you for the informations displayed on this screen so make "
         "sure you input them correctly. After entering the information and confirming everything, "
@@ -305,7 +305,7 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
     break;
   case GUICommon::gameSelection::XD:
     m_lblGameInstructions = new QLabel(tr(
-        "Upon reaching the main menu in the game, naviguate to VS Mode -> Quick Battle -> "
+        "\nUpon reaching the main menu in the game, naviguate to VS Mode -> Quick Battle -> "
         "Single Battle -> Ultimate. You should see a confirmation screen of a battle with a "
         "randomly generated team. The seed finder will ask you for the informations displayed on "
         "this screen so make sure you input them correctly. After entering the information and "
@@ -322,20 +322,17 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
     break;
   }
 
-  QLabel* lblNext =
-      new QLabel(tr("Press \"Next\" once you acknowledged the above instructions to start the seed "
-                    "finding procedure."));
+  QLabel* lblNext = new QLabel(
+      tr("\nPress \"Next\" once you acknowledged the above instructions to start the seed "
+         "finding procedure."));
   lblNext->setWordWrap(true);
   m_lblConsoleInstructions->setWordWrap(true);
   m_lblGameInstructions->setWordWrap(true);
 
   QVBoxLayout* instructionsLayout = new QVBoxLayout;
   instructionsLayout->addWidget(lblSummary);
-  instructionsLayout->addSpacing(30);
   instructionsLayout->addWidget(m_lblConsoleInstructions);
-  instructionsLayout->addSpacing(30);
   instructionsLayout->addWidget(m_lblGameInstructions);
-  instructionsLayout->addSpacing(30);
   instructionsLayout->addWidget(lblNext);
   instructionsLayout->addStretch();
 
@@ -350,6 +347,8 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
   mainLayout->addWidget(mainWidget);
 
   setLayout(mainLayout);
+  adjustSize();
+  setFixedHeight(400);
 }
 
 int InstructionsPage::nextId() const
