@@ -48,7 +48,8 @@ static const std::array<std::array<u8, 6>, 4> s_genderRatioDummyTeamsData = {
 // The gender ratio of the starters.
 static const std::array<u8, 2> s_genderRatioStarters = {{0x1f, 0x1f}};
 
-static const std::array<std::string, 2> s_startersName = {{"Umbreon", "Espeon"}};
+// Espeon first because it matters the most for speedruns
+static const std::array<std::string, 2> s_startersName = {{"Espeon", "Umbreon"}};
 
 // The minimum possible amount of naming screen animation render calls obtained by TASing the input
 // of the naming screen when using the WES preset name.
@@ -322,7 +323,8 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     starter.isShiny = false;
     starter.genderIndex = 0;
     starter.natureIndex = personalityID % 25;
-    startersProperties.push_back(starter);
+    // This will invert the order because we want Espeon first, but umbreon is generated first
+    startersProperties.insert(startersProperties.begin(), starter);
   }
   result.starters = startersProperties;
   return result;

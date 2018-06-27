@@ -128,8 +128,8 @@ void PredictorWidget::setStartersPrediction(
   QVector<GUICommon::starter> startersSettings;
   if (game == GUICommon::gameSelection::Colosseum)
   {
-    startersSettings.append(GUICommon::starter::Umbreon);
     startersSettings.append(GUICommon::starter::Espeon);
+    startersSettings.append(GUICommon::starter::Umbreon);
   }
   else if (game == GUICommon::gameSelection::XD)
   {
