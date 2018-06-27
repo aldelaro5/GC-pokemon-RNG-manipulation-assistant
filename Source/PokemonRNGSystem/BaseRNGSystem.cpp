@@ -40,13 +40,13 @@ size_t BaseRNGSystem::getPracalcFileSize(const bool useWii, const int rtcErrorMa
 }
 
 void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
-    const bool useWii, const int rtcErrorMarginSeconds, std::function<void(int)> progressUpdate,
+    const bool useWii, const int rtcErrorMarginSeconds, std::function<void(long)> progressUpdate,
     std::function<bool()> shouldCancelNow)
 {
   std::string filename = getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds);
   std::ofstream precalcFile(filename, std::ios::binary | std::ios::out);
   seedRange range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
-  int nbrSeedsPrecalculatedTotal = 0;
+  long nbrSeedsPrecalculatedTotal = 0;
   int seedsPrecalculatedCurrentBlock = 0;
   bool hasCancelled = false;
   for (s64 i = range.min; i < range.max; i++)
@@ -77,7 +77,7 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
 
 void BaseRNGSystem::seedFinder(const std::vector<int> criteria, std::vector<u32>& seeds,
                                const bool useWii, const int rtcErrorMarginSeconds,
-                               const bool usePrecalc, std::function<void(int)> progressUpdate,
+                               const bool usePrecalc, std::function<void(long)> progressUpdate,
                                std::function<bool()> shouldCancelNow)
 {
   std::vector<u32> newSeeds;
@@ -94,7 +94,7 @@ void BaseRNGSystem::seedFinder(const std::vector<int> criteria, std::vector<u32>
     precalc = new u16[range.max - range.min];
     precalcFile.read(reinterpret_cast<char*>(precalc), (range.max - range.min) * sizeof(u16));
   }
-  int nbrSeedsSimulatedTotal = 0;
+  long nbrSeedsSimulatedTotal = 0;
   int seedsSimulatedCurrentBlock = 0;
 #pragma omp parallel for
   for (s64 i = range.min; i < range.max; i++)

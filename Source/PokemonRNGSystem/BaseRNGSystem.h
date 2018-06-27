@@ -51,12 +51,12 @@ public:
   // before getting to the battle menu, this improves performance significantly thanks to the LCGn
   // function and this file can be reused in subsequent seed finding
   void precalculateNbrRollsBeforeTeamGeneration(const bool useWii, const int rtcErrorMarginSeconds,
-                                                std::function<void(int)> progressUpdate,
+                                                std::function<void(long)> progressUpdate,
                                                 std::function<bool()> shouldCancelNow);
   // Seed finding algorithm, this does only one pass with parellelism
   void seedFinder(const std::vector<int> criteria, std::vector<u32>& seeds, const bool useWii,
                   const int rtcErrorMarginSeconds, const bool usePrecalc,
-                  std::function<void(int)> progressUpdate, std::function<bool()> shouldCancelNow);
+                  std::function<void(long)> progressUpdate, std::function<bool()> shouldCancelNow);
   std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, const int nbrSeconds);
   // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
   // outcome got

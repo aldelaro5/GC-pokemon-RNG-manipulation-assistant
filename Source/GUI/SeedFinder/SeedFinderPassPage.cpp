@@ -58,7 +58,7 @@ void SeedFinderPassPage::setSeedFinderDone(const bool seedFinderDone)
   m_seedFinderDone = seedFinderDone;
 }
 
-void SeedFinderPassPage::setSeedFinderProgress(const int nbrSeedsSimulated)
+void SeedFinderPassPage::setSeedFinderProgress(const long nbrSeedsSimulated)
 {
   m_pbSeedFinder->setValue(nbrSeedsSimulated);
 }

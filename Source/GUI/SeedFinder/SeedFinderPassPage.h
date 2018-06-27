@@ -19,7 +19,7 @@ public:
   virtual std::vector<int> obtainCriteria() = 0;
 
   void setSeedFinderDone(const bool seedFinderDone);
-  void setSeedFinderProgress(const int nbrSeedsSimulated);
+  void setSeedFinderProgress(const long nbrSeedsSimulated);
   void setNewUsePrecalc(const bool newUsePrecalc);
   virtual void showSeedFinderProgress(const bool showProgress);
 

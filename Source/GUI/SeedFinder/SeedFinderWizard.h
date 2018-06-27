@@ -7,6 +7,7 @@
 #include <QCheckBox>
 #include <QFuture>
 #include <QLabel>
+#include <QProgressDialog>
 
 #include "../../Common/CommonTypes.h"
 #include "../GUICommon.h"
@@ -43,7 +44,8 @@ public:
   static int numberPass;
 
 signals:
-  void onUpdateSeedFinderProgress(const int value);
+  void onUpdateSeedFinderProgress(const long value);
+  void onUpdatePrecalcProgress(const long value);
   void onSeedFinderPassDone();
   void onPrecalcDone();
 
@@ -57,6 +59,7 @@ private:
   bool m_cancelPrecalc = false;
   QFuture<void> m_seedFinderFuture;
   QFuture<void> m_precalcFuture;
+  QProgressDialog* m_dlgProgressPrecalc;
   int m_rtcErrorMarginSeconds = 0;
   bool m_useWii = false;
   bool m_usePrecalc = false;
