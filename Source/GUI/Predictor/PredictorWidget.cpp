@@ -142,8 +142,9 @@ void PredictorWidget::setStartersPrediction(
     m_tblStartersPrediction->setItem(
         i, 0,
         new QTableWidgetItem(QString::number(startersPrediction[i].startingSeed, 16).toUpper()));
-    m_tblStartersPrediction->setItem(
-        i, 1, new QTableWidgetItem(QString::number(startersPrediction[i].trainerId)));
+    m_tblStartersPrediction->setItem(i, 1,
+                                     new QTableWidgetItem(QString("%1").arg(
+                                         startersPrediction[i].trainerId, 5, 10, QChar('0'))));
     if (i == 0)
     {
       m_tblStartersPrediction->setItem(
