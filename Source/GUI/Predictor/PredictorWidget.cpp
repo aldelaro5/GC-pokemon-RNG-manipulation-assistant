@@ -142,7 +142,8 @@ void PredictorWidget::setStartersPrediction(
     bool passAllFilters = true;
     m_tblStartersPrediction->setItem(
         i, 0,
-        new QTableWidgetItem(QString::number(startersPrediction[i].startingSeed, 16).toUpper()));
+        new QTableWidgetItem(
+            QString("%1").arg(startersPrediction[i].startingSeed, 8, 16, QChar('0')).toUpper()));
     m_tblStartersPrediction->setItem(i, 1,
                                      new QTableWidgetItem(QString("%1").arg(
                                          startersPrediction[i].trainerId, 5, 10, QChar('0'))));

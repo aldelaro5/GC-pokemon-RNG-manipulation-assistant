@@ -380,7 +380,7 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
       additionalNotes = tr("You MUST use a custom name for the predictions to work.");
     m_lblResult = new QLabel(
         "The seed finding procedure completed sucessfully.\n\n" + QString("Your current seed is ") +
-            QString::number(seed, 16).toUpper() +
+            QString("%1").arg(seed, 8, 16, QChar('0')).toUpper() +
             QString("\n\nPredictions of the starters will appear depending on the amount of frames "
                     "between pressing A on starting a new game and pressing A on the trainer name "
                     "confirmation. Desired predictions will appear in green while undesired ones "
