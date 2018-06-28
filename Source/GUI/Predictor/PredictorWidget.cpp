@@ -75,6 +75,7 @@ void PredictorWidget::switchGame(const GUICommon::gameSelection game)
   m_lblStartersNames.append(lblSeedFinder);
   m_startersNamesLayout->addWidget(m_lblStartersNames[0]);
   m_tblStartersPrediction->clear();
+  m_tblStartersPrediction->setRowCount(0);
   m_tblHeaderLabels.clear();
   m_tblHeaderLabels.append(tr("Seed"));
   m_tblHeaderLabels.append(tr("Trainer ID"));
