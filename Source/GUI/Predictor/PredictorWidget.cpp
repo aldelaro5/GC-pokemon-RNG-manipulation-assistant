@@ -81,7 +81,7 @@ void PredictorWidget::switchGame(const GUICommon::gameSelection game)
   m_tblHeaderLabels.append(tr("Frame (seconds)"));
   for (int i = 0; i < SPokemonRNG::getCurrentSystem()->getNbrStartersPrediction(); i++)
   {
-    m_tblHeaderLabels.append(tr("HP IV"));
+    m_tblHeaderLabels.append(tr("HP IV (stat)"));
     m_tblHeaderLabels.append(tr("Atk IV"));
     m_tblHeaderLabels.append(tr("Def IV"));
     m_tblHeaderLabels.append(tr("Sp. Atk IV"));
@@ -168,8 +168,10 @@ void PredictorWidget::setStartersPrediction(
     {
       BaseRNGSystem::StarterGen starter = startersPrediction[i].starters[j];
 
-      m_tblStartersPrediction->setItem(i, 3 + j * nbrColPerStarter,
-                                       new QTableWidgetItem(QString::number(starter.hpIV)));
+      m_tblStartersPrediction->setItem(
+          i, 3 + j * nbrColPerStarter,
+          new QTableWidgetItem(QString::number(starter.hpIV) + " (" +
+                               QString::number(starter.hpStartingStat) + ")"));
       if (starter.hpIV >= SConfig::getInstance().getMinHpIv(startersSettings[j]))
       {
         m_tblStartersPrediction->item(i, 3 + j * nbrColPerStarter)->setBackground(greenBrush);

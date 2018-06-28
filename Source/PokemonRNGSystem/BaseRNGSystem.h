@@ -20,6 +20,7 @@ public:
     int spAtkIV = 0;
     int spDefIV = 0;
     int speedIV = 0;
+    int hpStartingStat = 0;
     int hiddenPowerTypeIndex = 0;
     int hiddenPowerPower = 0;
     int genderIndex = 0;

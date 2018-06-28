@@ -45,11 +45,14 @@ static const std::array<std::array<u8, 6>, 4> s_genderRatioDummyTeamsData = {
      {{0xbf, 0x1f, 0x7f, 0x7f, 0x7f, 0x7f}},
      {{0x7f, 0x7f, 0xff, 0x7f, 0x7f, 0x7f}}}};
 
-// The gender ratio of the starters.
-static const std::array<u8, 2> s_genderRatioStarters = {{0x1f, 0x1f}};
-
 // Espeon first because it matters the most for speedruns
 static const std::array<std::string, 2> s_startersName = {{"Espeon", "Umbreon"}};
+
+// The gender ratio of the starters.
+static const u8 s_genderRatioStarters = 0x1f;
+// Order of generation so Umbreon then Espeon
+static const std::array<int, 2> s_startersHpBaseStats = {{95, 65}};
+static const std::array<int, 2> s_startersStartingLevel = {{26, 25}};
 
 // The minimum possible amount of naming screen animation render calls obtained by TASing the input
 // of the naming screen when using the WES preset name.
@@ -305,6 +308,9 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     // HP, ATK, DEF IV
     LCG(seed);
     starter.hpIV = (seed >> 16) & 31;
+    starter.hpStartingStat =
+        (2 * s_startersHpBaseStats[i] + starter.hpIV) * s_startersStartingLevel[i] / 100 +
+        s_startersStartingLevel[i] + 10;
     starter.atkIV = (seed >> 21) & 31;
     starter.defIV = (seed >> 26) & 31;
     // SPEED, SPATK, SPDEF IV
@@ -318,8 +324,8 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     fillStarterGenHiddenPowerInfo(starter);
 
     // Generates the true perosnality ID with any nature, but the gender has to be male.
-    u32 personalityID = generatePokemonPID(seed, hBaseId, lBaseId, dummyId, nullptr, 0,
-                                           s_genderRatioStarters[i], -1);
+    u32 personalityID =
+        generatePokemonPID(seed, hBaseId, lBaseId, dummyId, nullptr, 0, s_genderRatioStarters, -1);
     starter.isShiny = false;
     starter.genderIndex = 0;
     starter.natureIndex = personalityID % 25;

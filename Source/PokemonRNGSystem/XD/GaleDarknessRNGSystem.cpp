@@ -14,6 +14,8 @@ static const std::array<std::array<int, 2>, 10> s_quickBattleTeamMaxBaseHPStat =
                                                                                    {{320, 270}},
                                                                                    {{270, 230}}}};
 static const int eeveeGenderRatio = 0x1f;
+static const int eeveeBaseHpStat = 55;
+static const int eeveeStartingLevel = 10;
 
 // The minimum possible amount of naming screen animation render calls obtained by TASing the input
 // of the naming screen when using a custom name.
@@ -331,6 +333,8 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   // HP, ATK, DEF IV
   LCG(seed);
   starter.hpIV = (seed >> 16) & 31;
+  starter.hpStartingStat =
+      (2 * eeveeBaseHpStat + starter.hpIV) * eeveeStartingLevel / 100 + eeveeStartingLevel + 10;
   starter.atkIV = (seed >> 21) & 31;
   starter.defIV = (seed >> 26) & 31;
   // SPEED, SPATK, SPDEF IV
