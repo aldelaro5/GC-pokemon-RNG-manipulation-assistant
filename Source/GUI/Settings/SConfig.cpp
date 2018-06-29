@@ -102,7 +102,7 @@ bool SConfig::getEnableNatureFilter(const GUICommon::starter starter) const
   QString gameGroupStr = gameGroupStrForStarter(starter);
   QString starterGroupStr = s_starterGroupsStr.at(static_cast<int>(starter));
   return m_settings->value(gameGroupStr + "/" + starterGroupStr + "/enableNatureFilter", false)
-      .toInt();
+      .toBool();
 }
 
 QVector<bool> SConfig::getNatureFilters(const GUICommon::starter starter) const
@@ -127,7 +127,7 @@ bool SConfig::getEnableHiddenPowerTypesFilter(const GUICommon::starter starter) 
   QString starterGroupStr = s_starterGroupsStr.at(static_cast<int>(starter));
   return m_settings
       ->value(gameGroupStr + "/" + starterGroupStr + "/enableHiddenPowerTypeFilter", false)
-      .toInt();
+      .toBool();
 }
 
 QVector<bool> SConfig::getHiddenPowerTypesFilters(const GUICommon::starter starter) const
