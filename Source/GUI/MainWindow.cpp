@@ -141,6 +141,7 @@ void MainWindow::startSeedFinder()
     m_btnReset->setEnabled(true);
     m_btnRerollPrediciton->setEnabled(true);
   }
+  delete wizard;
 }
 
 void MainWindow::resetPredictor()
@@ -172,4 +173,5 @@ void MainWindow::openSettings()
 {
   DlgSettings* dlg = new DlgSettings(this);
   dlg->exec();
+  delete dlg;
 }

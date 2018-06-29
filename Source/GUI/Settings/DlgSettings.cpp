@@ -49,6 +49,14 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
   m_oldPlatform = m_generalTab->getPlatform();
 }
 
+DlgSettings::~DlgSettings()
+{
+  delete m_buttonsDlg;
+  delete m_generalTab;
+  delete m_coloTab;
+  delete m_xdTab;
+}
+
 void DlgSettings::loadSettings()
 {
   m_generalTab->setPlatform(SConfig::getInstance().getPlatform());
@@ -100,6 +108,7 @@ void DlgSettings::precalcDeletePrompt() const
         if (xdFile.exists())
           xdFile.remove();
       }
+      delete msg;
     }
   }
 }

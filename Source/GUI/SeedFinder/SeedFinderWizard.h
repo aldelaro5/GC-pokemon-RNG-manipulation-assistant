@@ -8,6 +8,7 @@
 #include <QFuture>
 #include <QLabel>
 #include <QProgressDialog>
+#include <QVector>
 
 #include "../../Common/CommonTypes.h"
 #include "../GUICommon.h"
@@ -31,6 +32,7 @@ public:
 
   SeedFinderWizard(QWidget* parent, const GUICommon::gameSelection game,
                    const int rtcErrorMarginSeconds, const bool useWii);
+  ~SeedFinderWizard();
 
   void accept() override;
   void reject() override;
@@ -54,6 +56,7 @@ private:
 
   bool m_seedFinderDone = false;
   std::vector<u32> m_seeds;
+  QVector<SeedFinderPassPage*> m_passPages;
   GUICommon::gameSelection m_game;
   bool m_cancelSeedFinderPass;
   bool m_cancelPrecalc = false;

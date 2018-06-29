@@ -54,6 +54,12 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, const GUICommon::gameSelecti
           [=](long value) { m_dlgProgressPrecalc->setValue(value); });
 }
 
+SeedFinderWizard::~SeedFinderWizard()
+{
+  for (auto page : m_passPages)
+    delete page;
+}
+
 std::vector<u32> SeedFinderWizard::getSeeds() const
 {
   return m_seeds;
@@ -75,6 +81,7 @@ SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
   default:
     return nullptr;
   }
+  m_passPages.append(page);
   QString strResultStatus("No passes done");
   if (m_seeds.size() > 1)
     strResultStatus = QString::number(m_seeds.size()) + QString(" results");
@@ -138,6 +145,7 @@ void SeedFinderWizard::precalcDone()
                         "any subsequent seed finding procedure with the given settings.",
                         QMessageBox::Ok);
     msg->exec();
+    delete msg;
     m_usePrecalc = true;
   }
 }
@@ -196,6 +204,7 @@ void SeedFinderWizard::pageChanged()
         m_dlgProgressPrecalc->exec();
         delete m_dlgProgressPrecalc;
       }
+      delete msg;
     }
   }
 }
@@ -217,7 +226,7 @@ void SeedFinderWizard::reject()
   else
   {
     QMessageBox* cancelPrompt =
-        new QMessageBox(QMessageBox::Information, "Seed Finder Cancellation",
+        new QMessageBox(QMessageBox::Question, "Seed Finder Cancellation",
                         "Are you sure you want to cancel the seed finding procedure?",
                         QMessageBox::No | QMessageBox::Yes, this);
     cancelPrompt->exec();
@@ -227,6 +236,7 @@ void SeedFinderWizard::reject()
       m_seedFinderFuture.waitForFinished();
       QWizard::reject();
     }
+    delete cancelPrompt;
   }
 }
 

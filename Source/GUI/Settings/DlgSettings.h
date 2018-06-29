@@ -13,6 +13,7 @@ class DlgSettings : public QDialog
 {
 public:
   DlgSettings(QWidget* parent = nullptr);
+  ~DlgSettings();
 
 private:
   void loadSettings();
