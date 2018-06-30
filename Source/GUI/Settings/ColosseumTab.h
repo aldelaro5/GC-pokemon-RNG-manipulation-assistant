@@ -9,6 +9,7 @@ class ColosseumTab : public QWidget
 {
 public:
   ColosseumTab(QWidget* parent = nullptr);
+  ~ColosseumTab();
 
   CommonPredictorFiltersWidget* getUmbreonFiltersWidget() const;
   CommonPredictorFiltersWidget* getEspeonFiltersWidget() const;

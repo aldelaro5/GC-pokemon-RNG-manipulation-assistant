@@ -13,6 +13,7 @@ class SeedFinderPassPage : public QWizardPage
 public:
   SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds, const int rtcErrorMarginSeconds,
                      const bool useWii, const bool usePrecalc);
+  ~SeedFinderPassPage();
 
   int nextId() const override;
 

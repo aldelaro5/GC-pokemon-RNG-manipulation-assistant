@@ -18,6 +18,12 @@ ColosseumTab::ColosseumTab(QWidget* parent) : QWidget(parent)
   setLayout(mainLayout);
 }
 
+ColosseumTab::~ColosseumTab()
+{
+  delete m_predictorFiltersUmbreon;
+  delete m_predictorFiltersEspeon;
+}
+
 CommonPredictorFiltersWidget* ColosseumTab::getUmbreonFiltersWidget() const
 {
   return m_predictorFiltersUmbreon;

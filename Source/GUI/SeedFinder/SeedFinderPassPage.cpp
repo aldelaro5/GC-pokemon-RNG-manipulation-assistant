@@ -53,6 +53,10 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds,
   setLayout(layout);
 }
 
+SeedFinderPassPage::~SeedFinderPassPage()
+{
+}
+
 void SeedFinderPassPage::setSeedFinderDone(const bool seedFinderDone)
 {
   m_seedFinderDone = seedFinderDone;

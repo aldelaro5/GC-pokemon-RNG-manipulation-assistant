@@ -36,6 +36,11 @@ GaleDarknessTab::GaleDarknessTab(QWidget* parent) : QWidget(parent)
   setLayout(mainLayout);
 }
 
+GaleDarknessTab::~GaleDarknessTab()
+{
+  delete m_predictorFiltersEevee;
+}
+
 CommonPredictorFiltersWidget* GaleDarknessTab::getEeveeFiltersWidget() const
 {
   return m_predictorFiltersEevee;

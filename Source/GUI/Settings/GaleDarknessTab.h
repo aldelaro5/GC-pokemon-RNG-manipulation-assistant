@@ -10,6 +10,7 @@ class GaleDarknessTab : public QWidget
 {
 public:
   GaleDarknessTab(QWidget* parent = nullptr);
+  ~GaleDarknessTab();
 
   CommonPredictorFiltersWidget* getEeveeFiltersWidget() const;
   GUICommon::shininess getShininess() const;

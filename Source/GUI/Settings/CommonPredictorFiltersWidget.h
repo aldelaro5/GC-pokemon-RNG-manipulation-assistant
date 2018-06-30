@@ -11,6 +11,7 @@ class CommonPredictorFiltersWidget : public QWidget
 {
 public:
   CommonPredictorFiltersWidget(QWidget* parent = nullptr);
+  virtual ~CommonPredictorFiltersWidget();
 
   int getMinHpIv() const;
   int getMinAtkIv() const;

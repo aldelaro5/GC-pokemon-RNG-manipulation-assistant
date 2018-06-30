@@ -131,6 +131,10 @@ CommonPredictorFiltersWidget::CommonPredictorFiltersWidget(QWidget* parent) : QW
   setLayout(mainLayout);
 }
 
+CommonPredictorFiltersWidget::~CommonPredictorFiltersWidget()
+{
+}
+
 int CommonPredictorFiltersWidget::getMinHpIv() const
 {
   return m_spnMinHpIv->value();
