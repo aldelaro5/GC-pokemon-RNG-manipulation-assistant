@@ -36,7 +36,7 @@ BaseRNGSystem::seedRange BaseRNGSystem::getRangeForSettings(const bool useWii,
 size_t BaseRNGSystem::getPracalcFileSize(const bool useWii, const int rtcErrorMarginSeconds)
 {
   seedRange range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
-  return (range.max - range.min) * sizeof(u16);
+  return (range.max - range.min) * (sizeof(u16) + sizeof(u8));
 }
 
 void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
@@ -60,8 +60,10 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
     u32 seed = 0;
     u16 counter = 0;
     seed = rollRNGToBattleMenu(static_cast<u32>(i), &counter);
-    u16* ptrCounter = &counter;
-    precalcFile.write(reinterpret_cast<const char*>(ptrCounter), sizeof(u16));
+    std::vector<int> criteria = obtainTeamGenerationCritera(seed);
+    u8 compactedCriteria = (criteria[0] & 0x0f) | (criteria[1] << 4);
+    precalcFile.write(reinterpret_cast<const char*>(&compactedCriteria), sizeof(u8));
+    precalcFile.write(reinterpret_cast<const char*>(&counter), sizeof(u16));
     nbrSeedsPrecalculatedTotal++;
     seedsPrecalculatedCurrentBlock++;
     if (seedsPrecalculatedCurrentBlock >= 10000)
@@ -75,10 +77,10 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
     std::remove(filename.c_str());
 }
 
-void BaseRNGSystem::seedFinder(const std::vector<int> criteria, std::vector<u32>& seeds,
-                               const bool useWii, const int rtcErrorMarginSeconds,
-                               const bool usePrecalc, std::function<void(long)> progressUpdate,
-                               std::function<bool()> shouldCancelNow)
+void BaseRNGSystem::seedFinderPass(const std::vector<int> criteria, std::vector<u32>& seeds,
+                                   const bool useWii, const int rtcErrorMarginSeconds,
+                                   const bool usePrecalc, std::function<void(long)> progressUpdate,
+                                   std::function<bool()> shouldCancelNow)
 {
   std::vector<u32> newSeeds;
   seedRange range;
@@ -88,11 +90,12 @@ void BaseRNGSystem::seedFinder(const std::vector<int> criteria, std::vector<u32>
   std::ifstream precalcFile(getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds),
                             std::ios::binary | std::ios::in);
   bool actuallyUsePrecalc = usePrecalc && precalcFile.good();
-  u16* precalc = nullptr;
+  u8* precalc = nullptr;
+  size_t sizeSeedPrecalc = sizeof(u16) + sizeof(u8);
   if (actuallyUsePrecalc)
   {
-    precalc = new u16[range.max - range.min];
-    precalcFile.read(reinterpret_cast<char*>(precalc), (range.max - range.min) * sizeof(u16));
+    precalc = new u8[(range.max - range.min) * (sizeof(u8) + sizeof(u16))];
+    precalcFile.read(reinterpret_cast<char*>(precalc), sizeSeedPrecalc * (range.max - range.min));
   }
   long nbrSeedsSimulatedTotal = 0;
   int seedsSimulatedCurrentBlock = 0;
@@ -106,24 +109,36 @@ void BaseRNGSystem::seedFinder(const std::vector<int> criteria, std::vector<u32>
       continue;
 
     u32 seed = 0;
+    bool goodSeed = false;
     if (seeds.size() == 0)
     {
       if (actuallyUsePrecalc)
       {
-        u16 nbrRngCalls = 0;
-        std::memcpy(&nbrRngCalls, precalc + (i - range.min), sizeof(u16));
-        seed = LCGn(static_cast<u32>(i), nbrRngCalls);
+        int precalcOffset = sizeSeedPrecalc * (i - range.min);
+
+        int firstCriteria = precalc[precalcOffset] & 0x0f;
+        int secondCriteria = precalc[precalcOffset] >> 4;
+        goodSeed = firstCriteria == criteria[0] && secondCriteria == criteria[1];
+        if (goodSeed)
+        {
+          u16 nbrRngCalls = 0;
+          std::memcpy(&nbrRngCalls, precalc + precalcOffset + sizeof(u8), sizeof(u16));
+          seed = LCGn(static_cast<u32>(i), nbrRngCalls);
+          goodSeed = generateBattleTeam(seed, criteria);
+        }
       }
       else
       {
         seed = rollRNGToBattleMenu(static_cast<u32>(i));
+        goodSeed = generateBattleTeam(seed, criteria);
       }
     }
     else
     {
       seed = seeds[i];
+      goodSeed = generateBattleTeam(seed, criteria);
     }
-    if (generateBattleTeam(seed, criteria))
+    if (goodSeed)
 #pragma omp critical(addSeed)
       newSeeds.push_back(seed);
 #pragma omp critical(progress)

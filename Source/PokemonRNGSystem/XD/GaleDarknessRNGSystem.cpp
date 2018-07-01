@@ -272,6 +272,18 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
   return true;
 }
 
+std::vector<int> GaleDarknessRNGSystem::obtainTeamGenerationCritera(u32 seed)
+{
+  std::vector<int> criteria;
+  // Player trainer name generation
+  LCG(seed);
+  // Player team index
+  criteria.push_back((LCG(seed) >> 16) % 5);
+  // Enemy team index
+  criteria.push_back((LCG(seed) >> 16) % 5);
+  return criteria;
+}
+
 int GaleDarknessRNGSystem::getMinFramesAmountNamingScreen()
 {
   return minNamingScreenFrames;

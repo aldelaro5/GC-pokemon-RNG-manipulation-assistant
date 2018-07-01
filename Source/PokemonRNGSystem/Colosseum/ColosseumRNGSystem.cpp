@@ -245,6 +245,44 @@ bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> cr
   return true;
 }
 
+std::vector<int> ColosseumRNGSystem::obtainTeamGenerationCritera(u32 seed)
+{
+  std::vector<int> criteria;
+
+  int enemyTeamIndex = (LCG(seed) >> 16) & 7;
+  int playerTeamIndex = -1;
+  // The game generates a player team index as long as it is not the same as the enemy one
+  do
+  {
+    playerTeamIndex = (LCG(seed) >> 16) & 7;
+  } while (enemyTeamIndex == playerTeamIndex);
+
+  criteria.push_back(playerTeamIndex);
+  // The enemy trainer ID is generated as candidate, low then high 16 bits
+  u32 lTrainerId = LCG(seed) >> 16;
+  u32 hTrainerId = LCG(seed) >> 16;
+  // For each enemy pokemon
+  for (int i = 0; i < 6; i++)
+  {
+    // A dummy perosnality ID is generated, high then low 16 bits
+    u32 hDummyId = LCG(seed) >> 16;
+    u32 lDummyId = LCG(seed) >> 16;
+    u32 dummyId = (hDummyId << 16) | (lDummyId);
+
+    // These calls generate the IV and the ability, they don't actually matter for the rest
+    // of the calls
+    LCG(seed);
+    LCG(seed);
+    LCG(seed);
+    generatePokemonPID(
+        seed, hTrainerId, lTrainerId, dummyId, nullptr, s_genderTeamsData[enemyTeamIndex][i],
+        s_genderRatioTeamsData[enemyTeamIndex][i], s_natureTeamsData[enemyTeamIndex][i]);
+  }
+
+  criteria.push_back((LCG(seed) >> 16) % 3);
+  return criteria;
+}
+
 int ColosseumRNGSystem::getMinFramesAmountNamingScreen()
 {
   return minNamingScreenFrames;
