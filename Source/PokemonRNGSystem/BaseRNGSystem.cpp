@@ -114,7 +114,7 @@ void BaseRNGSystem::seedFinderPass(const std::vector<int> criteria, std::vector<
     {
       if (actuallyUsePrecalc)
       {
-        int precalcOffset = sizeSeedPrecalc * (i - range.min);
+        size_t precalcOffset = sizeSeedPrecalc * (i - range.min);
 
         int firstCriteria = precalc[precalcOffset] & 0x0f;
         int secondCriteria = precalc[precalcOffset] >> 4;
