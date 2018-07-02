@@ -8,7 +8,7 @@
 
 // This class manages all the backend and the implementation details of the RNG of a GameCube
 // Pokemon game, it consists of a seed finder with precalculation to improve performances and a stat
-// predictor based on the frame of confirming a preset name on the naming screen
+// predictor based on the frame of confirming a name on the naming screen
 class BaseRNGSystem
 {
 public:
@@ -36,28 +36,19 @@ public:
     int trainerId = 0;
   };
 
-  struct seedRange
-  {
-    s64 min = 0;
-    s64 max = 0;
-  };
-
-  BaseRNGSystem::seedRange getRangeForSettings(const bool useWii, const int rtcErrorMarginSeconds);
-  virtual std::string getPrecalcFilenameForSettings(const bool useWii,
-                                                    const int rtcErrorMarginSeconds);
-  size_t getPracalcFileSize(const bool useWii, const int rtcErrorMarginSeconds);
+  virtual std::string getPrecalcFilename() = 0;
   virtual int getNbrStartersPrediction() = 0;
   virtual std::vector<std::string> getStartersName() = 0;
-  virtual std::vector<int> obtainTeamGenerationCritera(u32 seed) = 0;
-  // Does the precalculation which consist of outputing to a file the number of RNG calls done
-  // before getting to the battle menu, this improves performance significantly thanks to the LCGn
-  // function and this file can be reused in subsequent seed finding
-  void precalculateNbrRollsBeforeTeamGeneration(const bool useWii, const int rtcErrorMarginSeconds,
-                                                std::function<void(long)> progressUpdate,
-                                                std::function<bool()> shouldCancelNow);
+  virtual std::vector<int> obtainTeamGenerationCritera(u32& seed) = 0;
+  virtual int getNbrCombinationsFirstTwoCriteria() = 0;
+  // Does the precalculation which consist of outputing to a file the remaining unique seeds after a
+  // complete first pass, the order of seeds will allow to tell the corespondance with the first two
+  // criteria
+  void generatePrecalculationFile(std::function<void(long)> progressUpdate,
+                                  std::function<bool()> shouldCancelNow);
+  virtual int firstTwoCriteriaToIndex(const std::vector<int> criteria) = 0;
   // Seed finding algorithm, this does only one pass with parellelism
-  void seedFinderPass(const std::vector<int> criteria, std::vector<u32>& seeds, const bool useWii,
-                      const int rtcErrorMarginSeconds, const bool usePrecalc,
+  void seedFinderPass(const std::vector<int> criteria, std::vector<u32>& seeds,
                       std::function<void(long)> progressUpdate,
                       std::function<bool()> shouldCancelNow);
   std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, const int nbrSeconds);
@@ -66,12 +57,6 @@ public:
   virtual bool generateBattleTeam(u32& seed, const std::vector<int> criteria) = 0;
 
 protected:
-  // By TASing on Dolphin to get the fastest time to set the clock and have the game init its seed,
-  // we arrive at 235 frames for the GameCube
-  static const u32 minRTCTicksToBootGC = (Common::ticksPerSecondGC / 60) * 235;
-  // By TASing on Dolphin to get the fastest time to set the clock and have the game init its seed,
-  // we arrive at 860 frames for the Wii
-  static const u32 minRTCTicksToBootWii = (Common::ticksPerSecondWii / 60) * 860;
   // The number of time the game polls the input per second on the naming screen
   static const int pollingRateNamingScreenPerSec = 60;
   virtual u32 rollRNGToBattleMenu(const u32 seed, u16* counter = nullptr) = 0;

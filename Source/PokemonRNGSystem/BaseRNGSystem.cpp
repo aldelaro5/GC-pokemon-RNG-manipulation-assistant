@@ -3,53 +3,23 @@
 #include <algorithm>
 #include <cstring>
 #include <fstream>
+#include <iostream>
+#include <map>
 #include <sstream>
 
-std::string BaseRNGSystem::getPrecalcFilenameForSettings(const bool useWii,
-                                                         const int rtcErrorMarginSeconds)
+void BaseRNGSystem::generatePrecalculationFile(std::function<void(long)> progressUpdate,
+                                               std::function<bool()> shouldCancelNow)
 {
-  std::stringstream ss;
-  ss << (useWii ? "Wii" : "GC");
-  ss << '-';
-  ss << rtcErrorMarginSeconds;
-  return ss.str();
-}
-
-BaseRNGSystem::seedRange BaseRNGSystem::getRangeForSettings(const bool useWii,
-                                                            const int rtcErrorMarginSeconds)
-{
-  seedRange range;
-  int ticksPerSecond = useWii ? Common::ticksPerSecondWii : Common::ticksPerSecondGC;
-  if (rtcErrorMarginSeconds == 0)
-  {
-    range.min = 0;
-    range.max = 0x100000000;
-  }
-  else
-  {
-    range.min = useWii ? minRTCTicksToBootWii : minRTCTicksToBootGC;
-    range.max = range.min + ticksPerSecond * rtcErrorMarginSeconds;
-  }
-  return range;
-}
-
-size_t BaseRNGSystem::getPracalcFileSize(const bool useWii, const int rtcErrorMarginSeconds)
-{
-  seedRange range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
-  return (range.max - range.min) * (sizeof(u16) + sizeof(u8));
-}
-
-void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
-    const bool useWii, const int rtcErrorMarginSeconds, std::function<void(long)> progressUpdate,
-    std::function<bool()> shouldCancelNow)
-{
-  std::string filename = getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds);
-  std::ofstream precalcFile(filename, std::ios::binary | std::ios::out);
-  seedRange range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
-  long nbrSeedsPrecalculatedTotal = 0;
-  int seedsPrecalculatedCurrentBlock = 0;
+  int progressUpdateCurrentBlock = 0;
+  int nbrTotalSeedsProcessedCurrentBlock = 0;
   bool hasCancelled = false;
-  for (s64 i = range.min; i < range.max; i++)
+  // Apparently, std::set are so slow compared to periodically std::sort + std::unique that it's
+  // much easier to use a vector to maintain RAM comapcted (std::set takes much more RAM for some
+  // reaosns)
+  std::map<u8, std::vector<u32>> seedsMap;
+  int numBlocks = 32;
+  int seedPerBlock = static_cast<int>(Common::nbrPossibleSeeds / numBlocks);
+  for (int blockId = 0; blockId < numBlocks; blockId++)
   {
     if (shouldCancelNow())
     {
@@ -57,50 +27,94 @@ void BaseRNGSystem::precalculateNbrRollsBeforeTeamGeneration(
       break;
     }
 
-    u32 seed = 0;
-    u16 counter = 0;
-    seed = rollRNGToBattleMenu(static_cast<u32>(i), &counter);
-    std::vector<int> criteria = obtainTeamGenerationCritera(seed);
-    u8 compactedCriteria = (criteria[0] & 0x0f) | (criteria[1] << 4);
-    precalcFile.write(reinterpret_cast<const char*>(&compactedCriteria), sizeof(u8));
-    precalcFile.write(reinterpret_cast<const char*>(&counter), sizeof(u16));
-    nbrSeedsPrecalculatedTotal++;
-    seedsPrecalculatedCurrentBlock++;
-    if (seedsPrecalculatedCurrentBlock >= 10000)
+#pragma omp parallel for
+    for (s64 i = seedPerBlock * blockId; i < seedPerBlock + seedPerBlock * blockId; i++)
     {
-      progressUpdate(nbrSeedsPrecalculatedTotal);
-      seedsPrecalculatedCurrentBlock = 0;
+      if (shouldCancelNow())
+      {
+        hasCancelled = true;
+        continue;
+      }
+      u32 seed = 0;
+      seed = rollRNGToBattleMenu(static_cast<u32>(i));
+      std::vector<int> criteria = obtainTeamGenerationCritera(seed);
+      u8 fileIndex = firstTwoCriteriaToIndex(criteria);
+#pragma omp critical(storeSeed)
+      seedsMap[fileIndex].push_back(seed);
+#pragma omp critical(progressUpdate)
+      {
+        nbrTotalSeedsProcessedCurrentBlock++;
+        if (nbrTotalSeedsProcessedCurrentBlock == 65536)
+        {
+          progressUpdateCurrentBlock++;
+          nbrTotalSeedsProcessedCurrentBlock = 0;
+          progressUpdate(progressUpdateCurrentBlock);
+        }
+      }
+    }
+    if (hasCancelled)
+      break;
+
+    for (u8 i = 0; i < getNbrCombinationsFirstTwoCriteria(); i++)
+    {
+      std::sort(seedsMap[i].begin(), seedsMap[i].end());
+      auto last = std::unique(seedsMap[i].begin(), seedsMap[i].end());
+      seedsMap[i].erase(last, seedsMap[i].end());
     }
   }
-  precalcFile.close();
-  if (hasCancelled)
-    std::remove(filename.c_str());
+  if (!hasCancelled)
+  {
+    std::string filename = getPrecalcFilename();
+    std::ofstream precalcFile(filename, std::ios::binary | std::ios::out);
+
+    for (u8 i = 0; i < getNbrCombinationsFirstTwoCriteria(); i++)
+    {
+      u32 size = static_cast<u32>(seedsMap[i].size());
+      precalcFile.write(reinterpret_cast<const char*>(&size), sizeof(u32));
+    }
+
+    for (u8 i = 0; i < getNbrCombinationsFirstTwoCriteria(); i++)
+    {
+      precalcFile.write(reinterpret_cast<const char*>(seedsMap[i].data()),
+                        sizeof(u32) * seedsMap[i].size());
+    }
+
+    precalcFile.close();
+  }
 }
 
 void BaseRNGSystem::seedFinderPass(const std::vector<int> criteria, std::vector<u32>& seeds,
-                                   const bool useWii, const int rtcErrorMarginSeconds,
-                                   const bool usePrecalc, std::function<void(long)> progressUpdate,
+                                   std::function<void(long)> progressUpdate,
                                    std::function<bool()> shouldCancelNow)
 {
   std::vector<u32> newSeeds;
-  seedRange range;
-  range.max = seeds.size();
   if (seeds.size() == 0)
-    range = getRangeForSettings(useWii, rtcErrorMarginSeconds);
-  std::ifstream precalcFile(getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds),
-                            std::ios::binary | std::ios::in);
-  bool actuallyUsePrecalc = usePrecalc && precalcFile.good();
-  u8* precalc = nullptr;
-  size_t sizeSeedPrecalc = sizeof(u16) + sizeof(u8);
-  if (actuallyUsePrecalc)
   {
-    precalc = new u8[(range.max - range.min) * (sizeof(u8) + sizeof(u16))];
-    precalcFile.read(reinterpret_cast<char*>(precalc), sizeSeedPrecalc * (range.max - range.min));
+    std::ifstream precalcFile(getPrecalcFilename(), std::ios::binary | std::ios::in);
+    bool actuallyUsePrecalc = precalcFile.good();
+    if (actuallyUsePrecalc)
+    {
+      u32* seedsArraySizes = new u32[getNbrCombinationsFirstTwoCriteria()];
+      precalcFile.read(reinterpret_cast<char*>(seedsArraySizes),
+                       sizeof(u32) * getNbrCombinationsFirstTwoCriteria());
+
+      int seedArrayFileIndex = firstTwoCriteriaToIndex(criteria);
+      u32 offsetSeeds = 0;
+      for (u8 i = 0; i < seedArrayFileIndex; i++)
+        offsetSeeds += seedsArraySizes[i];
+
+      precalcFile.seekg(offsetSeeds * sizeof(u32), std::ios_base::cur);
+      seeds.resize(seedsArraySizes[seedArrayFileIndex]);
+      precalcFile.read(reinterpret_cast<char*>(seeds.data()),
+                       sizeof(u32) * seedsArraySizes[seedArrayFileIndex]);
+      delete[] seedsArraySizes;
+    }
+    return;
   }
   long nbrSeedsSimulatedTotal = 0;
   int seedsSimulatedCurrentBlock = 0;
 #pragma omp parallel for
-  for (s64 i = range.min; i < range.max; i++)
+  for (int i = 0; i < seeds.size(); i++)
   {
     // This is probably the most awkward way to do this, but it can't be done properly with OpenMP
     // because it requires to set an environement variable which cannot be set after the program is
@@ -110,34 +124,9 @@ void BaseRNGSystem::seedFinderPass(const std::vector<int> criteria, std::vector<
 
     u32 seed = 0;
     bool goodSeed = false;
-    if (seeds.size() == 0)
-    {
-      if (actuallyUsePrecalc)
-      {
-        size_t precalcOffset = sizeSeedPrecalc * (i - range.min);
+    seed = seeds[i];
+    goodSeed = generateBattleTeam(seed, criteria);
 
-        int firstCriteria = precalc[precalcOffset] & 0x0f;
-        int secondCriteria = precalc[precalcOffset] >> 4;
-        goodSeed = firstCriteria == criteria[0] && secondCriteria == criteria[1];
-        if (goodSeed)
-        {
-          u16 nbrRngCalls = 0;
-          std::memcpy(&nbrRngCalls, precalc + precalcOffset + sizeof(u8), sizeof(u16));
-          seed = LCGn(static_cast<u32>(i), nbrRngCalls);
-          goodSeed = generateBattleTeam(seed, criteria);
-        }
-      }
-      else
-      {
-        seed = rollRNGToBattleMenu(static_cast<u32>(i));
-        goodSeed = generateBattleTeam(seed, criteria);
-      }
-    }
-    else
-    {
-      seed = seeds[i];
-      goodSeed = generateBattleTeam(seed, criteria);
-    }
     if (goodSeed)
 #pragma omp critical(addSeed)
       newSeeds.push_back(seed);
@@ -159,7 +148,6 @@ void BaseRNGSystem::seedFinderPass(const std::vector<int> criteria, std::vector<
   std::sort(seeds.begin(), seeds.end());
   auto last = std::unique(seeds.begin(), seeds.end());
   seeds.erase(last, seeds.end());
-  delete[] precalc;
 }
 
 std::vector<BaseRNGSystem::StartersPrediction>

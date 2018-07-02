@@ -102,7 +102,7 @@ void SeedFinderWizard::nextSeedFinderPass()
   page->showSeedFinderProgress(true);
   m_seedFinderFuture = QtConcurrent::run([=] {
     SPokemonRNG::getCurrentSystem()->seedFinderPass(
-        page->obtainCriteria(), m_seeds, m_useWii, m_rtcErrorMarginSeconds, m_usePrecalc,
+        page->obtainCriteria(), m_seeds,
         [=](long int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },
         [=] { return m_cancelSeedFinderPass; });
     if (!m_cancelSeedFinderPass)
@@ -157,55 +157,6 @@ void SeedFinderWizard::pageChanged()
     QList<QWizard::WizardButton> layout;
     layout << QWizard::Stretch << QWizard::CancelButton << QWizard::CustomButton1;
     setButtonLayout(layout);
-
-    QFileInfo info(
-        QString::fromStdString(SPokemonRNG::getCurrentSystem()->getPrecalcFilenameForSettings(
-            m_useWii, m_rtcErrorMarginSeconds)));
-    m_usePrecalc = (info.exists() && info.isFile());
-    if (!(info.exists() && info.isFile()))
-    {
-      size_t fileSize =
-          SPokemonRNG::getCurrentSystem()->getPracalcFileSize(m_useWii, m_rtcErrorMarginSeconds);
-      QMessageBox* msg = new QMessageBox(
-          QMessageBox::Question, "Precalculation file",
-          "Do you want to generate a precalculation file? This file may take a while to generate "
-          "and "
-          "be rather large, but will significantly speed up performance of the seed finder with "
-          "the "
-          "given game and the following settings:\n\nClock margin of error(seconds): " +
-              QString::number(m_rtcErrorMarginSeconds) +
-              "\nPlatform: " + (m_useWii ? QString("Nintendo Wii") : QString("Nintendo GameCube")) +
-              "\n\nEstimated file size: " + QString::number(fileSize / 1024 / 1024) +
-              "MB, do you want to create it?",
-          QMessageBox::No | QMessageBox::Yes, this);
-      msg->exec();
-      if (msg->result() == QMessageBox::Yes)
-      {
-        BaseRNGSystem::seedRange range =
-            SPokemonRNG::getCurrentSystem()->getRangeForSettings(m_useWii, m_rtcErrorMarginSeconds);
-        m_dlgProgressPrecalc = new QProgressDialog(this);
-        m_dlgProgressPrecalc->setWindowTitle(tr("Precalculation file generation"));
-        m_dlgProgressPrecalc->setCancelButtonText(tr("&Cancel"));
-        m_dlgProgressPrecalc->setMinimum(0);
-        m_dlgProgressPrecalc->setLabelText("Precalculating " +
-                                           QString::number(range.max - range.min) + " seeds...");
-        m_dlgProgressPrecalc->setMaximum(range.max - range.min);
-        m_dlgProgressPrecalc->setFixedWidth(500);
-        connect(m_dlgProgressPrecalc, &QProgressDialog::canceled, this,
-                [=]() { m_cancelPrecalc = true; });
-        QtConcurrent::run([=]() {
-          SPokemonRNG::getCurrentSystem()->precalculateNbrRollsBeforeTeamGeneration(
-              m_useWii, m_rtcErrorMarginSeconds,
-              [=](long int value) { emit onUpdatePrecalcProgress(value); },
-              [=]() { return m_cancelPrecalc; });
-          emit onPrecalcDone();
-        });
-
-        m_dlgProgressPrecalc->exec();
-        delete m_dlgProgressPrecalc;
-      }
-      delete msg;
-    }
   }
 }
 

@@ -24,13 +24,14 @@ public:
     Thomas
   };
 
-  std::string getPrecalcFilenameForSettings(const bool useWii,
-                                            const int rtcErrorMarginSeconds) final override;
+  std::string getPrecalcFilename() final override;
 
 private:
   u32 rollRNGToBattleMenu(u32 seed, u16* counter = nullptr) final override;
   bool generateBattleTeam(u32& seed, const std::vector<int> criteria) final override;
-  std::vector<int> obtainTeamGenerationCritera(u32 seed) final override;
+  std::vector<int> obtainTeamGenerationCritera(u32& seed) final override;
+  int getNbrCombinationsFirstTwoCriteria() final override;
+  int firstTwoCriteriaToIndex(const std::vector<int> criteria) final override;
   int getMinFramesAmountNamingScreen() final override;
   int getNbrStartersPrediction() final override;
   std::vector<std::string> getStartersName() final override;

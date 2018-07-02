@@ -21,7 +21,6 @@ private:
   void loadEspeonSettings();
   void loadEeveeSettings();
   void saveSettings() const;
-  void precalcDeletePrompt() const;
   void saveUmbreonSettings() const;
   void saveEspeonSettings() const;
   void saveEeveeSettings() const;
