@@ -11,17 +11,14 @@
 
 int SeedFinderWizard::numberPass = 1;
 
-SeedFinderWizard::SeedFinderWizard(QWidget* parent, const GUICommon::gameSelection game,
-                                   const int rtcErrorMarginSeconds, const bool useWii)
-    : QWizard(parent), m_game(game), m_rtcErrorMarginSeconds(rtcErrorMarginSeconds),
-      m_useWii(useWii)
+SeedFinderWizard::SeedFinderWizard(QWidget* parent, const GUICommon::gameSelection game)
+    : QWizard(parent), m_game(game)
 {
   numberPass = 1;
   m_cancelSeedFinderPass = false;
   m_seedFinderFuture = QFuture<void>();
-  m_precalcFuture = QFuture<void>();
   setPage(pageID::Start, new StartPage(this, game));
-  setPage(pageID::Instructions, new InstructionsPage(this, game, useWii));
+  setPage(pageID::Instructions, new InstructionsPage(this, game));
   setPage(pageID::SeedFinderPass, getSeedFinderPassPageForGame());
   setStartId(pageID::Start);
 
@@ -37,7 +34,6 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, const GUICommon::gameSelecti
   });
   connect(this, &SeedFinderWizard::onSeedFinderPassDone, this,
           &SeedFinderWizard::seedFinderPassDone);
-  connect(this, &SeedFinderWizard::onPrecalcDone, this, &SeedFinderWizard::precalcDone);
 
   connect(button(QWizard::NextButton), &QAbstractButton::clicked, this,
           &SeedFinderWizard::pageChanged);
@@ -49,9 +45,6 @@ SeedFinderWizard::SeedFinderWizard(QWidget* parent, const GUICommon::gameSelecti
   btnlayout << QWizard::Stretch << QWizard::CancelButton << QWizard::NextButton;
   setButtonLayout(btnlayout);
   setFixedWidth(650);
-
-  connect(this, &SeedFinderWizard::onUpdatePrecalcProgress, this,
-          [=](long value) { m_dlgProgressPrecalc->setValue(value); });
 }
 
 SeedFinderWizard::~SeedFinderWizard()
@@ -71,12 +64,10 @@ SeedFinderPassPage* SeedFinderWizard::getSeedFinderPassPageForGame()
   switch (m_game)
   {
   case GUICommon::gameSelection::Colosseum:
-    page = new SeedFinderPassColosseum(this, static_cast<int>(m_seeds.size()),
-                                       m_rtcErrorMarginSeconds, m_useWii, m_usePrecalc);
+    page = new SeedFinderPassColosseum(this, static_cast<int>(m_seeds.size()));
     break;
   case GUICommon::gameSelection::XD:
-    page = new SeedFinderPassXD(this, static_cast<int>(m_seeds.size()), m_rtcErrorMarginSeconds,
-                                m_useWii, m_usePrecalc);
+    page = new SeedFinderPassXD(this, static_cast<int>(m_seeds.size()));
     break;
   default:
     return nullptr;
@@ -95,9 +86,6 @@ void SeedFinderWizard::nextSeedFinderPass()
   SeedFinderPassPage* page = static_cast<SeedFinderPassPage*>(currentPage());
 
   button(QWizard::CustomButton1)->setEnabled(false);
-
-  if (numberPass == 1)
-    page->setNewUsePrecalc(m_usePrecalc);
 
   page->showSeedFinderProgress(true);
   m_seedFinderFuture = QtConcurrent::run([=] {
@@ -132,21 +120,6 @@ void SeedFinderWizard::seedFinderPassDone()
     setPage(numberPass + pageID::SeedFinderPass, getSeedFinderPassPageForGame());
     button(QWizard::CustomButton1)->setEnabled(true);
     QWizard::next();
-  }
-}
-
-void SeedFinderWizard::precalcDone()
-{
-  if (!m_cancelPrecalc)
-  {
-    QMessageBox* msg =
-        new QMessageBox(QMessageBox::Information, "Precalculation sucess",
-                        "The precalculation file was created sucessfully, it will now be used with "
-                        "any subsequent seed finding procedure with the given settings.",
-                        QMessageBox::Ok);
-    msg->exec();
-    delete msg;
-    m_usePrecalc = true;
   }
 }
 
@@ -217,46 +190,18 @@ int StartPage::nextId() const
     return SeedFinderWizard::pageID::Instructions;
 }
 
-InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelection game,
-                                   const bool useWii)
+InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelection game)
     : QWizardPage(parent)
 {
   setTitle(tr("Instructions"));
   setSubTitle(tr("Follow these detailled instructions before starting the seed finding procedure"));
 
   QLabel* lblSummary = new QLabel(
-      "This procedure involves first, setting your console's clock, booting the game after "
-      "setting the clock as fast as possible and then generating random battle teams over and over "
-      "which gives more and more information about your seed so that it is found by narrowing it "
-      "down to one possible one.",
+      "This procedure involves generating random battle teams over and over which gives more and "
+      "more information about your seed so that it is found by narrowing it down to one possible "
+      "one.",
       this);
   lblSummary->setWordWrap(true);
-
-  if (useWii)
-  {
-    m_lblConsoleInstructions = new QLabel(tr(
-        "\nAfter a hardware reset or boot, insert your disc then go to Wii settings -> calendar "
-        "and set the date to 01/01/2000. Then, set the time to 00:00, AS SOON AS you confirm the "
-        "new time, naviguate to the disc channel and boot the game as fast as possible. Depending "
-        "on your margin of error in your settings, this step may be more lenient in how fast you "
-        "need to be because the margin of error corespond to the time you can WASTE considering "
-        "frame perfect input. Note: when going to the disc channel, make sure you see the entire "
-        "disc spinning animation. To ensure you will see it, insert your disc before going to Wii "
-        "settings and wait you see the GameCube logo thumbnail on the disc channel."));
-  }
-  else
-  {
-    m_lblConsoleInstructions = new QLabel(tr(
-        "\nAfter a hardware reset or boot, insert your disc then go to the GameCube main menu by "
-        "holding A upon boot and go the the calendar settings. Set the date to 01/01/2000, then "
-        "set the time to 00:00:00. AS SOON AS you press A to set the new time, naviguate to the "
-        "gameplay menu and boot the game as fast as possible. Depending on your margin of error in "
-        "your settings, this step may be more lenient in how fast you need to be because the "
-        "margin of error corespond to the time you can WASTE considering frame perfect input. "
-        "Note: you shouldn't notice any latency when turning the cube menu after setting the time, "
-        "if you do notice such latency, ensure you do not buffer your stick input and just do them "
-        "after letting the stick neutral for a moment. You can try again if you are unsure."));
-  }
 
   switch (game)
   {
@@ -296,12 +241,10 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
       tr("\nPress \"Next\" once you acknowledged the above instructions to start the seed "
          "finding procedure."));
   lblNext->setWordWrap(true);
-  m_lblConsoleInstructions->setWordWrap(true);
   m_lblGameInstructions->setWordWrap(true);
 
   QVBoxLayout* instructionsLayout = new QVBoxLayout;
   instructionsLayout->addWidget(lblSummary);
-  instructionsLayout->addWidget(m_lblConsoleInstructions);
   instructionsLayout->addWidget(m_lblGameInstructions);
   instructionsLayout->addWidget(lblNext);
   instructionsLayout->addStretch();
@@ -359,10 +302,7 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
     m_lblResult = new QLabel(
         "The seed finding procedure completed, but your current seed hasn't been found. You have "
         "to restart this entire procedure again (this implies that you must hard reset the "
-        "console).\n\n" +
-        QString("Tip: try to increase your clock margin of error in the settings, altough doing so "
-                "will make the seed finding procedure slower, it will make booting the game after "
-                "setting the clock more permissive giving you more time to boot the game"));
+        "console).");
   }
   m_lblResult->setWordWrap(true);
 

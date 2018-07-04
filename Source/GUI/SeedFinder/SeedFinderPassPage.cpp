@@ -13,11 +13,8 @@
 #include "../SPokemonRNG.h"
 #include "SeedFinderWizard.h"
 
-SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds,
-                                       const int rtcErrorMarginSeconds, const bool useWii,
-                                       const bool usePrecalc)
-    : QWizardPage(parent), m_rtcMarginErrorSeconds(rtcErrorMarginSeconds), m_useWii(useWii),
-      m_usePrecalc(usePrecalc)
+SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds)
+    : QWizardPage(parent)
 {
   setSubTitle("Fill in the informations you see on the battle confirmation screen");
 
@@ -65,15 +62,6 @@ void SeedFinderPassPage::setSeedFinderProgress(const long nbrSeedsSimulated)
   m_pbSeedFinder->setValue(nbrSeedsSimulated);
 }
 
-void SeedFinderPassPage::setNewUsePrecalc(const bool newUsePrecalc)
-{
-  m_usePrecalc = newUsePrecalc;
-  m_lblSeedFinderStatus->setText(
-      "Simulating " + QString::number(Common::nbrPossibleSeeds) + " seeds using " +
-      QString::number(std::thread::hardware_concurrency()) + " thread(s) " +
-      (m_usePrecalc ? QString("with") : QString("without")) + " precalculation...");
-}
-
 void SeedFinderPassPage::showSeedFinderProgress(const bool showProgress)
 {
   m_pbSeedFinder->setVisible(showProgress);
@@ -89,10 +77,8 @@ int SeedFinderPassPage::nextId() const
     return SeedFinderWizard::numberPass + SeedFinderWizard::pageID::SeedFinderPass;
 }
 
-SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, const int nbrFoundSeeds,
-                                                 const int rtcErrorMarginSeconds, const bool useWii,
-                                                 const bool usePrecalc)
-    : SeedFinderPassPage(parent, nbrFoundSeeds, rtcErrorMarginSeconds, useWii, usePrecalc)
+SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, const int nbrFoundSeeds)
+    : SeedFinderPassPage(parent, nbrFoundSeeds)
 {
   m_playerNameIndexBtnGroup = new QButtonGroup(this);
 
@@ -204,10 +190,8 @@ std::vector<int> SeedFinderPassColosseum::obtainCriteria()
   return criteria;
 }
 
-SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds,
-                                   const int rtcErrorMarginSeconds, const bool useWii,
-                                   const bool usePrecalc)
-    : SeedFinderPassPage(parent, nbrFoundSeeds, rtcErrorMarginSeconds, useWii, usePrecalc)
+SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds)
+    : SeedFinderPassPage(parent, nbrFoundSeeds)
 {
   m_playerTeamIndexBtnGroup = new QButtonGroup(this);
 

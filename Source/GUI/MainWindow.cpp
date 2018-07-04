@@ -127,9 +127,7 @@ void MainWindow::startSeedFinder()
 {
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
-  int rtcMarginError = SConfig::getInstance().getRtcMarginError();
-  bool useWii = SConfig::getInstance().getPlatform() == GUICommon::platform::Wii;
-  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection, rtcMarginError, useWii);
+  SeedFinderWizard* wizard = new SeedFinderWizard(this, selection);
   if (wizard->exec() == QDialog::Accepted)
   {
     m_currentSeed = wizard->getSeeds()[0];
