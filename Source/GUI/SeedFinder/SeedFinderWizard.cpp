@@ -419,7 +419,8 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
   mainlayout->addWidget(m_lblResult);
   mainlayout->addStretch();
   setLayout(mainlayout);
-  setFixedHeight(550);
+  m_lblResult->adjustSize();
+  setFixedHeight(m_lblResult->height() + 150);
 }
 
 int EndPage::nextId() const
