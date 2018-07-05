@@ -45,8 +45,6 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
   setWindowTitle(tr("Settings"));
 
   loadSettings();
-  m_oldRtcMarginError = m_generalTab->getRtcMarginError();
-  m_oldPlatform = m_generalTab->getPlatform();
 }
 
 DlgSettings::~DlgSettings()
@@ -59,8 +57,6 @@ DlgSettings::~DlgSettings()
 
 void DlgSettings::loadSettings()
 {
-  m_generalTab->setPlatform(SConfig::getInstance().getPlatform());
-  m_generalTab->setRtcMarginError(SConfig::getInstance().getRtcMarginError());
   m_generalTab->setPredictionTime(SConfig::getInstance().getPredictionTime());
 
   loadUmbreonSettings();
@@ -70,8 +66,6 @@ void DlgSettings::loadSettings()
 
 void DlgSettings::saveSettings() const
 {
-  SConfig::getInstance().setPlatform(m_generalTab->getPlatform());
-  SConfig::getInstance().setRtcMarginError(m_generalTab->getRtcMarginError());
   SConfig::getInstance().setPredictionTime(m_generalTab->getPredictionTime());
 
   saveUmbreonSettings();
