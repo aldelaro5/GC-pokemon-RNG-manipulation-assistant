@@ -84,9 +84,11 @@
   </ImportGroup>
   <ItemGroup>
     <QtMoc Include="gui\seedfinder\SeedFinderWizard.h" />
+    <QtMoc Include="gui\MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(QtMocOutPrefix)SeedFinderWizard.cpp" />
+    <ClCompile Include="$(QtMocOutPrefix)MainWindow.cpp" />
     <ClCompile Include="gui\GUICommon.cpp" />
     <ClCompile Include="gui\MainWindow.cpp" />
     <ClCompile Include="gui\predictor\PredictorWidget.cpp" />
@@ -111,7 +113,7 @@
     <ClInclude Include="gui\MainWindow.h" />
     <ClInclude Include="gui\predictor\PredictorWidget.h" />
     <ClInclude Include="gui\seedfinder\SeedFinderPassPage.h" />
-    <ClInclude Include="GUI\SeedFinder\SeedFinderWizard.h" />
+    <ClInclude Include="gui\seedfinder\SeedFinderWizard.h" />
     <ClInclude Include="gui\settings\ColosseumTab.h" />
     <ClInclude Include="gui\settings\CommonPredictorFiltersWidget.h" />
     <ClInclude Include="gui\settings\DlgSettings.h" />
