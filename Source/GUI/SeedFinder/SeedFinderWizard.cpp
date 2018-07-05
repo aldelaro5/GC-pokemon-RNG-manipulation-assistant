@@ -2,6 +2,7 @@
 
 #include <QAbstractButton>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QtConcurrent>
@@ -58,6 +59,16 @@ SeedFinderWizard::~SeedFinderWizard()
 {
   for (auto page : m_passPages)
     delete page;
+}
+
+void SeedFinderWizard::keyPressEvent(QKeyEvent* event)
+{
+  if ((event->key() == Qt::Key_Enter) || (event->key() == Qt::Key_Return))
+  {
+    if (currentId() >= pageID::SeedFinderPass)
+      static_cast<QPushButton*>(button(QWizard::CustomButton1))->click();
+  }
+  QWizard::keyPressEvent(event);
 }
 
 std::vector<u32> SeedFinderWizard::getSeeds() const

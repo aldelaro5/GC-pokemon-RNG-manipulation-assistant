@@ -7,6 +7,7 @@
 #include <QCheckBox>
 #include <QFuture>
 #include <QLabel>
+#include <QKeyEvent>
 #include <QProgressDialog>
 #include <QVector>
 
@@ -36,6 +37,7 @@ public:
 
   void accept() override;
   void reject() override;
+  void keyPressEvent(QKeyEvent* event) override;
 
   std::vector<u32> getSeeds() const;
   void nextSeedFinderPass();
