@@ -124,7 +124,7 @@ SeedFinderPassColosseum::SeedFinderPassColosseum(QWidget* parent, const int nbrF
 
   m_playerTeamIndexBtnGroup = new QButtonGroup(this);
 
-  QRadioButton* rbtnBlaziken = new QRadioButton("Blazkien", this);
+  QRadioButton* rbtnBlaziken = new QRadioButton("Blaziken", this);
   QRadioButton* rbtnEntei = new QRadioButton("Entei", this);
   QRadioButton* rbtnSwampert = new QRadioButton("Swampert", this);
   QRadioButton* rbtnRaikou = new QRadioButton("Raikou", this);

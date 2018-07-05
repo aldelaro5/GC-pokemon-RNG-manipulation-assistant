@@ -50,7 +50,7 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   gbSeedFinder->setLayout(seedFinderLayout);
 
   QLabel* lblPredictionsTime =
-      new QLabel(tr("Amount of time to geenrate predictions (in seconds): "));
+      new QLabel(tr("Amount of time to generate predictions (in seconds): "));
   m_spbPredictionsTime = new QSpinBox();
   m_spbPredictionsTime->setMinimum(0);
   m_spbPredictionsTime->setValue(10);
