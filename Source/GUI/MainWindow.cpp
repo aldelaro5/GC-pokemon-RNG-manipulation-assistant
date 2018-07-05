@@ -1,9 +1,11 @@
 #include "MainWindow.h"
 
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include <QtConcurrent>
 
 #include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
 #include "../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
@@ -18,6 +20,16 @@ MainWindow::MainWindow()
   initialiseWidgets();
   makeLayouts();
   makeMenus();
+
+  m_precalcFuture = QFuture<void>();
+
+  connect(this, &MainWindow::onPrecalcDone, this, &MainWindow::precalcDone);
+  connect(this, &MainWindow::onUpdatePrecalcProgress, this, [=](long value) {
+    if (value == m_dlgProgressPrecalc->maximum())
+      m_dlgProgressPrecalc->setLabelText(tr("Writting to disk..."));
+    else
+      m_dlgProgressPrecalc->setValue(value);
+  });
 }
 
 MainWindow::~MainWindow()
@@ -87,6 +99,10 @@ void MainWindow::makeLayouts()
 void MainWindow::makeMenus()
 {
   m_menuFile = menuBar()->addMenu(tr("&File"));
+  m_actGenerationPrecalcFile =
+      m_menuFile->addAction(tr("Generate the precalculation file for the chosen game"), this,
+                            [=]() { generatePrecalc(); });
+  m_actGenerationPrecalcFile->setEnabled(false);
   m_menuFile->addAction(tr("&Quit"), this, [=]() { close(); });
 
   m_menuEdit = menuBar()->addMenu(tr("&Edit"));
@@ -117,6 +133,7 @@ void MainWindow::gameChanged()
   {
     m_cmbGame->removeItem(static_cast<int>(GUICommon::gameSelection::Unselected));
     m_btnStartSeedFinder->setEnabled(true);
+    m_actGenerationPrecalcFile->setEnabled(true);
   }
   m_predictorWidget->switchGame(selection);
   m_btnReset->setEnabled(false);
@@ -125,6 +142,22 @@ void MainWindow::gameChanged()
 
 void MainWindow::startSeedFinder()
 {
+  QFileInfo info(QString::fromStdString(SPokemonRNG::getCurrentSystem()->getPrecalcFilename()));
+  if (!(info.exists() && info.isFile()))
+  {
+    QMessageBox* msg = new QMessageBox(
+        QMessageBox::Critical, "Precalculation file missing",
+        "The precalculation file " + info.fileName() +
+            " specific to this game is missing from the program's directory and it is required for "
+            "the seed finding procedure. Please either download it (it should have been "
+            "distributed along the release of the program), or generate it from the File menu. It "
+            "is highly recommended to download it as the generation takes a few hours.",
+        QMessageBox::Ok);
+    msg->exec();
+    delete msg;
+    return;
+  }
+
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   SeedFinderWizard* wizard = new SeedFinderWizard(this, selection);
@@ -172,4 +205,53 @@ void MainWindow::openSettings()
   DlgSettings* dlg = new DlgSettings(this);
   dlg->exec();
   delete dlg;
+}
+
+void MainWindow::generatePrecalc()
+{
+  QMessageBox* msg = new QMessageBox(
+      QMessageBox::Warning, "Precalculation file",
+      "You are about to start the generation of a precalculation file for the chosen game. This "
+      "generation will take a few hours to complete depending on your CPU and thread count. "
+      "Consider downloading the file instead which should have been distributed along the release "
+      "of this program.\n\nDo you really want to start the file generation process?",
+      QMessageBox::No | QMessageBox::Yes, this);
+  msg->exec();
+  if (msg->result() == QMessageBox::Yes)
+  {
+    QtConcurrent::run([=] {
+      SPokemonRNG::getCurrentSystem()->generatePrecalculationFile(
+          [=](long value) { emit onUpdatePrecalcProgress(value); },
+          [=]() { return m_cancelPrecalc; });
+      if (!m_cancelPrecalc)
+        emit onPrecalcDone();
+    });
+    m_dlgProgressPrecalc = new QProgressDialog(this);
+    m_dlgProgressPrecalc->setWindowTitle(tr("Precalculation file generation"));
+    m_dlgProgressPrecalc->setCancelButtonText(tr("&Cancel"));
+    m_dlgProgressPrecalc->setMinimum(0);
+    m_dlgProgressPrecalc->setLabelText("Precalculating " +
+                                       QString::number(Common::nbrPossibleSeeds) + " seeds...");
+    m_dlgProgressPrecalc->setMaximum(65536);
+    m_dlgProgressPrecalc->setValue(0);
+    m_dlgProgressPrecalc->setFixedWidth(500);
+    connect(m_dlgProgressPrecalc, &QProgressDialog::canceled, this, [=]() {
+      m_cancelPrecalc = true;
+      m_precalcFuture.waitForFinished();
+    });
+    m_dlgProgressPrecalc->exec();
+    m_precalcFuture.waitForFinished();
+    delete m_dlgProgressPrecalc;
+  }
+  delete msg;
+}
+
+void MainWindow::precalcDone()
+{
+  m_dlgProgressPrecalc->setValue(m_dlgProgressPrecalc->maximum());
+  QMessageBox* msg =
+      new QMessageBox(QMessageBox::Information, "Precalculation success",
+                      "The precalculation file was created successfully.", QMessageBox::Ok);
+  msg->exec();
+  delete msg;
 }

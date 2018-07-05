@@ -57,4 +57,5 @@ private:
   QSpinBox* m_spnBottomLeftPkmnHP;
   QSpinBox* m_spnTopRightPkmnHP;
   QSpinBox* m_spnBottomRightPkmnHP;
+  QWidget* m_pkmnHPWidget;
 };

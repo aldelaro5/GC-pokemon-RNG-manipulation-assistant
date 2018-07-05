@@ -26,9 +26,7 @@ SeedFinderPassPage::SeedFinderPassPage(QWidget* parent, const int nbrFoundSeeds)
     m_pbSeedFinder->setMinimum(0);
     m_pbSeedFinder->setMaximum(0);
     m_pbSeedFinder->setValue(0);
-    m_lblSeedFinderStatus =
-        new QLabel("Simulating " + QString::number(Common::nbrPossibleSeeds) + " seeds using " +
-                   QString::number(std::thread::hardware_concurrency()) + " thread(s) ");
+    m_lblSeedFinderStatus = new QLabel("Filtering seeds from the precalculation file...");
   }
   else
   {
@@ -329,7 +327,23 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds)
   bottomPkmnHPLayout->addLayout(bottomRightPkmnHPLayout);
   bottomPkmnHPLayout->addStretch();
 
-  QLabel* lblPkmnHP = new QLabel("Enter the HP of the indicated Pokémon:", this);
+  QVBoxLayout* pkmnHPLayout = new QVBoxLayout;
+  pkmnHPLayout->addLayout(topPkmnHPLayout);
+  pkmnHPLayout->addLayout(bottomPkmnHPLayout);
+
+  m_pkmnHPWidget = new QWidget(this);
+  m_pkmnHPWidget->setLayout(pkmnHPLayout);
+
+  QLabel* lblPkmnHP = new QLabel(this);
+  if (nbrFoundSeeds == 0)
+  {
+    lblPkmnHP->setText(tr("You will enter the Pokémon HP starting from the next pass"));
+    m_pkmnHPWidget->setEnabled(false);
+  }
+  else
+  {
+    lblPkmnHP->setText(tr("Enter the HP of the indicated Pokémon:"));
+  }
   lblPkmnHP->setAlignment(Qt::AlignHCenter);
 
   QVBoxLayout* inputLayout = new QVBoxLayout;
@@ -337,8 +351,7 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds)
   inputLayout->addSpacing(10);
   inputLayout->addWidget(lblPkmnHP);
   inputLayout->addSpacing(10);
-  inputLayout->addLayout(topPkmnHPLayout);
-  inputLayout->addLayout(bottomPkmnHPLayout);
+  inputLayout->addWidget(m_pkmnHPWidget);
   inputLayout->addSpacing(10);
 
   m_inputWidget->setLayout(inputLayout);
