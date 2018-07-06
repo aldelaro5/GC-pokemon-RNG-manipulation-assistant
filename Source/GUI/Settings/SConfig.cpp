@@ -23,20 +23,6 @@ QString SConfig::gameGroupStrForStarter(const GUICommon::starter starter) const
   return QString("colosseumPredictor");
 }
 
-GUICommon::platform SConfig::getPlatform() const
-{
-  return static_cast<GUICommon::platform>(
-      m_settings
-          ->value("generalSettings/finder/platform",
-                  static_cast<int>(GUICommon::platform::GameCube))
-          .toInt());
-}
-
-int SConfig::getRtcMarginError() const
-{
-  return m_settings->value("generalSettings/finder/rtcMarginError", 5).toInt();
-}
-
 int SConfig::getPredictionTime() const
 {
   return m_settings->value("generalSettings/predictor/time", 10).toInt();
@@ -161,16 +147,6 @@ GUICommon::gender SConfig::getEeveeGender() const
                                             ->value("galeDarknessPredictor/eevee/gender",
                                                     static_cast<int>(GUICommon::gender::AnyGender))
                                             .toInt());
-}
-
-void SConfig::setPlatform(const GUICommon::platform platform)
-{
-  m_settings->setValue("generalSettings/finder/platform", static_cast<int>(platform));
-}
-
-void SConfig::setRtcMarginError(const int rtcMarginError)
-{
-  m_settings->setValue("generalSettings/finder/rtcMarginError", rtcMarginError);
 }
 
 void SConfig::setPredictionTime(const int predictionTime)

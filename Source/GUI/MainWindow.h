@@ -2,8 +2,10 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QFuture>
 #include <QMainWindow>
 #include <QMenu>
+#include <QProgressDialog>
 #include <QPushButton>
 
 #include "../Common/CommonTypes.h"
@@ -11,6 +13,8 @@
 
 class MainWindow : public QMainWindow
 {
+  Q_OBJECT
+
 public:
   MainWindow();
   ~MainWindow();
@@ -20,6 +24,12 @@ public:
   void resetPredictor();
   void rerollPredictor();
   void openSettings();
+  void generatePrecalc();
+  void precalcDone();
+
+signals:
+  void onUpdatePrecalcProgress(const long value);
+  void onPrecalcDone();
 
 private:
   void initialiseWidgets();
@@ -30,6 +40,7 @@ private:
   QMenu* m_menuEdit;
   QMenu* m_menuHelp;
 
+  QAction* m_actGenerationPrecalcFile;
   QComboBox* m_cmbGame;
   QPushButton* m_btnStartSeedFinder;
   QPushButton* m_btnSettings;
@@ -37,5 +48,8 @@ private:
   QPushButton* m_btnRerollPrediciton;
   QCheckBox* m_chkFilterUnwantedPredictions;
   PredictorWidget* m_predictorWidget;
+  bool m_cancelPrecalc = false;
+  QFuture<void> m_precalcFuture;
+  QProgressDialog* m_dlgProgressPrecalc;
   u32 m_currentSeed = 0;
 };

@@ -17,6 +17,9 @@ static const int eeveeGenderRatio = 0x1f;
 static const int eeveeBaseHpStat = 55;
 static const int eeveeStartingLevel = 10;
 
+static const int s_nbrPossiblePlayerTeams = 5;
+static const int s_nbrPossibleEnemyTeams = 5;
+
 // The minimum possible amount of naming screen animation render calls obtained by TASing the input
 // of the naming screen when using a custom name.
 static const int minNamingScreenAnimRenderCalls = 725;
@@ -25,10 +28,9 @@ static const int minNamingScreenAnimRenderCalls = 725;
 // a custom name on the naming screen, obtained by TASing.
 static const int minNamingScreenFrames = 116;
 
-std::string GaleDarknessRNGSystem::getPrecalcFilenameForSettings(const bool useWii,
-                                                                 const int rtcErrorMarginSeconds)
+std::string GaleDarknessRNGSystem::getPrecalcFilename()
 {
-  return BaseRNGSystem::getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds) + ".xd";
+  return "xd.precalc";
 }
 
 u32 inline GaleDarknessRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerId,
@@ -272,7 +274,7 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
   return true;
 }
 
-std::vector<int> GaleDarknessRNGSystem::obtainTeamGenerationCritera(u32 seed)
+std::vector<int> GaleDarknessRNGSystem::obtainTeamGenerationCritera(u32& seed)
 {
   std::vector<int> criteria;
   // Player trainer name generation
@@ -281,7 +283,66 @@ std::vector<int> GaleDarknessRNGSystem::obtainTeamGenerationCritera(u32 seed)
   criteria.push_back((LCG(seed) >> 16) % 5);
   // Enemy team index
   criteria.push_back((LCG(seed) >> 16) % 5);
+  // modulo 6 ???
+  LCG(seed);
+
+  // Enemy gen
+
+  // The player trainer ID is generated, low then high 16 bits
+  u32 lTrainerId = LCG(seed) >> 16;
+  u32 hTrainerId = LCG(seed) >> 16;
+  // Pokemon gen
+  for (int i = 0; i < 2; i++)
+  {
+    // Dummy personality ID (doesn't matter)
+    LCG(seed);
+    LCG(seed);
+    // HP, ATK, DEF IV
+    LCG(seed);
+    u32 hpIV = (seed >> 16) & 31;
+    // SPEED, SPATK, SPDEF IV
+    LCG(seed);
+    // Ability
+    LCG(seed);
+    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
+    generateEVs(seed, false, false, nullptr);
+  }
+
+  // modulo 6 ???
+  LCG(seed);
+
+  // Player gen
+
+  // The player trainer ID is generated, low then high 16 bits
+  lTrainerId = LCG(seed) >> 16;
+  hTrainerId = LCG(seed) >> 16;
+  // Pokemon gen
+  for (int i = 0; i < 2; i++)
+  {
+    // Dummy personality ID (doesn't matter)
+    LCG(seed);
+    LCG(seed);
+    // HP, ATK, DEF IV
+    LCG(seed);
+    u32 hpIV = (seed >> 16) & 31;
+    // SPEED, SPATK, SPDEF IV
+    LCG(seed);
+    // Ability
+    LCG(seed);
+    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
+    generateEVs(seed, false, false, nullptr);
+  }
   return criteria;
+}
+
+int GaleDarknessRNGSystem::getNbrCombinationsFirstTwoCriteria()
+{
+  return s_nbrPossibleEnemyTeams * s_nbrPossiblePlayerTeams;
+}
+
+int GaleDarknessRNGSystem::firstTwoCriteriaToIndex(const std::vector<int> criteria)
+{
+  return criteria[0] * s_nbrPossiblePlayerTeams + criteria[1];
 }
 
 int GaleDarknessRNGSystem::getMinFramesAmountNamingScreen()

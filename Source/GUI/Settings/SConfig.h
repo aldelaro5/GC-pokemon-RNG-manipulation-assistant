@@ -12,8 +12,6 @@ public:
   SConfig(SConfig const&) = delete;
   void operator=(SConfig const&) = delete;
 
-  GUICommon::platform getPlatform() const;
-  int getRtcMarginError() const;
   int getPredictionTime() const;
   bool getSkipInstructionPage() const;
   int getMinHpIv(const GUICommon::starter starter) const;
@@ -31,8 +29,6 @@ public:
   GUICommon::shininess getEeveeShininess() const;
   GUICommon::gender getEeveeGender() const;
 
-  void setPlatform(const GUICommon::platform platform);
-  void setRtcMarginError(const int rtcMarginError);
   void setPredictionTime(const int predictionTime);
   void setSkipInstructionPage(const bool skipInstructionPage);
   void setMinHpIv(const GUICommon::starter starter, const int minHpIv);

@@ -45,8 +45,6 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
   setWindowTitle(tr("Settings"));
 
   loadSettings();
-  m_oldRtcMarginError = m_generalTab->getRtcMarginError();
-  m_oldPlatform = m_generalTab->getPlatform();
 }
 
 DlgSettings::~DlgSettings()
@@ -59,8 +57,6 @@ DlgSettings::~DlgSettings()
 
 void DlgSettings::loadSettings()
 {
-  m_generalTab->setPlatform(SConfig::getInstance().getPlatform());
-  m_generalTab->setRtcMarginError(SConfig::getInstance().getRtcMarginError());
   m_generalTab->setPredictionTime(SConfig::getInstance().getPredictionTime());
 
   loadUmbreonSettings();
@@ -70,47 +66,11 @@ void DlgSettings::loadSettings()
 
 void DlgSettings::saveSettings() const
 {
-  SConfig::getInstance().setPlatform(m_generalTab->getPlatform());
-  SConfig::getInstance().setRtcMarginError(m_generalTab->getRtcMarginError());
   SConfig::getInstance().setPredictionTime(m_generalTab->getPredictionTime());
 
   saveUmbreonSettings();
   saveEspeonSettings();
   saveEeveeSettings();
-  precalcDeletePrompt();
-}
-
-void DlgSettings::precalcDeletePrompt() const
-{
-  if (m_oldPlatform != m_generalTab->getPlatform() ||
-      m_oldRtcMarginError != m_generalTab->getRtcMarginError())
-  {
-    ColosseumRNGSystem colo;
-    GaleDarknessRNGSystem xd;
-    QString oldColoFilename = QString::fromStdString(colo.getPrecalcFilenameForSettings(
-        m_oldPlatform == GUICommon::platform::Wii, m_oldRtcMarginError));
-    QFile coloFile(oldColoFilename);
-    QString oldXdFilename = QString::fromStdString(xd.getPrecalcFilenameForSettings(
-        m_oldPlatform == GUICommon::platform::Wii, m_oldRtcMarginError));
-    QFile xdFile(oldXdFilename);
-    if (coloFile.exists() || xdFile.exists())
-    {
-      QMessageBox* msg = new QMessageBox(
-          QMessageBox::Question, tr("Deleting old precalculation file"),
-          tr("The seed finder settings has been changed, this means the precalculation file(s) "
-             "associated with the old settings have been invalidated.\n\nDo you want to delete "
-             "them?"),
-          QMessageBox::Yes | QMessageBox::No);
-      if (msg->exec() == QMessageBox::Yes)
-      {
-        if (coloFile.exists())
-          coloFile.remove();
-        if (xdFile.exists())
-          xdFile.remove();
-      }
-      delete msg;
-    }
-  }
 }
 
 void DlgSettings::loadUmbreonSettings()

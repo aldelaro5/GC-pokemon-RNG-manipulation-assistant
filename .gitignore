@@ -11,8 +11,7 @@ Source/*.obj
 Source/*.tlog
 Source/*.VC.opendb
 Source/*.VC.db
-Source/*.colo
-Source/*.xd
+Source/*.precalc
 Source/.vs/
 Source/.vscode/
 Source/x64/

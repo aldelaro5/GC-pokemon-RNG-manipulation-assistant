@@ -54,6 +54,9 @@ static const u8 s_genderRatioStarters = 0x1f;
 static const std::array<int, 2> s_startersHpBaseStats = {{95, 65}};
 static const std::array<int, 2> s_startersStartingLevel = {{26, 25}};
 
+static const int s_nbrPossibleTeams = 8;
+static const int s_nbrPossibleTrainerName = 3;
+
 // The minimum possible amount of naming screen animation render calls obtained by TASing the input
 // of the naming screen when using the WES preset name.
 static const int minNamingScreenAnimRenderCalls = 689;
@@ -62,10 +65,9 @@ static const int minNamingScreenAnimRenderCalls = 689;
 // preset name WES on the naming screen, obtained by TASing.
 static const int minNamingScreenFrames = 107;
 
-std::string ColosseumRNGSystem::getPrecalcFilenameForSettings(const bool useWii,
-                                                              const int rtcErrorMarginSeconds)
+std::string ColosseumRNGSystem::getPrecalcFilename()
 {
-  return BaseRNGSystem::getPrecalcFilenameForSettings(useWii, rtcErrorMarginSeconds) + ".colo";
+  return "colo.precalc";
 }
 
 u32 inline ColosseumRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerId,
@@ -245,7 +247,7 @@ bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> cr
   return true;
 }
 
-std::vector<int> ColosseumRNGSystem::obtainTeamGenerationCritera(u32 seed)
+std::vector<int> ColosseumRNGSystem::obtainTeamGenerationCritera(u32& seed)
 {
   std::vector<int> criteria;
 
@@ -280,7 +282,39 @@ std::vector<int> ColosseumRNGSystem::obtainTeamGenerationCritera(u32 seed)
   }
 
   criteria.push_back((LCG(seed) >> 16) % 3);
+
+  // The player trainer ID is generated, low then high 16 bits
+  lTrainerId = LCG(seed) >> 16;
+  hTrainerId = LCG(seed) >> 16;
+  // For each player pokemon
+  for (int i = 0; i < 6; i++)
+  {
+    // A dummy personality ID is generated, high then low 16 bits
+    u32 hDummyId = LCG(seed) >> 16;
+    u32 lDummyId = LCG(seed) >> 16;
+    u32 dummyId = (hDummyId << 16) | (lDummyId);
+
+    // These calls generate the IV and the ability, they don't actually matter for the rest
+    // of the calls
+    LCG(seed);
+    LCG(seed);
+    LCG(seed);
+    generatePokemonPID(
+        seed, hTrainerId, lTrainerId, dummyId, nullptr, s_genderTeamsData[playerTeamIndex][i],
+        s_genderRatioTeamsData[playerTeamIndex][i], s_natureTeamsData[playerTeamIndex][i]);
+  }
+
   return criteria;
+}
+
+int ColosseumRNGSystem::getNbrCombinationsFirstTwoCriteria()
+{
+  return s_nbrPossibleTrainerName * s_nbrPossibleTeams;
+}
+
+int ColosseumRNGSystem::firstTwoCriteriaToIndex(const std::vector<int> criteria)
+{
+  return criteria[0] + s_nbrPossibleTeams * criteria[1];
 }
 
 int ColosseumRNGSystem::getMinFramesAmountNamingScreen()

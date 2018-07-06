@@ -4,9 +4,7 @@
 
 namespace Common
 {
-// The GameCube RTC does 40500000 ticks per second while the Wii is exactly 1.5 faster
-static const int ticksPerSecondGC = 40500000;
-static const int ticksPerSecondWii = static_cast<int>(ticksPerSecondGC * 1.5);
+static const u64 nbrPossibleSeeds = 0x100000000;
 
 // Alogorithm that returns (base^exp) mod 2^32 in the complexity O(log n)
 inline u32 modpow32(u32 base, u32 exp)
