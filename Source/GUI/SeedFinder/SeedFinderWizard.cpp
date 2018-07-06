@@ -312,7 +312,7 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
   {
     m_lblResult = new QLabel(
         "The seed finding procedure completed, but your current seed hasn't been found. You have "
-        "to restart this entire procedure again (this implies that you must hard reset the "
+        "to restart this entire procedure again (this implies that you must soft reset the "
         "console).");
   }
   m_lblResult->setWordWrap(true);
