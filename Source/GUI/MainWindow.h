@@ -46,10 +46,12 @@ private:
   QPushButton* m_btnSettings;
   QPushButton* m_btnReset;
   QPushButton* m_btnRerollPrediciton;
+  QLabel* m_lblRerollCount;
   QCheckBox* m_chkFilterUnwantedPredictions;
   PredictorWidget* m_predictorWidget;
   bool m_cancelPrecalc = false;
   QFuture<void> m_precalcFuture;
   QProgressDialog* m_dlgProgressPrecalc;
   u32 m_currentSeed = 0;
+  int m_rerollCount = 0;
 };
