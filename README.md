@@ -4,20 +4,20 @@
 [![Travis CI build Status](https://travis-ci.org/aldelaro5/GC-pokemon-RNG-manipulation-assistant.svg?branch=master)](https://travis-ci.org/aldelaro5/GC-pokemon-RNG-manipulation-assistant)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/3k6v4h3rxl4pjd57/branch/master?svg=true)](https://ci.appveyor.com/project/aldelaro5/gc-pokemon-rng-manipulation-assistant/branch/master)
 
-A program to aid RTA speedrunners to manipulate the starters in Pokemon Colosseum and Pokemon XD: Gale of Darkness. This manipulation involves booting the console after setting its clock, using the random battle feature of each game to find the current seed and hitting the right frame when confirming the trainer name to get the desired starters RNG. 
+A program to aid RTA speedrunners to manipulate the starters in Pokemon Colosseum and Pokemon XD: Gale of Darkness. This manipulation involves using the random battle feature of each game to find the current seed and hitting the right frame when confirming the trainer name to get the desired starters RNG. 
 
 This program allows this manipulation technique to work as it assists the runner into all these steps with user-friendlyness being a priority. The goal of having such a method is to reduce the amount of early resets required to start a run and to also open up new possibilities for having better than usual starters as this method makes it easier to see the different possibilities.
 
 For binary releases of this program, refer to [the "releases" page](https://github.com/aldelaro5/Dolphin-memory-engine/releases) on [the Github repository](https://github.com/aldelaro5/Dolphin-memory-engine).
 
 ## System requirements
-Any x86_64 based system should work, however, Mac OS will require the use of [Wine](https://www.winehq.org/) as I do not have the necessary tools to build for this OS. For Windows, you must have the [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-ca/help/2977003/the-latest-supported-visual-c-downloads) installed.
+Any x86_64 based system should work, however Mac OS is unsupported. For Windows, you must have the [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-ca/help/2977003/the-latest-supported-visual-c-downloads) installed.
 
-For faster results, a CPU with high parallelism capabilities is recommended. This means that this program will benefit _greatly_ from having a CPU that has multiple cores/hreads.
+For faster results, a CPU with high parallelism capabilities is recommended. This means that this program will benefit from having a CPU that has multiple cores/hreads, especially if you are generation a precalculation file. Additionally, 500MB of free RAM is recommended (1.5GB if you are generating a precalculation file).
 
 ## How to Build
 ### Microsoft Windows
-This repository provides a solution file for Visual Studio 2015 and later. The Windows SDK Version 10.0.16299.0 (Windows 10 Fall Creators Update) is required*.
+This repository provides a solution file for Visual Studio 2015 and later. The Windows SDK Version 10.0.16299.0 (Windows 10 Fall Creators Update) is required.
 
 Before proceeding, ensure the Qt submodule is initialized by running `git submodule update --init` at the repository's root. The files should appear at the `Externals\Qt` directory.
 
@@ -38,9 +38,11 @@ To build, simply run the following commands from the `Source` directory:
 The compiled binaries should be appear in the directory named `build`.
 
 ## General usage
-First, select a game in the dropdown list. Then, start the seed finding procedure by clicking on "Find your seed". This will show a wizard to guide you through the process. If it succeeds, you will be able to see your starters prodictions depending on the amount of frames it takes to press A on the new game confirmation prompt and pressing A on the name confirmation prompt. You can set the desired predictions you wish to get by configuring the filters in the settings and you can also reroll the predictions as many times as you want providing you generate another random battle team. 
+Download the precalculation file provided along the binaries release for the game you intend to use the manipulation and extract it into the program's directory. Then, select the game in the dropdown list and start the seed finding procedure by clicking on "Find your seed". This will show a wizard to guide you through the process. If it succeeds, you will be able to see your starters prodictions depending on the amount of frames it takes to press A on the new game confirmation prompt and pressing A on the name confirmation prompt. You can set the desired predictions you wish to get by configuring the filters in the settings and you can also reroll the predictions as many times as you want providing you generate another random battle team. 
 
-Once you are satisfied with a certain prediction, you are ready to start your run, but for the manipulation to suceed, you have to hit the right frame when confirming the trainer name which is a time span of 1/60th of a second. A program like the [Eon timer](https://bitbucket.org/ToastPlusOne/eontimer/downloads/) can assist you by providing audio and visual cues for the timing. You may quickly verify the success of the manipulation by comparing the trainer ID of the starter with the trainer ID of the prediction you wished to get.
+Once you are satisfied with a certain prediction, you are ready to start your run, but for the manipulation to suceed, you have to hit the right frame when confirming the trainer name which is a time span of 1/60th of a second. A program like the [Eon timer](https://bitbucket.org/ToastPlusOne/eontimer/downloads/) can assist you by providing audio and visual cues for the timing. You may quickly verify the success of the manipulation by comparing the trainer ID of the starter with the trainer ID of the prediction you wished to get as well as the HP stat displayed next to the HP IV.
+
+Alternatively, you may generate the precalculation file for the game yourself in the `File` menu, but this process will take a few hours depending on your CPU and threads count. For this reason, it is highly recommended to download the file instead since the file is the same for every usage of the program.
 
 ## License
 This program is licensed under the MIT license which grants you the permission to do  anything you wish to with the software, as long as you preserve all copyright notices. (See the file LICENSE for the legal text.)
