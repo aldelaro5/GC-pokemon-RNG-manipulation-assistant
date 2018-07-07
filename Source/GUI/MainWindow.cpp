@@ -37,6 +37,7 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
   SPokemonRNG::deleteSystem();
+  delete m_dlgProgressPrecalc;
 }
 
 void MainWindow::initialiseWidgets()
@@ -244,6 +245,22 @@ void MainWindow::generatePrecalc()
     if (threadCount == 0)
       threadCount = std::thread::hardware_concurrency();
 
+    delete m_dlgProgressPrecalc;
+    m_dlgProgressPrecalc = new QProgressDialog(this);
+    m_dlgProgressPrecalc->setWindowModality(Qt::WindowModal);
+    m_dlgProgressPrecalc->setWindowTitle(tr("Precalculation file generation"));
+    m_dlgProgressPrecalc->setCancelButtonText(tr("&Cancel"));
+    m_dlgProgressPrecalc->setMinimum(0);
+    m_dlgProgressPrecalc->setLabelText("Precalculating " +
+                                       QString::number(Common::nbrPossibleSeeds) + " seeds with " +
+                                       QString::number(threadCount) + " threads...");
+    m_dlgProgressPrecalc->setMaximum(65536);
+    connect(m_dlgProgressPrecalc, &QProgressDialog::canceled, this, [=]() {
+      m_cancelPrecalc = true;
+      m_precalcFuture.waitForFinished();
+    });
+    m_dlgProgressPrecalc->setValue(0);
+
     QtConcurrent::run([=] {
       SPokemonRNG::getCurrentSystem()->generatePrecalculationFile(
           threadCount, [=](long value) { emit onUpdatePrecalcProgress(value); },
@@ -251,22 +268,8 @@ void MainWindow::generatePrecalc()
       if (!m_cancelPrecalc)
         emit onPrecalcDone();
     });
-    m_dlgProgressPrecalc = new QProgressDialog(this);
-    m_dlgProgressPrecalc->setWindowTitle(tr("Precalculation file generation"));
-    m_dlgProgressPrecalc->setCancelButtonText(tr("&Cancel"));
-    m_dlgProgressPrecalc->setMinimum(0);
-    m_dlgProgressPrecalc->setLabelText("Precalculating " +
-                                       QString::number(Common::nbrPossibleSeeds) + " seeds...");
-    m_dlgProgressPrecalc->setMaximum(65536);
-    m_dlgProgressPrecalc->setValue(0);
-    m_dlgProgressPrecalc->setFixedWidth(500);
-    connect(m_dlgProgressPrecalc, &QProgressDialog::canceled, this, [=]() {
-      m_cancelPrecalc = true;
-      m_precalcFuture.waitForFinished();
-    });
-    m_dlgProgressPrecalc->exec();
     m_precalcFuture.waitForFinished();
-    delete m_dlgProgressPrecalc;
+    m_cancelPrecalc = false;
   }
   delete msg;
 }
