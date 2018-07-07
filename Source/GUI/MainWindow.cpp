@@ -126,7 +126,7 @@ void MainWindow::makeMenus()
   m_menuHelp->addAction(tr("&About"), this, [=]() {
     QString title = tr("About GameCube Pokémon RNG assistant");
     QString text =
-        "Beta version 0.1.1\n\n" +
+        "Beta version 0.2.0\n\n" +
         tr("A program to allow the manipulation of the starters RNG in Pokémon Colosseum and "
            "Pokémon XD: Gale of darkness.\n\nThis program is licensed under the MIT license. "
            "You should have received a copy of the MIT license along with this program");
