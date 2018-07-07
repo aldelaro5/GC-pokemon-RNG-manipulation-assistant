@@ -47,9 +47,16 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   m_spbPredictionsTime->setMaximum(36000);
   m_spbPredictionsTime->setMaximumWidth(150);
 
+  QLabel* lblFrameDelay = new QLabel(tr("Amount of frames to add as delay to predictions: "));
+  m_spbFrameDelay = new QSpinBox();
+  m_spbFrameDelay->setMinimum(0);
+  m_spbFrameDelay->setValue(0);
+  m_spbFrameDelay->setMaximumWidth(150);
+
   QFormLayout* predictionTimeLayout = new QFormLayout;
   predictionTimeLayout->setLabelAlignment(Qt::AlignRight);
   predictionTimeLayout->addRow(lblPredictionsTime, m_spbPredictionsTime);
+  predictionTimeLayout->addRow(lblFrameDelay, m_spbFrameDelay);
 
   QGroupBox* gbPredictor = new QGroupBox(tr("Starters predictor"));
   gbPredictor->setLayout(predictionTimeLayout);
@@ -67,6 +74,11 @@ int GeneralTab::getPredictionTime() const
   return m_spbPredictionsTime->value();
 }
 
+int GeneralTab::getFrameDelay() const
+{
+  return m_spbFrameDelay->value();
+}
+
 int GeneralTab::getThreadLimit() const
 {
   return m_cmbThreadLimit->currentIndex();
@@ -80,4 +92,9 @@ void GeneralTab::setPredictionTime(const int predictionTime)
 void GeneralTab::setThreadLimit(const int threadLimit)
 {
   m_cmbThreadLimit->setCurrentIndex(threadLimit);
+}
+
+void GeneralTab::setFrameDelay(const int frameDelay)
+{
+  m_spbFrameDelay->setValue(frameDelay);
 }

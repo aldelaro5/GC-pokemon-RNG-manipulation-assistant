@@ -147,19 +147,20 @@ void PredictorWidget::setStartersPrediction(
     m_tblStartersPrediction->setItem(i, 1,
                                      new QTableWidgetItem(QString("%1").arg(
                                          startersPrediction[i].trainerId, 5, 10, QChar('0'))));
+
+    int frameNumberWithDelay =
+        startersPrediction[i].frameNumber + SConfig::getInstance().getFrameDelay();
     if (i == 0)
     {
       m_tblStartersPrediction->setItem(
-          i, 2,
-          new QTableWidgetItem(QString::number(startersPrediction[i].frameNumber) +
-                               " (frame perfect)"));
+          i, 2, new QTableWidgetItem(QString::number(frameNumberWithDelay) + " (frame perfect)"));
     }
     else
     {
       m_tblStartersPrediction->setItem(
           i, 2,
-          new QTableWidgetItem(QString::number(startersPrediction[i].frameNumber) + " (" +
-                               QString::number(startersPrediction[i].frameNumber / 60.0) + ")"));
+          new QTableWidgetItem(QString::number(frameNumberWithDelay) + " (" +
+                               QString::number(frameNumberWithDelay / 60.0) + ")"));
     }
 
     int nbrColPerStarter = 8;

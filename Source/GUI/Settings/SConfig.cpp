@@ -33,6 +33,11 @@ int SConfig::getPredictionTime() const
   return m_settings->value("generalSettings/predictor/time", 10).toInt();
 }
 
+int SConfig::getFrameDelay() const
+{
+  return m_settings->value("generalSettings/predictor/FrameDelay", 0).toInt();
+}
+
 bool SConfig::getSkipInstructionPage() const
 {
   return m_settings->value("generalSettings/skipInstructionPage", false).toBool();
@@ -162,6 +167,11 @@ void SConfig::setThreadLimit(const int threadLimit)
 void SConfig::setPredictionTime(const int predictionTime)
 {
   m_settings->setValue("generalSettings/predictor/time", predictionTime);
+}
+
+void SConfig::setFrameDelay(const int frameDelay)
+{
+  m_settings->setValue("generalSettings/predictor/FrameDelay", frameDelay);
 }
 
 void SConfig::setSkipInstructionPage(const bool skipInstructionPage)

@@ -14,11 +14,14 @@ public:
 
   int getThreadLimit() const;
   int getPredictionTime() const;
+  int getFrameDelay() const;
 
-  void setPredictionTime(const int predictionTime);
   void setThreadLimit(const int threadLimit);
+  void setPredictionTime(const int predictionTime);
+  void setFrameDelay(const int frameDelay);
 
 private:
   QComboBox* m_cmbThreadLimit;
   QSpinBox* m_spbPredictionsTime;
+  QSpinBox* m_spbFrameDelay;
 };

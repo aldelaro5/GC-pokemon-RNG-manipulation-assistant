@@ -58,6 +58,7 @@ DlgSettings::~DlgSettings()
 void DlgSettings::loadSettings()
 {
   m_generalTab->setPredictionTime(SConfig::getInstance().getPredictionTime());
+  m_generalTab->setFrameDelay(SConfig::getInstance().getFrameDelay());
   m_generalTab->setThreadLimit(SConfig::getInstance().getThreadLimit());
 
   loadUmbreonSettings();
@@ -68,6 +69,7 @@ void DlgSettings::loadSettings()
 void DlgSettings::saveSettings() const
 {
   SConfig::getInstance().setPredictionTime(m_generalTab->getPredictionTime());
+  SConfig::getInstance().setFrameDelay(m_generalTab->getFrameDelay());
   SConfig::getInstance().setThreadLimit(m_generalTab->getThreadLimit());
 
   saveUmbreonSettings();
