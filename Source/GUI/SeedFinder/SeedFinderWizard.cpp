@@ -99,9 +99,13 @@ void SeedFinderWizard::nextSeedFinderPass()
   button(QWizard::CustomButton1)->setEnabled(false);
 
   page->showSeedFinderProgress(true);
+  unsigned int threadCount = SConfig::getInstance().getThreadLimit();
+  if (threadCount == 0)
+    threadCount = std::thread::hardware_concurrency();
+
   m_seedFinderFuture = QtConcurrent::run([=] {
     SPokemonRNG::getCurrentSystem()->seedFinderPass(
-        page->obtainCriteria(), m_seeds,
+        threadCount, page->obtainCriteria(), m_seeds,
         [=](long int nbrSeedsSimulated) { emit onUpdateSeedFinderProgress(nbrSeedsSimulated); },
         [=] { return m_cancelSeedFinderPass; });
     if (!m_cancelSeedFinderPass)

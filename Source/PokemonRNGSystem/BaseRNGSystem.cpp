@@ -7,7 +7,8 @@
 #include <map>
 #include <sstream>
 
-void BaseRNGSystem::generatePrecalculationFile(std::function<void(long)> progressUpdate,
+void BaseRNGSystem::generatePrecalculationFile(unsigned int threadCount,
+                                               std::function<void(long)> progressUpdate,
                                                std::function<bool()> shouldCancelNow)
 {
   int progressUpdateCurrentBlock = 0;
@@ -27,7 +28,7 @@ void BaseRNGSystem::generatePrecalculationFile(std::function<void(long)> progres
       break;
     }
 
-#pragma omp parallel for
+#pragma omp parallel for num_threads(threadCount)
     for (s64 i = seedPerBlock * blockId; i < seedPerBlock + seedPerBlock * blockId; i++)
     {
       if (shouldCancelNow())
@@ -83,7 +84,8 @@ void BaseRNGSystem::generatePrecalculationFile(std::function<void(long)> progres
   }
 }
 
-void BaseRNGSystem::seedFinderPass(const std::vector<int> criteria, std::vector<u32>& seeds,
+void BaseRNGSystem::seedFinderPass(unsigned int threadCount, const std::vector<int> criteria,
+                                   std::vector<u32>& seeds,
                                    std::function<void(long)> progressUpdate,
                                    std::function<bool()> shouldCancelNow)
 {
@@ -113,7 +115,7 @@ void BaseRNGSystem::seedFinderPass(const std::vector<int> criteria, std::vector<
   }
   long nbrSeedsSimulatedTotal = 0;
   int seedsSimulatedCurrentBlock = 0;
-#pragma omp parallel for
+#pragma omp parallel for num_threads(threadCount)
   for (int i = 0; i < seeds.size(); i++)
   {
     // This is probably the most awkward way to do this, but it can't be done properly with OpenMP

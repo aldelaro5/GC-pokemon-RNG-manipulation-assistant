@@ -7,6 +7,8 @@
 #include <QVBoxLayout>
 #include <QtConcurrent>
 
+#include <thread>
+
 #include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
 #include "../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
 #include "GUICommon.h"
@@ -238,9 +240,13 @@ void MainWindow::generatePrecalc()
   msg->exec();
   if (msg->result() == QMessageBox::Yes)
   {
+    unsigned int threadCount = SConfig::getInstance().getThreadLimit();
+    if (threadCount == 0)
+      threadCount = std::thread::hardware_concurrency();
+
     QtConcurrent::run([=] {
       SPokemonRNG::getCurrentSystem()->generatePrecalculationFile(
-          [=](long value) { emit onUpdatePrecalcProgress(value); },
+          threadCount, [=](long value) { emit onUpdatePrecalcProgress(value); },
           [=]() { return m_cancelPrecalc; });
       if (!m_cancelPrecalc)
         emit onPrecalcDone();

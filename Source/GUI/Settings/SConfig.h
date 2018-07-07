@@ -12,6 +12,7 @@ public:
   SConfig(SConfig const&) = delete;
   void operator=(SConfig const&) = delete;
 
+  int getThreadLimit() const;
   int getPredictionTime() const;
   bool getSkipInstructionPage() const;
   int getMinHpIv(const GUICommon::starter starter) const;
@@ -29,6 +30,7 @@ public:
   GUICommon::shininess getEeveeShininess() const;
   GUICommon::gender getEeveeGender() const;
 
+  void setThreadLimit(const int threadLimit);
   void setPredictionTime(const int predictionTime);
   void setSkipInstructionPage(const bool skipInstructionPage);
   void setMinHpIv(const GUICommon::starter starter, const int minHpIv);

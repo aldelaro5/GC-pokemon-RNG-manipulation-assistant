@@ -44,12 +44,13 @@ public:
   // Does the precalculation which consist of outputing to a file the remaining unique seeds after a
   // complete first pass, the order of seeds will allow to tell the corespondance with the first two
   // criteria
-  void generatePrecalculationFile(std::function<void(long)> progressUpdate,
+  void generatePrecalculationFile(unsigned int threadCount,
+                                  std::function<void(long)> progressUpdate,
                                   std::function<bool()> shouldCancelNow);
   virtual int firstTwoCriteriaToIndex(const std::vector<int> criteria) = 0;
   // Seed finding algorithm, this does only one pass with parellelism
-  void seedFinderPass(const std::vector<int> criteria, std::vector<u32>& seeds,
-                      std::function<void(long)> progressUpdate,
+  void seedFinderPass(unsigned int threadCount, const std::vector<int> criteria,
+                      std::vector<u32>& seeds, std::function<void(long)> progressUpdate,
                       std::function<bool()> shouldCancelNow);
   std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, const int nbrSeconds);
   // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the

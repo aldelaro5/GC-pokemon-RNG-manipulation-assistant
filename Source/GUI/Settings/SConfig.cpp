@@ -23,6 +23,11 @@ QString SConfig::gameGroupStrForStarter(const GUICommon::starter starter) const
   return QString("colosseumPredictor");
 }
 
+int SConfig::getThreadLimit() const
+{
+  return m_settings->value("generalSettings/CPUThreadLimit", 0).toInt();
+}
+
 int SConfig::getPredictionTime() const
 {
   return m_settings->value("generalSettings/predictor/time", 10).toInt();
@@ -147,6 +152,11 @@ GUICommon::gender SConfig::getEeveeGender() const
                                             ->value("galeDarknessPredictor/eevee/gender",
                                                     static_cast<int>(GUICommon::gender::AnyGender))
                                             .toInt());
+}
+
+void SConfig::setThreadLimit(const int threadLimit)
+{
+  m_settings->setValue("generalSettings/CPUThreadLimit", threadLimit);
 }
 
 void SConfig::setPredictionTime(const int predictionTime)

@@ -12,10 +12,13 @@ class GeneralTab : public QWidget
 public:
   GeneralTab(QWidget* parent = nullptr);
 
+  int getThreadLimit() const;
   int getPredictionTime() const;
 
   void setPredictionTime(const int predictionTime);
+  void setThreadLimit(const int threadLimit);
 
 private:
+  QComboBox* m_cmbThreadLimit;
   QSpinBox* m_spbPredictionsTime;
 };
