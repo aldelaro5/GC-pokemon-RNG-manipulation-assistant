@@ -1,5 +1,7 @@
 #include "SConfig.h"
 
+#include <thread>
+
 SConfig::SConfig()
 {
   m_settings = new QSettings("settings.ini", QSettings::IniFormat);
@@ -25,7 +27,10 @@ QString SConfig::gameGroupStrForStarter(const GUICommon::starter starter) const
 
 int SConfig::getThreadLimit() const
 {
-  return m_settings->value("generalSettings/CPUThreadLimit", 0).toInt();
+  unsigned int threadLimit = m_settings->value("generalSettings/CPUThreadLimit", 0).toUInt();
+  if (threadLimit != 0 && threadLimit >= std::thread::hardware_concurrency())
+    return 0;
+  return threadLimit;
 }
 
 int SConfig::getPredictionTime() const
