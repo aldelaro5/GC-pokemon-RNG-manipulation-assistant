@@ -69,6 +69,10 @@ void MainWindow::initialiseWidgets()
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
 
+  m_btnAutoReroll = new QPushButton(tr("Auto Reroll\n(rerolls until it finds a valid starter(s))"));
+  connect(m_btnAutoReroll, &QPushButton::clicked, this, &MainWindow::autoRerollPredictor);
+  m_btnAutoReroll->setEnabled(false);
+
   m_lblRerollCount = new QLabel(QString::number(m_rerollCount), this);
 
   m_predictorWidget = new PredictorWidget(this);
@@ -101,6 +105,7 @@ void MainWindow::makeLayouts()
   mainLayout->addWidget(m_predictorWidget);
   mainLayout->addWidget(m_btnRerollPrediciton);
   mainLayout->addLayout(rerollCountLayout);
+  mainLayout->addWidget(m_btnAutoReroll);
 
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);
@@ -187,6 +192,7 @@ void MainWindow::startSeedFinder()
     m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
     m_btnReset->setEnabled(true);
     m_btnRerollPrediciton->setEnabled(true);
+    m_btnAutoReroll->setEnabled(true);
     m_rerollCount = 0;
     m_lblRerollCount->setText(QString::number(m_rerollCount));
   }
@@ -200,13 +206,15 @@ void MainWindow::resetPredictor()
   m_predictorWidget->resetPredictor(selection);
   m_btnReset->setEnabled(false);
   m_btnRerollPrediciton->setEnabled(false);
+  m_btnAutoReroll->setEnabled(false);
   m_rerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
 }
 
-void MainWindow::rerollPredictor()
+bool MainWindow::rerollPredictor()
 {
   std::vector<int> dummyCriteria;
+  bool found;
   for (int i = 0; i < 6; i++)
     dummyCriteria.push_back(-1);
 
@@ -217,9 +225,22 @@ void MainWindow::rerollPredictor()
       SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
           m_currentSeed, SConfig::getInstance().getPredictionTime());
   m_predictorWidget->setStartersPrediction(predictions, selection);
-  m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
+  found = m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_rerollCount++;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  return found;
+}
+void MainWindow::autoRerollPredictor()
+{
+  bool found = false;
+  int maxRolls = SConfig::getInstance().getMaxAutoRerolls();
+  for (int i = 0; i < maxRolls; i++)
+  {
+    found = rerollPredictor();
+    if (found)
+      break;
+  }
+
 }
 
 void MainWindow::openSettings()

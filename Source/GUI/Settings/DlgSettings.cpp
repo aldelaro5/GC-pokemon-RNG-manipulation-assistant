@@ -58,6 +58,7 @@ DlgSettings::~DlgSettings()
 void DlgSettings::loadSettings()
 {
   m_generalTab->setPredictionTime(SConfig::getInstance().getPredictionTime());
+  m_generalTab->setMaxAutoRerolls(SConfig::getInstance().getMaxAutoRerolls());
   m_generalTab->setFrameDelay(SConfig::getInstance().getFrameDelay());
   m_generalTab->setThreadLimit(SConfig::getInstance().getThreadLimit());
 
@@ -71,6 +72,7 @@ void DlgSettings::saveSettings() const
   SConfig::getInstance().setPredictionTime(m_generalTab->getPredictionTime());
   SConfig::getInstance().setFrameDelay(m_generalTab->getFrameDelay());
   SConfig::getInstance().setThreadLimit(m_generalTab->getThreadLimit());
+  SConfig::getInstance().setMaxAutoRerolls(m_generalTab->getMaxAutoRerolls());
 
   saveUmbreonSettings();
   saveEspeonSettings();

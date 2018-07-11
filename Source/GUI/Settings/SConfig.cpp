@@ -38,6 +38,11 @@ int SConfig::getPredictionTime() const
   return m_settings->value("generalSettings/predictor/time", 10).toInt();
 }
 
+int SConfig::getMaxAutoRerolls() const
+{
+  return m_settings->value("generalSettings/MaxAutoRerolls", 20).toInt();
+}
+
 int SConfig::getFrameDelay() const
 {
   return m_settings->value("generalSettings/predictor/FrameDelay", 0).toInt();
@@ -172,6 +177,11 @@ void SConfig::setThreadLimit(const int threadLimit)
 void SConfig::setPredictionTime(const int predictionTime)
 {
   m_settings->setValue("generalSettings/predictor/time", predictionTime);
+}
+
+void SConfig::setMaxAutoRerolls(const int maxAutoRerolls)
+{
+  m_settings->setValue("generalSettings/MaxAutoRerolls", maxAutoRerolls);
 }
 
 void SConfig::setFrameDelay(const int frameDelay)

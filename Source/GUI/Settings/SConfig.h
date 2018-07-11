@@ -14,6 +14,7 @@ public:
 
   int getThreadLimit() const;
   int getPredictionTime() const;
+  int getMaxAutoRerolls() const;
   int getFrameDelay() const;
   bool getSkipInstructionPage() const;
   int getMinHpIv(const GUICommon::starter starter) const;
@@ -33,6 +34,7 @@ public:
 
   void setThreadLimit(const int threadLimit);
   void setPredictionTime(const int predictionTime);
+  void setMaxAutoRerolls(const int maxAutoRerolls);
   void setFrameDelay(const int frameDelay);
   void setSkipInstructionPage(const bool skipInstructionPage);
   void setMinHpIv(const GUICommon::starter starter, const int minHpIv);

@@ -16,7 +16,7 @@ public:
   setStartersPrediction(const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
                         const GUICommon::gameSelection game);
   void resetPredictor(const GUICommon::gameSelection currentGame);
-  void filterUnwanted(const bool filterUnwanted);
+  bool filterUnwanted(const bool filterUnwanted);
   void switchGame(const GUICommon::gameSelection game);
 
 private:
