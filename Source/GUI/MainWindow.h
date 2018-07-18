@@ -26,7 +26,6 @@ public:
   void openSettings();
   void generatePrecalc();
   void precalcDone();
-  void autoRerollPredictor();
 
 signals:
   void onUpdatePrecalcProgress(const long value);
@@ -47,7 +46,6 @@ private:
   QPushButton* m_btnSettings;
   QPushButton* m_btnReset;
   QPushButton* m_btnRerollPrediciton;
-  QPushButton* m_btnAutoReroll;
   QLabel* m_lblRerollCount;
   QLabel* m_lblAdditionalRerollCount;
   QCheckBox* m_chkFilterUnwantedPredictions;

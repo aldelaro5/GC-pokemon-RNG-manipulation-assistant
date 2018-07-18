@@ -14,18 +14,14 @@ public:
 
   int getThreadLimit() const;
   int getPredictionTime() const;
-  int getMaxAutoRerolls() const;
   int getFrameDelay() const;
 
   void setThreadLimit(const int threadLimit);
   void setPredictionTime(const int predictionTime);
-  void setMaxAutoRerolls(const int maxAutoRerolls);
   void setFrameDelay(const int frameDelay);
 
 private:
   QComboBox* m_cmbThreadLimit;
   QSpinBox* m_spbPredictionsTime;
-  QSpinBox* m_spbMaxAutoRerolls;
   QSpinBox* m_spbFrameDelay;
-
 };

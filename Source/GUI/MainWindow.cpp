@@ -69,11 +69,14 @@ void MainWindow::initialiseWidgets()
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
 
+<<<<<<< HEAD
   m_btnAutoReroll =
       new QPushButton(tr("Auto Reroll\n(rerolls until a wanted starter(s) is found)"));
   connect(m_btnAutoReroll, &QPushButton::clicked, this, &MainWindow::autoRerollPredictor);
   m_btnAutoReroll->setEnabled(false);
 
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
   m_lblRerollCount = new QLabel(QString::number(m_rerollCount), this);
   m_lblAdditionalRerollCount = new QLabel(QString::number(m_additionalRerollCount), this);
 
@@ -115,8 +118,11 @@ void MainWindow::makeLayouts()
   mainLayout->addWidget(m_predictorWidget);
   mainLayout->addWidget(m_btnRerollPrediciton);
   mainLayout->addLayout(rerollCountLayout);
+<<<<<<< HEAD
   mainLayout->addWidget(m_btnAutoReroll);
   mainLayout->addLayout(additionalRerollCountLayout);
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
 
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);
@@ -203,7 +209,6 @@ void MainWindow::startSeedFinder()
     m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
     m_btnReset->setEnabled(true);
     m_btnRerollPrediciton->setEnabled(true);
-    m_btnAutoReroll->setEnabled(true);
     m_rerollCount = 0;
     m_additionalRerollCount = 0;
     m_lblRerollCount->setText(QString::number(m_rerollCount));
@@ -218,7 +223,6 @@ void MainWindow::resetPredictor()
   m_predictorWidget->resetPredictor(selection);
   m_btnReset->setEnabled(false);
   m_btnRerollPrediciton->setEnabled(false);
-  m_btnAutoReroll->setEnabled(false);
   m_rerollCount = 0;
   m_additionalRerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
@@ -241,6 +245,7 @@ void MainWindow::rerollPredictor()
   m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_rerollCount++;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+<<<<<<< HEAD
 }
 
 void MainWindow::autoRerollPredictor()
@@ -262,6 +267,8 @@ void MainWindow::autoRerollPredictor()
   maxRerollsDone->setWindowTitle("Max Rerolls reached!");
   maxRerollsDone->setText("No wanted starter(s) were found.");
   maxRerollsDone->exec();
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
 }
 
 void MainWindow::openSettings()
