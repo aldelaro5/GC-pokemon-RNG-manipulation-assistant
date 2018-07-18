@@ -25,19 +25,31 @@ void PredictorWidget::initialiseWidgets()
   m_tblStartersPrediction->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
-bool PredictorWidget::filterUnwanted(const bool filterUnwanted)
+void PredictorWidget::filterUnwanted(const bool filterUnwanted)
 {
-  bool found = false;
   for (int i = 0; i < m_tblStartersPrediction->rowCount(); i++)
   {
     bool showRow =
         !filterUnwanted || m_tblStartersPrediction->item(i, 2)->background().color().name() ==
                                greenBrush.color().name();
-    if (showRow)
-      found = true;
+
     m_tblStartersPrediction->setRowHidden(i, !showRow);
   }
-  return found;
+}
+
+int PredictorWidget::getGreenRowCount()
+{
+  int count = 0;
+  for (int i = 0; i < m_tblStartersPrediction->rowCount(); i++)
+  {
+
+    if (m_tblStartersPrediction->item(i, 2)->background().color().name() ==
+        greenBrush.color().name())
+    {
+      count++;
+    }
+  }
+  return count;
 }
 
 void PredictorWidget::makeLayouts()

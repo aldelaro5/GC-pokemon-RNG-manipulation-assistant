@@ -16,8 +16,9 @@ public:
   setStartersPrediction(const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
                         const GUICommon::gameSelection game);
   void resetPredictor(const GUICommon::gameSelection currentGame);
-  bool filterUnwanted(const bool filterUnwanted);
+  void filterUnwanted(const bool filterUnwanted);
   void switchGame(const GUICommon::gameSelection game);
+  int getGreenRowCount();
 
 private:
   const QBrush greenBrush = QBrush(QColor("#32CD32"));

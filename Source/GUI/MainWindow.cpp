@@ -69,11 +69,13 @@ void MainWindow::initialiseWidgets()
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
 
-  m_btnAutoReroll = new QPushButton(tr("Auto Reroll\n(rerolls until it finds a valid starter(s))"));
+  m_btnAutoReroll =
+      new QPushButton(tr("Auto Reroll\n(rerolls until a wanted starter(s) is found)"));
   connect(m_btnAutoReroll, &QPushButton::clicked, this, &MainWindow::autoRerollPredictor);
   m_btnAutoReroll->setEnabled(false);
 
   m_lblRerollCount = new QLabel(QString::number(m_rerollCount), this);
+  m_lblAdditionalRerollCount = new QLabel(QString::number(m_additionalRerollCount), this);
 
   m_predictorWidget = new PredictorWidget(this);
 }
@@ -98,6 +100,14 @@ void MainWindow::makeLayouts()
   rerollCountLayout->addWidget(m_lblRerollCount);
   rerollCountLayout->addStretch();
 
+  QLabel* lblAdditionalReroll = new QLabel(tr("Additional rerolls needed: "), this);
+
+  QHBoxLayout* additionalRerollCountLayout = new QHBoxLayout;
+  additionalRerollCountLayout->addStretch();
+  additionalRerollCountLayout->addWidget(lblAdditionalReroll);
+  additionalRerollCountLayout->addWidget(m_lblAdditionalRerollCount);
+  additionalRerollCountLayout->addStretch();
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_cmbGame);
   mainLayout->addLayout(buttonsLayout);
@@ -106,6 +116,7 @@ void MainWindow::makeLayouts()
   mainLayout->addWidget(m_btnRerollPrediciton);
   mainLayout->addLayout(rerollCountLayout);
   mainLayout->addWidget(m_btnAutoReroll);
+  mainLayout->addLayout(additionalRerollCountLayout);
 
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);
@@ -194,6 +205,7 @@ void MainWindow::startSeedFinder()
     m_btnRerollPrediciton->setEnabled(true);
     m_btnAutoReroll->setEnabled(true);
     m_rerollCount = 0;
+    m_additionalRerollCount = 0;
     m_lblRerollCount->setText(QString::number(m_rerollCount));
   }
   delete wizard;
@@ -208,13 +220,14 @@ void MainWindow::resetPredictor()
   m_btnRerollPrediciton->setEnabled(false);
   m_btnAutoReroll->setEnabled(false);
   m_rerollCount = 0;
+  m_additionalRerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  m_lblAdditionalRerollCount->setText(QString::number(m_additionalRerollCount));
 }
 
-bool MainWindow::rerollPredictor()
+void MainWindow::rerollPredictor()
 {
   std::vector<int> dummyCriteria;
-  bool found;
   for (int i = 0; i < 6; i++)
     dummyCriteria.push_back(-1);
 
@@ -225,22 +238,30 @@ bool MainWindow::rerollPredictor()
       SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
           m_currentSeed, SConfig::getInstance().getPredictionTime());
   m_predictorWidget->setStartersPrediction(predictions, selection);
-  found = m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
+  m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_rerollCount++;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
-  return found;
 }
+
 void MainWindow::autoRerollPredictor()
 {
-  bool found = false;
-  int maxRolls = SConfig::getInstance().getMaxAutoRerolls();
-  for (int i = 0; i < maxRolls; i++)
+  m_additionalRerollCount = 0;
+  for (int i = 0; i < MAX_REROLLS; i++)
   {
-    found = rerollPredictor();
-    if (found)
-      break;
+    rerollPredictor();
+    if (m_predictorWidget->getGreenRowCount() > 0)
+    {
+      m_additionalRerollCount += i + 1;
+      m_lblAdditionalRerollCount->setText(QString::number(m_additionalRerollCount));
+      return;
+    }
   }
-
+  m_additionalRerollCount += MAX_REROLLS;
+  m_lblAdditionalRerollCount->setText(QString::number(m_additionalRerollCount));
+  QMessageBox* maxRerollsDone = new QMessageBox();
+  maxRerollsDone->setWindowTitle("Max Rerolls reached!");
+  maxRerollsDone->setText("No wanted starter(s) were found.");
+  maxRerollsDone->exec();
 }
 
 void MainWindow::openSettings()
