@@ -18,6 +18,7 @@ public:
   void resetPredictor(const GUICommon::gameSelection currentGame);
   void filterUnwanted(const bool filterUnwanted);
   void switchGame(const GUICommon::gameSelection game);
+  int getGreenRowCount();
 
 private:
   const QBrush greenBrush = QBrush(QColor("#32CD32"));

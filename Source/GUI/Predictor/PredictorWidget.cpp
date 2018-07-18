@@ -35,6 +35,27 @@ void PredictorWidget::filterUnwanted(const bool filterUnwanted)
 
     m_tblStartersPrediction->setRowHidden(i, !showRow);
   }
+<<<<<<< HEAD
+<<<<<<< HEAD
+}
+
+int PredictorWidget::getGreenRowCount()
+{
+  int count = 0;
+  for (int i = 0; i < m_tblStartersPrediction->rowCount(); i++)
+  {
+
+    if (m_tblStartersPrediction->item(i, 2)->background().color().name() ==
+        greenBrush.color().name())
+    {
+      count++;
+    }
+  }
+  return count;
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
 }
 
 void PredictorWidget::makeLayouts()

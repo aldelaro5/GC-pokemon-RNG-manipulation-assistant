@@ -47,6 +47,7 @@ private:
   QPushButton* m_btnReset;
   QPushButton* m_btnRerollPrediciton;
   QLabel* m_lblRerollCount;
+  QLabel* m_lblAdditionalRerollCount;
   QCheckBox* m_chkFilterUnwantedPredictions;
   PredictorWidget* m_predictorWidget;
   bool m_cancelPrecalc = false;
@@ -54,4 +55,6 @@ private:
   QProgressDialog* m_dlgProgressPrecalc;
   u32 m_currentSeed = 0;
   int m_rerollCount = 0;
+  int m_additionalRerollCount = 0;
+  const int MAX_REROLLS = 5000;
 };
