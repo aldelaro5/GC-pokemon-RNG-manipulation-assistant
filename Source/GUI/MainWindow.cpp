@@ -70,11 +70,14 @@ void MainWindow::initialiseWidgets()
   m_btnRerollPrediciton->setEnabled(false);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_btnAutoReroll =
       new QPushButton(tr("Auto Reroll\n(rerolls until a wanted starter(s) is found)"));
   connect(m_btnAutoReroll, &QPushButton::clicked, this, &MainWindow::autoRerollPredictor);
   m_btnAutoReroll->setEnabled(false);
 
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
 =======
 >>>>>>> parent of ed102cb... Auto Reroll
   m_lblRerollCount = new QLabel(QString::number(m_rerollCount), this);
@@ -119,8 +122,11 @@ void MainWindow::makeLayouts()
   mainLayout->addWidget(m_btnRerollPrediciton);
   mainLayout->addLayout(rerollCountLayout);
 <<<<<<< HEAD
+<<<<<<< HEAD
   mainLayout->addWidget(m_btnAutoReroll);
   mainLayout->addLayout(additionalRerollCountLayout);
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
 =======
 >>>>>>> parent of ed102cb... Auto Reroll
 
@@ -246,6 +252,7 @@ void MainWindow::rerollPredictor()
   m_rerollCount++;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 
 void MainWindow::autoRerollPredictor()
@@ -267,6 +274,8 @@ void MainWindow::autoRerollPredictor()
   maxRerollsDone->setWindowTitle("Max Rerolls reached!");
   maxRerollsDone->setText("No wanted starter(s) were found.");
   maxRerollsDone->exec();
+=======
+>>>>>>> parent of ed102cb... Auto Reroll
 =======
 >>>>>>> parent of ed102cb... Auto Reroll
 }
