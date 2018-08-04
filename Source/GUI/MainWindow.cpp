@@ -24,6 +24,7 @@ MainWindow::MainWindow()
   makeMenus();
 
   m_precalcFuture = QFuture<void>();
+  m_dlgProgressPrecalc = nullptr;
 
   connect(this, &MainWindow::onPrecalcDone, this, &MainWindow::precalcDone);
   connect(this, &MainWindow::onUpdatePrecalcProgress, this, [=](long value) {
