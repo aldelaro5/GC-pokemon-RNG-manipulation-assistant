@@ -22,7 +22,9 @@ public:
   void gameChanged();
   void startSeedFinder();
   void resetPredictor();
-  void rerollPredictor();
+  // Returns whether we have a desired prediction after the reroll
+  bool rerollPredictor();
+  void autoRerollPredictor();
   void openSettings();
   void generatePrecalc();
   void precalcDone();
@@ -46,6 +48,8 @@ private:
   QPushButton* m_btnSettings;
   QPushButton* m_btnReset;
   QPushButton* m_btnRerollPrediciton;
+  QPushButton* m_btnAutoRerollPrediciton;
+
   QLabel* m_lblRerollCount;
   QCheckBox* m_chkFilterUnwantedPredictions;
   PredictorWidget* m_predictorWidget;

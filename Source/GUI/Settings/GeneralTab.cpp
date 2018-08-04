@@ -53,10 +53,19 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   m_spbFrameDelay->setValue(0);
   m_spbFrameDelay->setMaximumWidth(150);
 
+  QLabel* lblMaxAutoReroll =
+      new QLabel(tr("Number of maximum reroll to perform when auto rerolling: "));
+  m_spbMaxAutoReroll = new QSpinBox();
+  m_spbMaxAutoReroll->setMinimum(1);
+  m_spbMaxAutoReroll->setMaximum(1000);
+  m_spbMaxAutoReroll->setValue(100);
+  m_spbMaxAutoReroll->setMaximumWidth(150);
+
   QFormLayout* predictionTimeLayout = new QFormLayout;
   predictionTimeLayout->setLabelAlignment(Qt::AlignRight);
   predictionTimeLayout->addRow(lblPredictionsTime, m_spbPredictionsTime);
   predictionTimeLayout->addRow(lblFrameDelay, m_spbFrameDelay);
+  predictionTimeLayout->addRow(lblMaxAutoReroll, m_spbMaxAutoReroll);
 
   QGroupBox* gbPredictor = new QGroupBox(tr("Starters predictor"));
   gbPredictor->setLayout(predictionTimeLayout);
@@ -84,6 +93,11 @@ int GeneralTab::getThreadLimit() const
   return m_cmbThreadLimit->currentIndex();
 }
 
+int GeneralTab::getMaxAutoReroll() const
+{
+  return m_spbMaxAutoReroll->value();
+}
+
 void GeneralTab::setPredictionTime(const int predictionTime)
 {
   m_spbPredictionsTime->setValue(predictionTime);
@@ -97,4 +111,9 @@ void GeneralTab::setThreadLimit(const int threadLimit)
 void GeneralTab::setFrameDelay(const int frameDelay)
 {
   m_spbFrameDelay->setValue(frameDelay);
+}
+
+void GeneralTab::setMaxAutoReroll(const int maxAutoReroll)
+{
+  m_spbMaxAutoReroll->setValue(maxAutoReroll);
 }

@@ -70,6 +70,11 @@ void MainWindow::initialiseWidgets()
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
 
+  m_btnAutoRerollPrediciton =
+      new QPushButton(tr("Auto Reroll\n(rerolls until the next desired prediction)"));
+  connect(m_btnAutoRerollPrediciton, &QPushButton::clicked, this, &MainWindow::autoRerollPredictor);
+  m_btnAutoRerollPrediciton->setEnabled(false);
+
   m_lblRerollCount = new QLabel(QString::number(m_rerollCount), this);
 
   m_predictorWidget = new PredictorWidget(this);
@@ -95,12 +100,16 @@ void MainWindow::makeLayouts()
   rerollCountLayout->addWidget(m_lblRerollCount);
   rerollCountLayout->addStretch();
 
+  QHBoxLayout* rerollButtonsLayout = new QHBoxLayout;
+  rerollButtonsLayout->addWidget(m_btnRerollPrediciton);
+  rerollButtonsLayout->addWidget(m_btnAutoRerollPrediciton);
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_cmbGame);
   mainLayout->addLayout(buttonsLayout);
   mainLayout->addLayout(filterUnwantedLayout);
   mainLayout->addWidget(m_predictorWidget);
-  mainLayout->addWidget(m_btnRerollPrediciton);
+  mainLayout->addLayout(rerollButtonsLayout);
   mainLayout->addLayout(rerollCountLayout);
 
   QWidget* mainWidget = new QWidget;
@@ -153,6 +162,7 @@ void MainWindow::gameChanged()
   m_predictorWidget->switchGame(selection);
   m_btnReset->setEnabled(false);
   m_btnRerollPrediciton->setEnabled(false);
+  m_btnAutoRerollPrediciton->setEnabled(false);
   m_rerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
 }
@@ -188,6 +198,7 @@ void MainWindow::startSeedFinder()
     m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
     m_btnReset->setEnabled(true);
     m_btnRerollPrediciton->setEnabled(true);
+    m_btnAutoRerollPrediciton->setEnabled(true);
     m_rerollCount = 0;
     m_lblRerollCount->setText(QString::number(m_rerollCount));
   }
@@ -201,11 +212,12 @@ void MainWindow::resetPredictor()
   m_predictorWidget->resetPredictor(selection);
   m_btnReset->setEnabled(false);
   m_btnRerollPrediciton->setEnabled(false);
+  m_btnAutoRerollPrediciton->setEnabled(false);
   m_rerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
 }
 
-void MainWindow::rerollPredictor()
+bool MainWindow::rerollPredictor()
 {
   std::vector<int> dummyCriteria;
   for (int i = 0; i < 6; i++)
@@ -217,10 +229,62 @@ void MainWindow::rerollPredictor()
   std::vector<BaseRNGSystem::StartersPrediction> predictions =
       SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
           m_currentSeed, SConfig::getInstance().getPredictionTime());
-  m_predictorWidget->setStartersPrediction(predictions, selection);
+  bool desiredStarterFound = m_predictorWidget->setStartersPrediction(predictions, selection);
   m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_rerollCount++;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  return desiredStarterFound;
+}
+
+void MainWindow::autoRerollPredictor()
+{
+  QDialog* autoRerollDlg = new QDialog;
+  autoRerollDlg->setModal(true);
+  autoRerollDlg->setWindowTitle("Auto rerolling");
+  QLabel* lblAutoRerolling = new QLabel(autoRerollDlg);
+  lblAutoRerolling->setText("Auto rerolling, please wait a moment...");
+  QVBoxLayout* mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(lblAutoRerolling);
+  autoRerollDlg->setLayout(mainLayout);
+  autoRerollDlg->show();
+
+  bool desiredPredictionFound = false;
+  int nbrRerolls = 0;
+  for (nbrRerolls; nbrRerolls < SConfig::getInstance().getMaxAutoReroll(); nbrRerolls++)
+  {
+    if (rerollPredictor())
+    {
+      desiredPredictionFound = true;
+      break;
+    }
+    // No idea why, but this is required for the dialog to keep rendering which is odd because one
+    // call to this before the loop should have been enough, but apparently, it isn't
+    QCoreApplication::processEvents();
+  }
+  autoRerollDlg->close();
+  delete autoRerollDlg;
+
+  if (desiredPredictionFound)
+  {
+    QMessageBox* msg = new QMessageBox(
+        QMessageBox::Information, "Desired prediction found",
+        "After " + QString::number(nbrRerolls + 1) +
+            " rerolls, a desired prediction has been found; the predictions list has been updated.",
+        QMessageBox::Ok);
+    msg->exec();
+    delete msg;
+  }
+  else
+  {
+    QMessageBox* msg = new QMessageBox(
+        QMessageBox::Critical, "No desired prediction has been found",
+        "The predictor has reached the limit of " + QString::number(nbrRerolls) +
+            " rerolls, but no desired prediction has been found; the predictions list has been "
+            "updated. You may try to auto reroll again.",
+        QMessageBox::Ok);
+    msg->exec();
+    delete msg;
+  }
 }
 
 void MainWindow::openSettings()

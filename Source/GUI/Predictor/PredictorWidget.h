@@ -12,7 +12,8 @@ class PredictorWidget : public QWidget
 {
 public:
   PredictorWidget(QWidget* parent = nullptr);
-  void
+  // Returns whether or not a desired starter has been found
+  bool
   setStartersPrediction(const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
                         const GUICommon::gameSelection game);
   void resetPredictor(const GUICommon::gameSelection currentGame);

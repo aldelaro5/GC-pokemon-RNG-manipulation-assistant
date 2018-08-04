@@ -43,6 +43,11 @@ int SConfig::getFrameDelay() const
   return m_settings->value("generalSettings/predictor/FrameDelay", 0).toInt();
 }
 
+int SConfig::getMaxAutoReroll() const
+{
+  return m_settings->value("generalSettings/predictor/MaxAutoReroll", 100).toInt();
+}
+
 bool SConfig::getSkipInstructionPage() const
 {
   return m_settings->value("generalSettings/skipInstructionPage", false).toBool();
@@ -177,6 +182,11 @@ void SConfig::setPredictionTime(const int predictionTime)
 void SConfig::setFrameDelay(const int frameDelay)
 {
   m_settings->setValue("generalSettings/predictor/FrameDelay", frameDelay);
+}
+
+void SConfig::setMaxAutoReroll(const int maxAutoReroll)
+{
+  m_settings->setValue("generalSettings/predictor/MaxAutoReroll", maxAutoReroll);
 }
 
 void SConfig::setSkipInstructionPage(const bool skipInstructionPage)

@@ -102,7 +102,7 @@ void PredictorWidget::switchGame(const GUICommon::gameSelection game)
   m_tblStartersPrediction->resizeColumnsToContents();
 }
 
-void PredictorWidget::setStartersPrediction(
+bool PredictorWidget::setStartersPrediction(
     const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
     const GUICommon::gameSelection game)
 {
@@ -137,6 +137,7 @@ void PredictorWidget::setStartersPrediction(
     startersSettings.append(GUICommon::starter::Eevee);
   }
 
+  bool desiredStarterFound = false;
   for (int i = 0; i < startersPrediction.size(); i++)
   {
     bool passAllFilters = true;
@@ -311,9 +312,15 @@ void PredictorWidget::setStartersPrediction(
       }
     }
     if (passAllFilters)
+    {
       m_tblStartersPrediction->item(i, 2)->setBackground(greenBrush);
+      desiredStarterFound = true;
+    }
     else
+    {
       m_tblStartersPrediction->item(i, 2)->setBackground(redBrush);
+    }
   }
   m_tblStartersPrediction->resizeColumnsToContents();
+  return desiredStarterFound;
 }
