@@ -355,8 +355,8 @@ u32 ColosseumRNGSystem::rollRNGNamingScreenNext(u32 seed)
 BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u32 seed)
 {
   StartersPrediction result;
-  std::vector<StarterGen> startersProperties;
-  StarterGen starter;
+  std::vector<PokemonProperties> startersProperties;
+  PokemonProperties starter;
 
   // 500 numbers of 32 bits are generated, but they don't seem to influence anything.
   seed = LCGn(seed, 1000);
@@ -377,19 +377,11 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     u32 lDummyId = LCG(seed) >> 16;
     u32 dummyId = (hDummyId << 16) | (lDummyId);
 
-    // HP, ATK, DEF IV
-    LCG(seed);
-    starter.hpIV = (seed >> 16) & 31;
+    extractIVs(starter, seed);
     starter.hpStartingStat =
         (2 * s_startersHpBaseStats[i] + starter.hpIV) * s_startersStartingLevel[i] / 100 +
         s_startersStartingLevel[i] + 10;
-    starter.atkIV = (seed >> 21) & 31;
-    starter.defIV = (seed >> 26) & 31;
-    // SPEED, SPATK, SPDEF IV
-    LCG(seed);
-    starter.speedIV = (seed >> 16) & 31;
-    starter.spAtkIV = (seed >> 21) & 31;
-    starter.spDefIV = (seed >> 26) & 31;
+
     // Ability, doesn't matter
     LCG(seed);
 
@@ -406,4 +398,126 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
   }
   result.starters = startersProperties;
   return result;
+}
+
+BaseRNGSystem::SecondaryCandidate ColosseumRNGSystem::generateSecondaryPokemon(u32 seed,
+                                                                               int secondaryIndex)
+{
+  SecondaryCandidate secondary;
+
+  // Every RNG call from now on influence the starters.
+  secondary.startingSeed = seed;
+  extractIVs(secondary.properties, seed);
+  // Ability, doesn't matter
+  LCG(seed);
+  fillStarterGenHiddenPowerInfo(secondary.properties);
+
+  // Generates the true perosnality ID with any nature, but the gender has to be male.
+  u32 hId = LCG(seed) >> 16;
+  u32 lId = LCG(seed) >> 16;
+  u32 pid = (hId << 16) | (lId);
+
+  secondary.properties.isShiny = false;
+  secondary.properties.genderIndex = getPidGender(31, pid);
+  secondary.properties.natureIndex = pid % 25;
+
+  secondary.stats.hp =
+      (2 * secondaryStats[secondaryIndex].hp + secondary.properties.hpIV) * 30 / 100 + 30 + 10;
+  secondary.stats.atk =
+      (2 * secondaryStats[secondaryIndex].atk + secondary.properties.atkIV) * 30 / 100 + 5;
+  secondary.stats.def =
+      (2 * secondaryStats[secondaryIndex].def + secondary.properties.defIV) * 30 / 100 + 5;
+  secondary.stats.spAtk =
+      (2 * secondaryStats[secondaryIndex].spAtk + secondary.properties.spAtkIV) * 30 / 100 + 5;
+  secondary.stats.spDef =
+      (2 * secondaryStats[secondaryIndex].spDef + secondary.properties.spDefIV) * 30 / 100 + 5;
+  secondary.stats.speed =
+      (2 * secondaryStats[secondaryIndex].speed + secondary.properties.speedIV) * 30 / 100 + 5;
+
+  if (secondary.properties.natureIndex % 6 != 0)
+  {
+    int plusStat = (secondary.properties.natureIndex / 5) + 1;
+    int minusStat = (secondary.properties.natureIndex % 5) + 1;
+    switch (plusStat)
+    {
+    case 1:
+      secondary.stats.atk = static_cast<int>(secondary.stats.atk * 1.1);
+      break;
+    case 2:
+      secondary.stats.def = static_cast<int>(secondary.stats.def * 1.1);
+      break;
+    case 3:
+      secondary.stats.speed = static_cast<int>(secondary.stats.speed * 1.1);
+      break;
+    case 4:
+      secondary.stats.spAtk = static_cast<int>(secondary.stats.spAtk * 1.1);
+      break;
+    case 5:
+      secondary.stats.spDef = static_cast<int>(secondary.stats.spDef * 1.1);
+      break;
+    }
+
+    switch (minusStat)
+    {
+    case 1:
+      secondary.stats.atk = static_cast<int>(secondary.stats.atk * 0.9);
+      break;
+    case 2:
+      secondary.stats.def = static_cast<int>(secondary.stats.def * 0.9);
+      break;
+    case 3:
+      secondary.stats.speed = static_cast<int>(secondary.stats.speed * 0.9);
+      break;
+    case 4:
+      secondary.stats.spAtk = static_cast<int>(secondary.stats.spAtk * 0.9);
+      break;
+    case 5:
+      secondary.stats.spDef = static_cast<int>(secondary.stats.spDef * 0.9);
+      break;
+    }
+  }
+
+  return secondary;
+}
+
+void ColosseumRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
+                                                                   int secondaryIndex)
+{
+  if (secondaryIndex >= SECONDARY_COUNT)
+    return;
+
+  u32 seed = postStarterSeed;
+  seed = LCGn(seed, secondaryRngAdvanceSearchStart);
+  m_secondaryCandidates.clear();
+  for (int i = 0; i < secondarySearchSeedsAmount; i++)
+  {
+    m_secondaryCandidates.push_back(generateSecondaryPokemon(seed, secondaryIndex));
+    LCG(seed);
+  }
+}
+
+std::vector<BaseRNGSystem::SecondaryCandidate>
+ColosseumRNGSystem::getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef,
+                                                int speed)
+{
+  std::vector<SecondaryCandidate> filteredCandidates;
+
+  for (auto candiate : m_secondaryCandidates)
+  {
+    if (hp != -1 && hp != candiate.stats.hp)
+      continue;
+    if (atk != -1 && atk != candiate.stats.atk)
+      continue;
+    if (def != -1 && def != candiate.stats.def)
+      continue;
+    if (spAtk != -1 && spAtk != candiate.stats.spAtk)
+      continue;
+    if (spDef != -1 && spDef != candiate.stats.spDef)
+      continue;
+    if (speed != -1 && speed != candiate.stats.speed)
+      continue;
+    filteredCandidates.push_back(candiate);
+  }
+
+  return filteredCandidates;
 }

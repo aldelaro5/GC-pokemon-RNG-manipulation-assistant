@@ -170,7 +170,7 @@ bool PredictorWidget::setStartersPrediction(
 
     for (int j = 0; j < startersPrediction[i].starters.size(); j++)
     {
-      BaseRNGSystem::StarterGen starter = startersPrediction[i].starters[j];
+      BaseRNGSystem::PokemonProperties starter = startersPrediction[i].starters[j];
 
       m_tblStartersPrediction->setItem(
           i, 3 + j * nbrColPerStarter,

@@ -12,7 +12,7 @@
 class BaseRNGSystem
 {
 public:
-  struct StarterGen
+  struct PokemonProperties
   {
     int hpIV = 0;
     int atkIV = 0;
@@ -28,9 +28,26 @@ public:
     bool isShiny = false;
   };
 
+  struct Stats
+  {
+    int hp;
+    int atk;
+    int def;
+    int spAtk;
+    int spDef;
+    int speed;
+  };
+
+  struct SecondaryCandidate
+  {
+    PokemonProperties properties;
+    Stats stats;
+    u32 startingSeed = 0;
+  };
+
   struct StartersPrediction
   {
-    std::vector<StarterGen> starters;
+    std::vector<PokemonProperties> starters;
     u32 startingSeed = 0;
     int frameNumber = 0;
     int trainerId = 0;
@@ -56,6 +73,11 @@ public:
   // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
   // outcome got
   virtual bool generateBattleTeam(u32& seed, const std::vector<int> criteria) = 0;
+  // Internally generates all the secondary Pokémons in the searh range
+  virtual void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
+                                                         int secondaryIndex) = 0;
+  virtual std::vector<SecondaryCandidate>
+  getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef, int speed) = 0;
 
 protected:
   // The number of time the game polls the input per second on the naming screen
@@ -70,6 +92,7 @@ protected:
   virtual u32 rollRNGNamingScreenNext(const u32 seed) = 0;
   // Generates the starters with a given seed, the seed must have passed the naming screen
   virtual StartersPrediction generateStarterPokemons(const u32 seed) = 0;
+  virtual SecondaryCandidate generateSecondaryPokemon(u32 seed, int secondaryIndex) = 0;
 
   // The LCG used in both Pokemon games
   u32 inline LCG(u32& seed, u16* counter = nullptr)
@@ -109,7 +132,21 @@ protected:
     return ((TID ^ SID ^ (PID & 0xFFFF) ^ (PID >> 16)) < 8);
   }
 
-  void inline fillStarterGenHiddenPowerInfo(StarterGen& starter)
+  void inline extractIVs(PokemonProperties& properties, u32& seed)
+  {
+    // HP, ATK, DEF IV
+    LCG(seed);
+    properties.hpIV = (seed >> 16) & 31;
+    properties.atkIV = (seed >> 21) & 31;
+    properties.defIV = (seed >> 26) & 31;
+    // SPEED, SPATK, SPDEF IV
+    LCG(seed);
+    properties.speedIV = (seed >> 16) & 31;
+    properties.spAtkIV = (seed >> 21) & 31;
+    properties.spDefIV = (seed >> 26) & 31;
+  }
+
+  void inline fillStarterGenHiddenPowerInfo(PokemonProperties& starter)
   {
     int typeSum = (starter.hpIV & 1) + 2 * (starter.atkIV & 1) + 4 * (starter.defIV & 1) +
                   8 * (starter.speedIV & 1) + 16 * (starter.spAtkIV & 1) +

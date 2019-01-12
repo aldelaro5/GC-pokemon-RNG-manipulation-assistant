@@ -385,8 +385,8 @@ u32 GaleDarknessRNGSystem::rollRNGNamingScreenNext(u32 seed)
 BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons(u32 seed)
 {
   StartersPrediction result;
-  std::vector<StarterGen> startersProperties;
-  StarterGen starter;
+  std::vector<PokemonProperties> startersProperties;
+  PokemonProperties starter;
 
   // 500 numbers of 32 bits are generated, but they don't seem to influence anything.
   seed = LCGn(seed, 1000);
@@ -429,4 +429,20 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
 
   result.starters = startersProperties;
   return result;
+}
+
+BaseRNGSystem::SecondaryCandidate
+GaleDarknessRNGSystem::generateSecondaryPokemon(u32 seed, int secondaryIndex)
+{
+}
+
+void GaleDarknessRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
+                                                                      int secondaryIndex)
+{
+}
+
+std::vector<BaseRNGSystem::SecondaryCandidate>
+GaleDarknessRNGSystem::getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef,
+                                                   int speed)
+{
 }
