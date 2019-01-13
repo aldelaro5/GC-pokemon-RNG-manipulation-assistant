@@ -46,11 +46,8 @@ private:
   u32 rollRNGNamingScreenInit(u32 seed) final override;
   u32 rollRNGNamingScreenNext(u32 seed) final override;
   StartersPrediction generateStarterPokemons(u32 seed) final override;
-  SecondaryCandidate generateSecondaryPokemon(u32 seed, int secondaryIndex) final override;
   void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
                                                  int secondaryIndex) final override;
-  std::vector<SecondaryCandidate> getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk,
-                                                              int spDef, int speed) final override;
   u32 generatePokemonPID(u32& seed, const u32 hTrainerId, const u32 lTrainerId, const u32 dummyId,
                          u16* counter = nullptr, const s8 wantedGender = -1,
                          const u32 genderRatio = 257, const s8 wantedNature = -1);
@@ -59,8 +56,9 @@ private:
 
   const int secondaryRngAdvanceSearchStart = 1000000;
   const int secondarySearchSeedsAmount = 1000000;
+  const int secondaryLevel = 30;
+  const u8 secondaryGenderRatio = 31;
 
-  std::vector<SecondaryCandidate> m_secondaryCandidates;
   Stats secondaryStats[3] = {{58, 64, 58, 80, 65, 80},  // Quilava
                              {65, 80, 80, 59, 63, 58},  // Croconaw
                              {60, 62, 80, 63, 80, 60}}; // Bayleef

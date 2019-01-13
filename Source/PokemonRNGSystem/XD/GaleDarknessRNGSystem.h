@@ -25,6 +25,8 @@ public:
 
   std::string getPrecalcFilename() final override;
 
+  const int teddiursaSecondaryIndex = 0;
+
 private:
   enum class WantedShininess
   {
@@ -44,11 +46,8 @@ private:
   u32 rollRNGNamingScreenInit(u32 seed) final override;
   u32 rollRNGNamingScreenNext(u32 seed) final override;
   StartersPrediction generateStarterPokemons(const u32 seed) final override;
-  SecondaryCandidate generateSecondaryPokemon(u32 seed, int secondaryIndex) final override;
   void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
                                                  int secondaryIndex) final override;
-  std::vector<SecondaryCandidate> getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk,
-                                                              int spDef, int speed) final override;
   u32 generatePokemonPID(u32& seed, const u32 hTrainerId, const u32 lTrainerId, const u32 dummyId,
                          u16* counter = nullptr,
                          const WantedShininess shininess = WantedShininess::any,
@@ -59,8 +58,8 @@ private:
 
   const int secondaryRngAdvanceSearchStart = 693000;
   const int secondarySearchSeedsAmount = 50000;
-
-  std::vector<SecondaryCandidate> m_secondaryCandidates;
+  const int teddiursaLevel = 11;
+  const u8 teddiursaGenderRatio = 127;
 
   Stats teddiursaBaseStats = {60, 80, 50, 50, 50, 40};
 };

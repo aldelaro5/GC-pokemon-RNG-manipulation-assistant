@@ -431,121 +431,13 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   return result;
 }
 
-BaseRNGSystem::SecondaryCandidate
-GaleDarknessRNGSystem::generateSecondaryPokemon(u32 seed, int secondaryIndex)
-{
-  SecondaryCandidate secondary;
-
-  // Every RNG call from now on influence the starters.
-  secondary.startingSeed = seed;
-  extractIVs(secondary.properties, seed);
-  // Ability, doesn't matter
-  LCG(seed);
-  fillStarterGenHiddenPowerInfo(secondary.properties);
-
-  // Generates the true perosnality ID with any nature, but the gender has to be male.
-  u32 hId = LCG(seed) >> 16;
-  u32 lId = LCG(seed) >> 16;
-  u32 pid = (hId << 16) | (lId);
-
-  secondary.properties.isShiny = false;
-  secondary.properties.genderIndex = getPidGender(127, pid);
-  secondary.properties.natureIndex = pid % 25;
-
-  secondary.stats.hp = (2 * teddiursaBaseStats.hp + secondary.properties.hpIV) * 11 / 100 + 11 + 10;
-  secondary.stats.atk = (2 * teddiursaBaseStats.atk + secondary.properties.atkIV) * 11 / 100 + 5;
-  secondary.stats.def = (2 * teddiursaBaseStats.def + secondary.properties.defIV) * 11 / 100 + 5;
-  secondary.stats.spAtk =
-      (2 * teddiursaBaseStats.spAtk + secondary.properties.spAtkIV) * 11 / 100 + 5;
-  secondary.stats.spDef =
-      (2 * teddiursaBaseStats.spDef + secondary.properties.spDefIV) * 11 / 100 + 5;
-  secondary.stats.speed =
-      (2 * teddiursaBaseStats.speed + secondary.properties.speedIV) * 11 / 100 + 5;
-
-  if (secondary.properties.natureIndex % 6 != 0)
-  {
-    int plusStat = (secondary.properties.natureIndex / 5) + 1;
-    int minusStat = (secondary.properties.natureIndex % 5) + 1;
-    switch (plusStat)
-    {
-    case 1:
-      secondary.stats.atk = static_cast<int>(secondary.stats.atk * 1.1);
-      break;
-    case 2:
-      secondary.stats.def = static_cast<int>(secondary.stats.def * 1.1);
-      break;
-    case 3:
-      secondary.stats.speed = static_cast<int>(secondary.stats.speed * 1.1);
-      break;
-    case 4:
-      secondary.stats.spAtk = static_cast<int>(secondary.stats.spAtk * 1.1);
-      break;
-    case 5:
-      secondary.stats.spDef = static_cast<int>(secondary.stats.spDef * 1.1);
-      break;
-    }
-
-    switch (minusStat)
-    {
-    case 1:
-      secondary.stats.atk = static_cast<int>(secondary.stats.atk * 0.9);
-      break;
-    case 2:
-      secondary.stats.def = static_cast<int>(secondary.stats.def * 0.9);
-      break;
-    case 3:
-      secondary.stats.speed = static_cast<int>(secondary.stats.speed * 0.9);
-      break;
-    case 4:
-      secondary.stats.spAtk = static_cast<int>(secondary.stats.spAtk * 0.9);
-      break;
-    case 5:
-      secondary.stats.spDef = static_cast<int>(secondary.stats.spDef * 0.9);
-      break;
-    }
-  }
-
-  return secondary;
-}
-
 void GaleDarknessRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
                                                                       int secondaryIndex)
 {
-  if (secondaryIndex != 0)
+  if (secondaryIndex != teddiursaSecondaryIndex)
     return;
 
-  u32 seed = postStarterSeed;
-  seed = LCGn(seed, secondaryRngAdvanceSearchStart);
-  m_secondaryCandidates.clear();
-  for (int i = 0; i < secondarySearchSeedsAmount; i++)
-  {
-    m_secondaryCandidates.push_back(generateSecondaryPokemon(seed, secondaryIndex));
-    LCG(seed);
-  }
-}
-
-std::vector<BaseRNGSystem::SecondaryCandidate>
-GaleDarknessRNGSystem::getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef,
-                                                   int speed)
-{
-  std::vector<SecondaryCandidate> filteredCandidates;
-
-  for (auto candiate : m_secondaryCandidates)
-  {
-    if (hp != -1 && hp != candiate.stats.hp)
-      continue;
-    if (atk != -1 && atk != candiate.stats.atk)
-      continue;
-    if (def != -1 && def != candiate.stats.def)
-      continue;
-    if (spAtk != -1 && spAtk != candiate.stats.spAtk)
-      continue;
-    if (spDef != -1 && spDef != candiate.stats.spDef)
-      continue;
-    if (speed != -1 && speed != candiate.stats.speed)
-      continue;
-    filteredCandidates.push_back(candiate);
-  }
-
-  return filteredCandidates;
+  BaseRNGSystem::generateAllSecondaryPokemonsInSearchRange(
+      postStarterSeed, teddiursaBaseStats, teddiursaLevel, teddiursaGenderRatio,
+      secondaryRngAdvanceSearchStart, secondarySearchSeedsAmount);
 }

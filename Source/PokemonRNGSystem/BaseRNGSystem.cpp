@@ -168,3 +168,118 @@ BaseRNGSystem::predictStartersForNbrSeconds(u32 seed, const int nbrSeconds)
   }
   return predictionsResult;
 }
+
+BaseRNGSystem::SecondaryCandidate BaseRNGSystem::generateSecondaryPokemon(u32 seed, Stats baseStats,
+                                                                          int level, u8 genderRatio)
+{
+  SecondaryCandidate secondary;
+
+  // Every RNG call from now on influence the starters.
+  secondary.startingSeed = seed;
+  extractIVs(secondary.properties, seed);
+  // Ability, doesn't matter
+  LCG(seed);
+  fillStarterGenHiddenPowerInfo(secondary.properties);
+
+  // Generates the true perosnality ID with any nature, but the gender has to be male.
+  u32 hId = LCG(seed) >> 16;
+  u32 lId = LCG(seed) >> 16;
+  u32 pid = (hId << 16) | (lId);
+
+  secondary.properties.isShiny = false;
+  secondary.properties.genderIndex = getPidGender(genderRatio, pid);
+  secondary.properties.natureIndex = pid % 25;
+
+  secondary.stats.hp = (2 * baseStats.hp + secondary.properties.hpIV) * level / 100 + level + 10;
+  secondary.stats.atk = (2 * baseStats.atk + secondary.properties.atkIV) * level / 100 + 5;
+  secondary.stats.def = (2 * baseStats.def + secondary.properties.defIV) * level / 100 + 5;
+  secondary.stats.spAtk = (2 * baseStats.spAtk + secondary.properties.spAtkIV) * level / 100 + 5;
+  secondary.stats.spDef = (2 * baseStats.spDef + secondary.properties.spDefIV) * level / 100 + 5;
+  secondary.stats.speed = (2 * baseStats.speed + secondary.properties.speedIV) * level / 100 + 5;
+
+  if (secondary.properties.natureIndex % 6 != 0)
+  {
+    int plusStat = (secondary.properties.natureIndex / 5) + 1;
+    int minusStat = (secondary.properties.natureIndex % 5) + 1;
+    switch (plusStat)
+    {
+    case 1:
+      secondary.stats.atk = static_cast<int>(secondary.stats.atk * 1.1);
+      break;
+    case 2:
+      secondary.stats.def = static_cast<int>(secondary.stats.def * 1.1);
+      break;
+    case 3:
+      secondary.stats.speed = static_cast<int>(secondary.stats.speed * 1.1);
+      break;
+    case 4:
+      secondary.stats.spAtk = static_cast<int>(secondary.stats.spAtk * 1.1);
+      break;
+    case 5:
+      secondary.stats.spDef = static_cast<int>(secondary.stats.spDef * 1.1);
+      break;
+    }
+
+    switch (minusStat)
+    {
+    case 1:
+      secondary.stats.atk = static_cast<int>(secondary.stats.atk * 0.9);
+      break;
+    case 2:
+      secondary.stats.def = static_cast<int>(secondary.stats.def * 0.9);
+      break;
+    case 3:
+      secondary.stats.speed = static_cast<int>(secondary.stats.speed * 0.9);
+      break;
+    case 4:
+      secondary.stats.spAtk = static_cast<int>(secondary.stats.spAtk * 0.9);
+      break;
+    case 5:
+      secondary.stats.spDef = static_cast<int>(secondary.stats.spDef * 0.9);
+      break;
+    }
+  }
+
+  return secondary;
+}
+
+void BaseRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed, Stats baseStats,
+                                                              int level, u8 genderRatio,
+                                                              int rngAdvanceSearchStart,
+                                                              int searchSeedsAmount)
+{
+  u32 seed = postStarterSeed;
+  seed = LCGn(seed, rngAdvanceSearchStart);
+  m_secondaryCandidates.clear();
+  for (int i = 0; i < searchSeedsAmount; i++)
+  {
+    m_secondaryCandidates.push_back(generateSecondaryPokemon(seed, baseStats, level, genderRatio));
+    LCG(seed);
+  }
+}
+
+std::vector<BaseRNGSystem::SecondaryCandidate>
+BaseRNGSystem::getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef,
+                                           int speed)
+{
+  std::vector<SecondaryCandidate> filteredCandidates;
+
+  for (auto candiate : m_secondaryCandidates)
+  {
+    if (hp != -1 && hp != candiate.stats.hp)
+      continue;
+    if (atk != -1 && atk != candiate.stats.atk)
+      continue;
+    if (def != -1 && def != candiate.stats.def)
+      continue;
+    if (spAtk != -1 && spAtk != candiate.stats.spAtk)
+      continue;
+    if (spDef != -1 && spDef != candiate.stats.spDef)
+      continue;
+    if (speed != -1 && speed != candiate.stats.speed)
+      continue;
+    filteredCandidates.push_back(candiate);
+  }
+
+  return filteredCandidates;
+}

@@ -76,8 +76,8 @@ public:
   // Internally generates all the secondary Pokémons in the searh range
   virtual void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
                                                          int secondaryIndex) = 0;
-  virtual std::vector<SecondaryCandidate>
-  getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef, int speed) = 0;
+  std::vector<SecondaryCandidate> getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk,
+                                                              int spDef, int speed);
 
 protected:
   // The number of time the game polls the input per second on the naming screen
@@ -92,7 +92,9 @@ protected:
   virtual u32 rollRNGNamingScreenNext(const u32 seed) = 0;
   // Generates the starters with a given seed, the seed must have passed the naming screen
   virtual StartersPrediction generateStarterPokemons(const u32 seed) = 0;
-  virtual SecondaryCandidate generateSecondaryPokemon(u32 seed, int secondaryIndex) = 0;
+  void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed, Stats baseStats, int level,
+                                                 u8 genderRatio, int rngAdvanceSearchStart,
+                                                 int searchSeedsAmount);
 
   // The LCG used in both Pokemon games
   u32 inline LCG(u32& seed, u16* counter = nullptr)
@@ -162,4 +164,9 @@ protected:
   {
     return genderRatio > (pid & 0xff) ? 1 : 0;
   }
+
+private:
+  SecondaryCandidate generateSecondaryPokemon(u32 seed, Stats baseStats, int level, u8 genderRatio);
+
+  std::vector<SecondaryCandidate> m_secondaryCandidates;
 };
