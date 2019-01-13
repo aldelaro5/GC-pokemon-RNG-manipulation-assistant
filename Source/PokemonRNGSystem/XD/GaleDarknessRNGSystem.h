@@ -56,4 +56,11 @@ private:
                          const s8 wantedNature = -1);
   std::array<u8, 6> generateEVs(u32& seed, const bool allowUnfilledEV, const bool endPrematurely,
                                 u16* counter = nullptr);
+
+  const int secondaryRngAdvanceSearchStart = 693000;
+  const int secondarySearchSeedsAmount = 50000;
+
+  std::vector<SecondaryCandidate> m_secondaryCandidates;
+
+  Stats teddiursaBaseStats = {60, 80, 50, 50, 50, 40};
 };
