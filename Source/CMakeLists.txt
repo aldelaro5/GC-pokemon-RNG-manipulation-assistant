@@ -23,6 +23,7 @@ set(SRCS PokemonRNGSystem/BaseRNGSystem.cpp
          GUI/SeedFinder/SeedFinderPassPage.cpp
          GUI/SeedFinder/SeedFinderWizard.cpp
          GUI/Predictor/PredictorWidget.cpp
+         GUI/StatsReporter/PokemonPropertiesFrame.cpp
          GUI/MainWindow.cpp
          main.cpp)
 
