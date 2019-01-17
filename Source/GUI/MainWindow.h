@@ -10,6 +10,7 @@
 
 #include "../Common/CommonTypes.h"
 #include "Predictor/PredictorWidget.h"
+#include "StatsReporter/StatsReporterWidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -53,6 +54,7 @@ private:
   QLabel* m_lblRerollCount;
   QCheckBox* m_chkFilterUnwantedPredictions;
   PredictorWidget* m_predictorWidget;
+  StatsReporterWidget* m_statsReporterWidget;
   bool m_cancelPrecalc = false;
   QFuture<void> m_precalcFuture;
   QProgressDialog* m_dlgProgressPrecalc;

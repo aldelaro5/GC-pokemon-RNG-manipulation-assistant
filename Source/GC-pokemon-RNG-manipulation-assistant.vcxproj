@@ -91,6 +91,7 @@
     <ClCompile Include="$(QtMocOutPrefix)MainWindow.cpp" />
     <ClCompile Include="gui\GUICommon.cpp" />
     <ClCompile Include="gui\MainWindow.cpp" />
+    <ClCompile Include="gui\StatsReporter\StatsReporterWidget.cpp" />
     <ClCompile Include="gui\StatsReporter\PokemonPropertiesFrame.cpp" />
     <ClCompile Include="gui\predictor\PredictorWidget.cpp" />
     <ClCompile Include="gui\seedfinder\SeedFinderPassPage.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="common\CommonTypes.h" />
     <ClInclude Include="gui\GUICommon.h" />
     <ClInclude Include="gui\MainWindow.h" />
+    <ClInclude Include="gui\StatsReporter\StatsReporterWidget.h" />
     <ClInclude Include="gui\StatsReporter\PokemonPropertiesFrame.h" />
     <ClInclude Include="gui\predictor\PredictorWidget.h" />
     <ClInclude Include="gui\seedfinder\SeedFinderPassPage.h" />
