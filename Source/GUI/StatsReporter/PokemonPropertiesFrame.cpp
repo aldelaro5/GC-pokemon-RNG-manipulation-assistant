@@ -14,8 +14,9 @@ PokemonPropertiesFrame::PokemonPropertiesFrame(QString pokemonName, QPixmap poke
 {
   setFrameStyle(QFrame::Box | QFrame::Plain);
   // This is done because this frame is expected to be captured using a live streaming software with
-  // cropping aligned with the frame; the width cannot change because of this
+  // cropping aligned with the frame; the size cannot change because of this
   setFixedWidth(360);
+  setFixedHeight(100);
 
   // The default fonts were hard to read which would be a problem considering this is supposed to be
   // viewed on a live stream. Therefore, a bigger bold font is more appropriate.
