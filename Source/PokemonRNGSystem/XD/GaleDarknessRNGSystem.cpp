@@ -441,3 +441,12 @@ void GaleDarknessRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postSt
       postStarterSeed, teddiursaBaseStats, teddiursaLevel, teddiursaGenderRatio,
       secondaryRngAdvanceSearchStart, secondarySearchSeedsAmount);
 }
+
+std::array<BaseRNGSystem::StatsRange, 6>
+GaleDarknessRNGSystem::getPokemonStatsRange(int secondaryIndex)
+{
+  if (secondaryIndex != teddiursaSecondaryIndex)
+    return {};
+
+  return teddiursaStatsRange;
+}

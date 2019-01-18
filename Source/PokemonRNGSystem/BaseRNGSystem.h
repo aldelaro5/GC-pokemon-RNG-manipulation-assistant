@@ -3,6 +3,7 @@
 #include "../Common/Common.h"
 #include "../Common/CommonTypes.h"
 
+#include <array>
 #include <functional>
 #include <vector>
 
@@ -53,6 +54,12 @@ public:
     int trainerId = 0;
   };
 
+  struct StatsRange
+  {
+    int min;
+    int max;
+  };
+
   virtual std::string getPrecalcFilename() = 0;
   virtual int getNbrStartersPrediction() = 0;
   virtual std::vector<std::string> getStartersName() = 0;
@@ -76,6 +83,8 @@ public:
   // Internally generates all the secondary Pokémons in the searh range
   virtual void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
                                                          int secondaryIndex) = 0;
+  // Obtain the possible stats range of the given secondary, order: HP, Atk, Def, SpA, SpD, Spe
+  virtual std::array<StatsRange, 6> getPokemonStatsRange(int secondaryIndex) = 0;
   std::vector<SecondaryCandidate> getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk,
                                                               int spDef, int speed);
 

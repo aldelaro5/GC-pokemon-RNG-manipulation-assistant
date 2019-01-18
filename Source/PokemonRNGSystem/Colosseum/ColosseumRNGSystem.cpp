@@ -403,10 +403,26 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
 void ColosseumRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
                                                                    int secondaryIndex)
 {
-  if (secondaryIndex >= SECONDARY_COUNT && secondaryIndex < 0)
+  if (!(secondaryIndex < POKEMON_COUNT || secondaryIndex >= quilava))
     return;
 
   BaseRNGSystem::generateAllSecondaryPokemonsInSearchRange(
-      postStarterSeed, secondaryStats[secondaryIndex], secondaryLevel, secondaryGenderRatio,
+      postStarterSeed, secondaryBaseStats[secondaryIndex], secondaryLevel, secondaryGenderRatio,
       secondaryRngAdvanceSearchStart, secondarySearchSeedsAmount);
+}
+
+std::array<BaseRNGSystem::StatsRange, 6>
+ColosseumRNGSystem::getPokemonStatsRange(int secondaryIndex)
+{
+  switch (secondaryIndex)
+  {
+  case quilava:
+    return quilavaStatsRange;
+  case croconaw:
+    return croconawStatsRange;
+  case bayleef:
+    return bayleefStatsRange;
+  default:
+    return {};
+  }
 }

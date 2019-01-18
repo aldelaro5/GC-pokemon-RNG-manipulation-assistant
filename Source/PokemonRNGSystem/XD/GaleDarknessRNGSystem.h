@@ -48,6 +48,7 @@ private:
   StartersPrediction generateStarterPokemons(const u32 seed) final override;
   void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
                                                  int secondaryIndex) final override;
+  std::array<StatsRange, 6> getPokemonStatsRange(int secondaryIndex) final override;
   u32 generatePokemonPID(u32& seed, const u32 hTrainerId, const u32 lTrainerId, const u32 dummyId,
                          u16* counter = nullptr,
                          const WantedShininess shininess = WantedShininess::any,
@@ -62,4 +63,7 @@ private:
   const u8 teddiursaGenderRatio = 127;
 
   Stats teddiursaBaseStats = {60, 80, 50, 50, 50, 40};
+
+  std::array<StatsRange, 6> teddiursaStatsRange = {
+      {{34, 37}, {19, 28}, {14, 20}, {14, 20}, {14, 20}, {11, 18}}};
 };
