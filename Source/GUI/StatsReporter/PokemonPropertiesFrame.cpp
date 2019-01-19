@@ -103,7 +103,7 @@ void PokemonPropertiesFrame::setPokemonIcon(const QPixmap icon)
   m_lblIcon->setPixmap(icon);
 }
 
-void PokemonPropertiesFrame::SetPokemonProperties(BaseRNGSystem::PokemonProperties properties)
+void PokemonPropertiesFrame::setPokemonProperties(BaseRNGSystem::PokemonProperties properties)
 {
   m_lblHpIv->setText(QString::number(properties.hpIV));
   m_lblAtkIv->setText(QString::number(properties.atkIV));
@@ -170,7 +170,7 @@ void PokemonPropertiesFrame::SetPokemonProperties(BaseRNGSystem::PokemonProperti
   }
 }
 
-void PokemonPropertiesFrame::Reset()
+void PokemonPropertiesFrame::reset()
 {
   m_lblHpIv->setText("?");
   m_lblHpIv->setPalette(palette());
