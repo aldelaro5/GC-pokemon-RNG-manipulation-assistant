@@ -86,7 +86,8 @@ public:
   // Obtain the possible stats range of the given secondary, order: HP, Atk, Def, SpA, SpD, Spe
   virtual std::array<StatsRange, 6> getPokemonStatsRange(int secondaryIndex) = 0;
   std::vector<SecondaryCandidate> getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk,
-                                                              int spDef, int speed);
+                                                              int spDef, int speed,
+                                                              int genderIndex);
 
 protected:
   // The number of time the game polls the input per second on the naming screen

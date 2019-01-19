@@ -260,12 +260,14 @@ void BaseRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSee
 
 std::vector<BaseRNGSystem::SecondaryCandidate>
 BaseRNGSystem::getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef,
-                                           int speed)
+                                           int speed, int genderIndex)
 {
   std::vector<SecondaryCandidate> filteredCandidates;
 
   for (auto candiate : m_secondaryCandidates)
   {
+    if (genderIndex != -1 && genderIndex != candiate.properties.genderIndex)
+      continue;
     if (hp != -1 && hp != candiate.stats.hp)
       continue;
     if (atk != -1 && atk != candiate.stats.atk)
