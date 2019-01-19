@@ -83,10 +83,12 @@
     <Import Project="Qt.props" />
   </ImportGroup>
   <ItemGroup>
+    <QtMoc Include="gui\Predictor\PredictorWidget.h" />
     <QtMoc Include="gui\seedfinder\SeedFinderWizard.h" />
     <QtMoc Include="gui\MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(QtMocOutPrefix)PredictorWidget.cpp" />
     <ClCompile Include="$(QtMocOutPrefix)SeedFinderWizard.cpp" />
     <ClCompile Include="$(QtMocOutPrefix)MainWindow.cpp" />
     <ClCompile Include="gui\GUICommon.cpp" />
@@ -109,13 +111,13 @@
     <ClCompile Include="pokemonrngsystem\xd\GaleDarknessRNGSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gui\predictor\PredictorWidget.h" />
     <ClInclude Include="common\Common.h" />
     <ClInclude Include="common\CommonTypes.h" />
     <ClInclude Include="gui\GUICommon.h" />
     <ClInclude Include="gui\MainWindow.h" />
     <ClInclude Include="gui\StatsReporter\StatsReporterWidget.h" />
     <ClInclude Include="gui\StatsReporter\PokemonPropertiesFrame.h" />
-    <ClInclude Include="gui\predictor\PredictorWidget.h" />
     <ClInclude Include="gui\seedfinder\SeedFinderPassPage.h" />
     <ClInclude Include="gui\seedfinder\SeedFinderWizard.h" />
     <ClInclude Include="gui\settings\ColosseumTab.h" />
