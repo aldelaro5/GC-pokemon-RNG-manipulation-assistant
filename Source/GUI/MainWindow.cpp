@@ -78,6 +78,13 @@ void MainWindow::initialiseWidgets()
   m_lblRerollCount = new QLabel(QString::number(m_rerollCount), this);
 
   m_predictorWidget = new PredictorWidget(this);
+  m_statsReporterWidget = new StatsReporterWidget(this);
+  m_statsReporterWidget->setDisabled(true);
+  connect(m_predictorWidget, &PredictorWidget::selectedPredictionChanged, this,
+          [=](BaseRNGSystem::StartersPrediction prediction) {
+            m_statsReporterWidget->startersPredictionChanged(prediction);
+            m_statsReporterWidget->setEnabled(true);
+          });
 }
 
 void MainWindow::makeLayouts()
@@ -104,13 +111,21 @@ void MainWindow::makeLayouts()
   rerollButtonsLayout->addWidget(m_btnRerollPrediciton);
   rerollButtonsLayout->addWidget(m_btnAutoRerollPrediciton);
 
-  QVBoxLayout* mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(m_cmbGame);
-  mainLayout->addLayout(buttonsLayout);
-  mainLayout->addLayout(filterUnwantedLayout);
-  mainLayout->addWidget(m_predictorWidget);
-  mainLayout->addLayout(rerollButtonsLayout);
-  mainLayout->addLayout(rerollCountLayout);
+  QVBoxLayout* predictorLayout = new QVBoxLayout;
+  predictorLayout->addWidget(m_cmbGame);
+  predictorLayout->addLayout(buttonsLayout);
+  predictorLayout->addLayout(filterUnwantedLayout);
+  predictorLayout->addWidget(m_predictorWidget);
+  predictorLayout->addLayout(rerollButtonsLayout);
+  predictorLayout->addLayout(rerollCountLayout);
+
+  QFrame* separatorLine = new QFrame();
+  separatorLine->setFrameShape(QFrame::VLine);
+
+  QHBoxLayout* mainLayout = new QHBoxLayout;
+  mainLayout->addLayout(predictorLayout);
+  mainLayout->addWidget(separatorLine);
+  mainLayout->addWidget(m_statsReporterWidget);
 
   QWidget* mainWidget = new QWidget;
   mainWidget->setLayout(mainLayout);
@@ -165,6 +180,9 @@ void MainWindow::gameChanged()
   m_btnAutoRerollPrediciton->setEnabled(false);
   m_rerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+
+  m_statsReporterWidget->gameChanged(selection);
+  m_statsReporterWidget->setDisabled(true);
 }
 
 void MainWindow::startSeedFinder()
@@ -215,6 +233,8 @@ void MainWindow::resetPredictor()
   m_btnAutoRerollPrediciton->setEnabled(false);
   m_rerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  m_statsReporterWidget->reset();
+  m_statsReporterWidget->setDisabled(true);
 }
 
 bool MainWindow::rerollPredictor()
@@ -233,6 +253,7 @@ bool MainWindow::rerollPredictor()
   m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_rerollCount++;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  m_statsReporterWidget->setDisabled(true);
   return desiredStarterFound;
 }
 
@@ -285,6 +306,7 @@ void MainWindow::autoRerollPredictor()
     msg->exec();
     delete msg;
   }
+  m_statsReporterWidget->setDisabled(true);
 }
 
 void MainWindow::openSettings()

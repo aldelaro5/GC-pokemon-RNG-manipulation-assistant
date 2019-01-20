@@ -10,6 +10,9 @@ PredictorWidget::PredictorWidget(QWidget* parent) : QWidget(parent)
 {
   initialiseWidgets();
   makeLayouts();
+
+  connect(m_tblStartersPrediction, &QTableWidget::itemSelectionChanged, this,
+          &PredictorWidget::onSelectedPredictionChanged);
 }
 
 void PredictorWidget::initialiseWidgets()
@@ -102,10 +105,26 @@ void PredictorWidget::switchGame(const GUICommon::gameSelection game)
   m_tblStartersPrediction->resizeColumnsToContents();
 }
 
+std::vector<BaseRNGSystem::StartersPrediction> PredictorWidget::getStartersPrediction()
+{
+  return m_startersPrediction;
+}
+
+void PredictorWidget::onSelectedPredictionChanged()
+{
+  if (m_tblStartersPrediction->currentRow() == -1)
+    return;
+
+  BaseRNGSystem::StartersPrediction prediction =
+      m_startersPrediction[m_tblStartersPrediction->currentRow()];
+  emit selectedPredictionChanged(prediction);
+}
+
 bool PredictorWidget::setStartersPrediction(
     const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
     const GUICommon::gameSelection game)
 {
+  m_startersPrediction = startersPrediction;
   clearLabels();
   std::vector<std::string> names = SPokemonRNG::getCurrentSystem()->getStartersName();
   for (auto name : names)
@@ -170,7 +189,7 @@ bool PredictorWidget::setStartersPrediction(
 
     for (int j = 0; j < startersPrediction[i].starters.size(); j++)
     {
-      BaseRNGSystem::StarterGen starter = startersPrediction[i].starters[j];
+      BaseRNGSystem::PokemonProperties starter = startersPrediction[i].starters[j];
 
       m_tblStartersPrediction->setItem(
           i, 3 + j * nbrColPerStarter,

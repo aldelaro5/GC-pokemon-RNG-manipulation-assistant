@@ -47,6 +47,7 @@ static const std::array<std::array<u8, 6>, 4> s_genderRatioDummyTeamsData = {
 
 // Espeon first because it matters the most for speedruns
 static const std::array<std::string, 2> s_startersName = {{"Espeon", "Umbreon"}};
+static const std::array<std::string, 3> s_secondariesName = {{"Quilava", "Croconaw", "Bayleef"}};
 
 // The gender ratio of the starters.
 static const u8 s_genderRatioStarters = 0x1f;
@@ -335,6 +336,14 @@ std::vector<std::string> ColosseumRNGSystem::getStartersName()
   return names;
 }
 
+std::vector<std::string> ColosseumRNGSystem::getSecondariesName()
+{
+  std::vector<std::string> names;
+  for (auto i : s_secondariesName)
+    names.push_back(i);
+  return names;
+}
+
 u32 ColosseumRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   // Exhaust all guaranteed calls before considering input and wasted frames.
@@ -355,8 +364,8 @@ u32 ColosseumRNGSystem::rollRNGNamingScreenNext(u32 seed)
 BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u32 seed)
 {
   StartersPrediction result;
-  std::vector<StarterGen> startersProperties;
-  StarterGen starter;
+  std::vector<PokemonProperties> startersProperties;
+  PokemonProperties starter;
 
   // 500 numbers of 32 bits are generated, but they don't seem to influence anything.
   seed = LCGn(seed, 1000);
@@ -377,19 +386,11 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
     u32 lDummyId = LCG(seed) >> 16;
     u32 dummyId = (hDummyId << 16) | (lDummyId);
 
-    // HP, ATK, DEF IV
-    LCG(seed);
-    starter.hpIV = (seed >> 16) & 31;
+    extractIVs(starter, seed);
     starter.hpStartingStat =
         (2 * s_startersHpBaseStats[i] + starter.hpIV) * s_startersStartingLevel[i] / 100 +
         s_startersStartingLevel[i] + 10;
-    starter.atkIV = (seed >> 21) & 31;
-    starter.defIV = (seed >> 26) & 31;
-    // SPEED, SPATK, SPDEF IV
-    LCG(seed);
-    starter.speedIV = (seed >> 16) & 31;
-    starter.spAtkIV = (seed >> 21) & 31;
-    starter.spDefIV = (seed >> 26) & 31;
+
     // Ability, doesn't matter
     LCG(seed);
 
@@ -406,4 +407,31 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
   }
   result.starters = startersProperties;
   return result;
+}
+
+void ColosseumRNGSystem::generateAllSecondariesInSearchRange(const u32 postStarterSeed,
+                                                             const int secondaryIndex)
+{
+  if (!(secondaryIndex < POKEMON_COUNT || secondaryIndex >= quilava))
+    return;
+
+  BaseRNGSystem::generateAllSecondariesInSearchRange(
+      postStarterSeed, secondaryBaseStats[secondaryIndex], secondaryLevel, secondaryGenderRatio,
+      secondaryRngAdvanceSearchStart, secondarySearchSeedsAmount);
+}
+
+std::array<BaseRNGSystem::StatsRange, 6>
+ColosseumRNGSystem::getSecondaryStatsRange(const int secondaryIndex)
+{
+  switch (secondaryIndex)
+  {
+  case quilava:
+    return quilavaStatsRange;
+  case croconaw:
+    return croconawStatsRange;
+  case bayleef:
+    return bayleefStatsRange;
+  default:
+    return {};
+  }
 }

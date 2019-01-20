@@ -10,8 +10,11 @@
 
 class PredictorWidget : public QWidget
 {
+  Q_OBJECT
+
 public:
   PredictorWidget(QWidget* parent = nullptr);
+  std::vector<BaseRNGSystem::StartersPrediction> getStartersPrediction();
   // Returns whether or not a desired starter has been found
   bool
   setStartersPrediction(const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
@@ -20,6 +23,9 @@ public:
   void filterUnwanted(const bool filterUnwanted);
   void switchGame(const GUICommon::gameSelection game);
 
+signals:
+  void selectedPredictionChanged(BaseRNGSystem::StartersPrediction prediction);
+
 private:
   const QBrush greenBrush = QBrush(QColor("#32CD32"));
   const QBrush redBrush = QBrush(QColor("#DC143C"));
@@ -27,8 +33,9 @@ private:
   void clearLabels();
   void initialiseWidgets();
   void makeLayouts();
+  void onSelectedPredictionChanged();
 
-  BaseRNGSystem::StartersPrediction m_startersPrediction;
+  std::vector<BaseRNGSystem::StartersPrediction> m_startersPrediction;
   QHBoxLayout* m_startersNamesLayout;
   QVector<QLabel*> m_lblStartersNames;
   QStringList m_tblHeaderLabels;

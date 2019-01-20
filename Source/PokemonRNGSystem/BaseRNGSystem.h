@@ -3,6 +3,7 @@
 #include "../Common/Common.h"
 #include "../Common/CommonTypes.h"
 
+#include <array>
 #include <functional>
 #include <vector>
 
@@ -12,7 +13,7 @@
 class BaseRNGSystem
 {
 public:
-  struct StarterGen
+  struct PokemonProperties
   {
     int hpIV = 0;
     int atkIV = 0;
@@ -28,17 +29,41 @@ public:
     bool isShiny = false;
   };
 
+  struct Stats
+  {
+    int hp;
+    int atk;
+    int def;
+    int spAtk;
+    int spDef;
+    int speed;
+  };
+
+  struct SecondaryCandidate
+  {
+    PokemonProperties properties;
+    Stats stats;
+    u32 startingSeed = 0;
+  };
+
   struct StartersPrediction
   {
-    std::vector<StarterGen> starters;
+    std::vector<PokemonProperties> starters;
     u32 startingSeed = 0;
     int frameNumber = 0;
     int trainerId = 0;
   };
 
+  struct StatsRange
+  {
+    int min;
+    int max;
+  };
+
   virtual std::string getPrecalcFilename() = 0;
   virtual int getNbrStartersPrediction() = 0;
   virtual std::vector<std::string> getStartersName() = 0;
+  virtual std::vector<std::string> getSecondariesName() = 0;
   virtual std::vector<int> obtainTeamGenerationCritera(u32& seed) = 0;
   virtual int getNbrCombinationsFirstTwoCriteria() = 0;
   // Does the precalculation which consist of outputing to a file the remaining unique seeds after a
@@ -56,6 +81,15 @@ public:
   // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
   // outcome got
   virtual bool generateBattleTeam(u32& seed, const std::vector<int> criteria) = 0;
+  // Internally generates all the secondary Pokémons in the searh range
+  virtual void generateAllSecondariesInSearchRange(const u32 postStarterSeed,
+                                                   const int secondaryIndex) = 0;
+  // Obtain the possible stats range of the given secondary, order: HP, Atk, Def, SpA, SpD, Spe
+  virtual std::array<StatsRange, 6> getSecondaryStatsRange(const int secondaryIndex) = 0;
+  std::vector<SecondaryCandidate> getFilteredSecondaryCandidates(const int hp, const int atk,
+                                                                 const int def, const int spAtk,
+                                                                 const int spDef, const int speed,
+                                                                 const int genderIndex);
 
 protected:
   // The number of time the game polls the input per second on the naming screen
@@ -70,6 +104,10 @@ protected:
   virtual u32 rollRNGNamingScreenNext(const u32 seed) = 0;
   // Generates the starters with a given seed, the seed must have passed the naming screen
   virtual StartersPrediction generateStarterPokemons(const u32 seed) = 0;
+  void generateAllSecondariesInSearchRange(const u32 postStarterSeed, const Stats baseStats,
+                                           const int level, const u8 genderRatio,
+                                           const int rngAdvanceSearchStart,
+                                           const int searchSeedsAmount);
 
   // The LCG used in both Pokemon games
   u32 inline LCG(u32& seed, u16* counter = nullptr)
@@ -109,7 +147,21 @@ protected:
     return ((TID ^ SID ^ (PID & 0xFFFF) ^ (PID >> 16)) < 8);
   }
 
-  void inline fillStarterGenHiddenPowerInfo(StarterGen& starter)
+  void inline extractIVs(PokemonProperties& properties, u32& seed)
+  {
+    // HP, ATK, DEF IV
+    LCG(seed);
+    properties.hpIV = (seed >> 16) & 31;
+    properties.atkIV = (seed >> 21) & 31;
+    properties.defIV = (seed >> 26) & 31;
+    // SPEED, SPATK, SPDEF IV
+    LCG(seed);
+    properties.speedIV = (seed >> 16) & 31;
+    properties.spAtkIV = (seed >> 21) & 31;
+    properties.spDefIV = (seed >> 26) & 31;
+  }
+
+  void inline fillStarterGenHiddenPowerInfo(PokemonProperties& starter)
   {
     int typeSum = (starter.hpIV & 1) + 2 * (starter.atkIV & 1) + 4 * (starter.defIV & 1) +
                   8 * (starter.speedIV & 1) + 16 * (starter.spAtkIV & 1) +
@@ -125,4 +177,10 @@ protected:
   {
     return genderRatio > (pid & 0xff) ? 1 : 0;
   }
+
+private:
+  SecondaryCandidate generateSecondary(u32 seed, const Stats baseStats, const int level,
+                                       const u8 genderRatio);
+
+  std::vector<SecondaryCandidate> m_secondaryCandidates;
 };
