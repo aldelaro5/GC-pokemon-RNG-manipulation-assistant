@@ -1,11 +1,12 @@
 #pragma once
 
 #include <QComboBox>
-#include <QVBoxLayout>
 #include <QTableWidget>
+#include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
 
+#include "../../Common/CommonTypes.h"
 #include "../../PokemonRNGSystem/BaseRNGSystem.h"
 #include "../GUICommon.h"
 #include "PokemonPropertiesFrame.h"
@@ -28,6 +29,8 @@ private:
   void resetStatsSelection();
 
   const int c_maxResultsShown = 100;
+
+  u32 m_startingSeed = 0;
 
   QComboBox* m_cmbSecondaryPokemon;
 

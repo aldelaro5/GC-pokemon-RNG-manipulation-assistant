@@ -63,8 +63,8 @@ StatsReporterWidget::StatsReporterWidget(QWidget* parent) : QWidget(parent)
   leftStatsLayout->setLabelAlignment(Qt::AlignRight);
 
   QFormLayout* RightStatsLayout = new QFormLayout();
-  RightStatsLayout->addRow("Sp. Atk", m_cmbSpDefStat);
-  RightStatsLayout->addRow("Sp. Def", m_cmbSpAtkStat);
+  RightStatsLayout->addRow("Sp. Atk", m_cmbSpAtkStat);
+  RightStatsLayout->addRow("Sp. Def", m_cmbSpDefStat);
   RightStatsLayout->addRow("Speed", m_cmbSpeedStat);
   RightStatsLayout->setLabelAlignment(Qt::AlignRight);
 
@@ -150,16 +150,22 @@ void StatsReporterWidget::startersPredictionChanged(
   for (int i = 0; i < m_starterFrames.size(); i++)
     m_starterFrames[i]->setPokemonProperties(starters.starters[i]);
 
+  m_startingSeed = starters.startingSeed;
+
   SPokemonRNG::getCurrentSystem()->generateAllSecondariesInSearchRange(
-      starters.startingSeed, m_cmbSecondaryPokemon->currentIndex());
+      m_startingSeed, m_cmbSecondaryPokemon->currentIndex());
 }
 
 void StatsReporterWidget::onSecondaryChanged(const int newIndex)
 {
+  m_secondaryFrame->reset();
   m_secondaryFrame->setPokemonName(m_cmbSecondaryPokemon->currentText());
   m_secondaryFrame->setPokemonIcon(pixmapForPokemon(m_cmbSecondaryPokemon->currentText()));
 
   updateStatsSelection();
+
+  SPokemonRNG::getCurrentSystem()->generateAllSecondariesInSearchRange(
+      m_startingSeed, m_cmbSecondaryPokemon->currentIndex());
 }
 
 void StatsReporterWidget::updateStatsSelection()
@@ -222,6 +228,9 @@ QPixmap StatsReporterWidget::pixmapForPokemon(const QString name)
 
 void StatsReporterWidget::onStatsGenderChanged()
 {
+  m_secondaryFrame->reset();
+  m_tblSecondaryPossibilities->clearSelection();
+
   int hp = (m_cmbHpStat->currentIndex() != 0) ? m_cmbHpStat->currentText().toInt() : -1;
   int atk = (m_cmbAtkStat->currentIndex() != 0) ? m_cmbAtkStat->currentText().toInt() : -1;
   int def = (m_cmbDefStat->currentIndex() != 0) ? m_cmbDefStat->currentText().toInt() : -1;
@@ -273,6 +282,8 @@ void StatsReporterWidget::onStatsGenderChanged()
     }
 
     m_tblSecondaryPossibilities->resizeColumnsToContents();
+    if (m_tblSecondaryPossibilities->rowCount() == 1)
+      m_tblSecondaryPossibilities->selectRow(0);
     m_lblResultsCount->setText(QString::number(m_filteredCandidates.size()) +
                                QString(" result(s)"));
   }
@@ -285,6 +296,10 @@ void StatsReporterWidget::onStatsGenderChanged()
 
 void StatsReporterWidget::selectedPossibilityChanged()
 {
+  if (m_tblSecondaryPossibilities->currentRow() == -1 ||
+      m_tblSecondaryPossibilities->selectedItems().size() == 0)
+    return;
+
   m_secondaryFrame->reset();
   m_secondaryFrame->setPokemonProperties(
       m_filteredCandidates[m_tblSecondaryPossibilities->currentRow()].properties);
@@ -321,6 +336,7 @@ void StatsReporterWidget::resetStatsSelection()
 
   m_cmbGender->setCurrentIndex(0);
 
+  m_filteredCandidates.clear();
   m_tblSecondaryPossibilities->clear();
   m_tblSecondaryPossibilities->setRowCount(0);
   m_tblSecondaryPossibilities->setHorizontalHeaderLabels(m_possibilitiesHeaderLabels);
