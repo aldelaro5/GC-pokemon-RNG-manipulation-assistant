@@ -169,8 +169,9 @@ BaseRNGSystem::predictStartersForNbrSeconds(u32 seed, const int nbrSeconds)
   return predictionsResult;
 }
 
-BaseRNGSystem::SecondaryCandidate BaseRNGSystem::generateSecondaryPokemon(u32 seed, Stats baseStats,
-                                                                          int level, u8 genderRatio)
+BaseRNGSystem::SecondaryCandidate BaseRNGSystem::generateSecondary(u32 seed, const Stats baseStats,
+                                                                   const int level,
+                                                                   const u8 genderRatio)
 {
   SecondaryCandidate secondary;
 
@@ -243,24 +244,26 @@ BaseRNGSystem::SecondaryCandidate BaseRNGSystem::generateSecondaryPokemon(u32 se
   return secondary;
 }
 
-void BaseRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed, Stats baseStats,
-                                                              int level, u8 genderRatio,
-                                                              int rngAdvanceSearchStart,
-                                                              int searchSeedsAmount)
+void BaseRNGSystem::generateAllSecondariesInSearchRange(const u32 postStarterSeed,
+                                                        const Stats baseStats, const int level,
+                                                        const u8 genderRatio,
+                                                        const int rngAdvanceSearchStart,
+                                                        const int searchSeedsAmount)
 {
   u32 seed = postStarterSeed;
   seed = LCGn(seed, rngAdvanceSearchStart);
   m_secondaryCandidates.clear();
   for (int i = 0; i < searchSeedsAmount; i++)
   {
-    m_secondaryCandidates.push_back(generateSecondaryPokemon(seed, baseStats, level, genderRatio));
+    m_secondaryCandidates.push_back(generateSecondary(seed, baseStats, level, genderRatio));
     LCG(seed);
   }
 }
 
 std::vector<BaseRNGSystem::SecondaryCandidate>
-BaseRNGSystem::getFilteredSecondaryPokemon(int hp, int atk, int def, int spAtk, int spDef,
-                                           int speed, int genderIndex)
+BaseRNGSystem::getFilteredSecondaryCandidates(const int hp, const int atk, const int def,
+                                              const int spAtk, const int spDef, const int speed,
+                                              const int genderIndex)
 {
   std::vector<SecondaryCandidate> filteredCandidates;
 

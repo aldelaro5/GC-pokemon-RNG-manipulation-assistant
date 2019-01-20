@@ -47,6 +47,7 @@ static const std::array<std::array<u8, 6>, 4> s_genderRatioDummyTeamsData = {
 
 // Espeon first because it matters the most for speedruns
 static const std::array<std::string, 2> s_startersName = {{"Espeon", "Umbreon"}};
+static const std::array<std::string, 3> s_secondariesName = {{"Quilava", "Croconaw", "Bayleef"}};
 
 // The gender ratio of the starters.
 static const u8 s_genderRatioStarters = 0x1f;
@@ -335,6 +336,14 @@ std::vector<std::string> ColosseumRNGSystem::getStartersName()
   return names;
 }
 
+std::vector<std::string> ColosseumRNGSystem::getSecondariesName()
+{
+  std::vector<std::string> names;
+  for (auto i : s_secondariesName)
+    names.push_back(i);
+  return names;
+}
+
 u32 ColosseumRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   // Exhaust all guaranteed calls before considering input and wasted frames.
@@ -400,19 +409,19 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
   return result;
 }
 
-void ColosseumRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
-                                                                   int secondaryIndex)
+void ColosseumRNGSystem::generateAllSecondariesInSearchRange(const u32 postStarterSeed,
+                                                             const int secondaryIndex)
 {
   if (!(secondaryIndex < POKEMON_COUNT || secondaryIndex >= quilava))
     return;
 
-  BaseRNGSystem::generateAllSecondaryPokemonsInSearchRange(
+  BaseRNGSystem::generateAllSecondariesInSearchRange(
       postStarterSeed, secondaryBaseStats[secondaryIndex], secondaryLevel, secondaryGenderRatio,
       secondaryRngAdvanceSearchStart, secondarySearchSeedsAmount);
 }
 
 std::array<BaseRNGSystem::StatsRange, 6>
-ColosseumRNGSystem::getPokemonStatsRange(int secondaryIndex)
+ColosseumRNGSystem::getSecondaryStatsRange(const int secondaryIndex)
 {
   switch (secondaryIndex)
   {

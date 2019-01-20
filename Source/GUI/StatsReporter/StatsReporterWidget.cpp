@@ -44,10 +44,10 @@ StatsReporterWidget::StatsReporterWidget(QWidget* parent) : QWidget(parent)
   m_tblSecondaryPossibilities->setEditTriggers(QAbstractItemView::NoEditTriggers);
   m_tblSecondaryPossibilities->setSelectionMode(QAbstractItemView::SingleSelection);
   m_tblSecondaryPossibilities->setSelectionBehavior(QAbstractItemView::SelectRows);
-  m_tblSecondaryPossibilities->setColumnCount(10);
-  m_tblSecondaryPossibilities->setRowCount(0);
   m_possibilitiesHeaderLabels = QStringList(
       {"Seed", "Nature", "HP", "Atk", "Def", "SpA", "SpD", "Spe", "H. Power", "Gender"});
+  m_tblSecondaryPossibilities->setColumnCount(m_possibilitiesHeaderLabels.size());
+  m_tblSecondaryPossibilities->setRowCount(0);
   m_tblSecondaryPossibilities->setHorizontalHeaderLabels(m_possibilitiesHeaderLabels);
   m_tblSecondaryPossibilities->setMinimumHeight(200);
   m_tblSecondaryPossibilities->resizeColumnsToContents();
@@ -105,7 +105,7 @@ StatsReporterWidget::StatsReporterWidget(QWidget* parent) : QWidget(parent)
           &StatsReporterWidget::onStatsGenderChanged);
 }
 
-void StatsReporterWidget::gameChanged(GUICommon::gameSelection game)
+void StatsReporterWidget::gameChanged(const GUICommon::gameSelection game)
 {
   if (game == GUICommon::gameSelection::Unselected)
     return;
@@ -119,22 +119,17 @@ void StatsReporterWidget::gameChanged(GUICommon::gameSelection game)
 
   m_cmbSecondaryPokemon->clear();
 
-  if (game == GUICommon::gameSelection::Colosseum)
+  for (auto name : SPokemonRNG::getCurrentSystem()->getStartersName())
   {
-    PokemonPropertiesFrame* espeonFrame =
-        new PokemonPropertiesFrame("Espeon", pixmapForPokemon("Espeon"));
-    PokemonPropertiesFrame* umbreonFrame =
-        new PokemonPropertiesFrame("Umbreon", pixmapForPokemon("Umbreon"));
-    m_starterFrames.append(espeonFrame);
-    m_starterFrames.append(umbreonFrame);
-    m_cmbSecondaryPokemon->addItems({"Quilava", "Croconaw", "Bayleef"});
+    QString nameQStr = QString::fromStdString(name);
+    PokemonPropertiesFrame* frame =
+        new PokemonPropertiesFrame(nameQStr, pixmapForPokemon(nameQStr));
+    m_starterFrames.append(frame);
   }
-  else if (game == GUICommon::gameSelection::XD)
+
+  for (auto name : SPokemonRNG::getCurrentSystem()->getSecondariesName())
   {
-    PokemonPropertiesFrame* espeonFrame =
-        new PokemonPropertiesFrame("Espeon", pixmapForPokemon("Espeon"));
-    m_starterFrames.append(espeonFrame);
-    m_cmbSecondaryPokemon->addItems({"Teddiursa"});
+    m_cmbSecondaryPokemon->addItem(QString::fromStdString(name));
   }
 
   m_cmbSecondaryPokemon->setCurrentIndex(0);
@@ -146,7 +141,8 @@ void StatsReporterWidget::gameChanged(GUICommon::gameSelection game)
   updateStartersLayout();
 }
 
-void StatsReporterWidget::startersPredictionChanged(BaseRNGSystem::StartersPrediction starters)
+void StatsReporterWidget::startersPredictionChanged(
+    const BaseRNGSystem::StartersPrediction starters)
 {
   reset();
   updateStatsSelection();
@@ -154,11 +150,11 @@ void StatsReporterWidget::startersPredictionChanged(BaseRNGSystem::StartersPredi
   for (int i = 0; i < m_starterFrames.size(); i++)
     m_starterFrames[i]->setPokemonProperties(starters.starters[i]);
 
-  SPokemonRNG::getCurrentSystem()->generateAllSecondaryPokemonsInSearchRange(
+  SPokemonRNG::getCurrentSystem()->generateAllSecondariesInSearchRange(
       starters.startingSeed, m_cmbSecondaryPokemon->currentIndex());
 }
 
-void StatsReporterWidget::onSecondaryChanged(int newIndex)
+void StatsReporterWidget::onSecondaryChanged(const int newIndex)
 {
   m_secondaryFrame->setPokemonName(m_cmbSecondaryPokemon->currentText());
   m_secondaryFrame->setPokemonIcon(pixmapForPokemon(m_cmbSecondaryPokemon->currentText()));
@@ -169,7 +165,8 @@ void StatsReporterWidget::onSecondaryChanged(int newIndex)
 void StatsReporterWidget::updateStatsSelection()
 {
   std::array<BaseRNGSystem::StatsRange, 6> statsRange =
-      SPokemonRNG::getCurrentSystem()->getPokemonStatsRange(m_cmbSecondaryPokemon->currentIndex());
+      SPokemonRNG::getCurrentSystem()->getSecondaryStatsRange(
+          m_cmbSecondaryPokemon->currentIndex());
 
   resetStatsSelection();
 
@@ -205,11 +202,11 @@ void StatsReporterWidget::updateStartersLayout()
     m_startersLayout->addWidget(frame, Qt::AlignCenter);
 }
 
-QPixmap StatsReporterWidget::pixmapForPokemon(QString name)
+QPixmap StatsReporterWidget::pixmapForPokemon(const QString name)
 {
   if (name == "Umbreon")
     return QPixmap("Resources/MDP197.png");
-  else if (name == "Espeon")
+  else if (name == "Espeon" || name == "Eevee")
     return QPixmap("Resources/MDP196.png");
   else if (name == "Quilava")
     return QPixmap("Resources/MDP156.png");
@@ -233,7 +230,7 @@ void StatsReporterWidget::onStatsGenderChanged()
   int speed = (m_cmbSpeedStat->currentIndex() != 0) ? m_cmbSpeedStat->currentText().toInt() : -1;
   int gender = (m_cmbGender->currentIndex() != 0) ? m_cmbGender->currentIndex() - 1 : -1;
 
-  m_filteredCandidates = SPokemonRNG::getCurrentSystem()->getFilteredSecondaryPokemon(
+  m_filteredCandidates = SPokemonRNG::getCurrentSystem()->getFilteredSecondaryCandidates(
       hp, atk, def, spAtk, spDef, speed, gender);
 
   if (m_filteredCandidates.size() <= c_maxResultsShown)

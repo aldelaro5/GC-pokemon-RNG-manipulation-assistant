@@ -43,12 +43,13 @@ private:
   int getMinFramesAmountNamingScreen() final override;
   int getNbrStartersPrediction() final override;
   std::vector<std::string> getStartersName() final override;
+  std::vector<std::string> getSecondariesName() final override;
   u32 rollRNGNamingScreenInit(u32 seed) final override;
   u32 rollRNGNamingScreenNext(u32 seed) final override;
   StartersPrediction generateStarterPokemons(const u32 seed) final override;
-  void generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
-                                                 int secondaryIndex) final override;
-  std::array<StatsRange, 6> getPokemonStatsRange(int secondaryIndex) final override;
+  void generateAllSecondariesInSearchRange(const u32 postStarterSeed,
+                                           const int secondaryIndex) final override;
+  std::array<StatsRange, 6> getSecondaryStatsRange(const int secondaryIndex) final override;
   u32 generatePokemonPID(u32& seed, const u32 hTrainerId, const u32 lTrainerId, const u32 dummyId,
                          u16* counter = nullptr,
                          const WantedShininess shininess = WantedShininess::any,

@@ -14,16 +14,16 @@ class StatsReporterWidget : public QWidget
 {
 public:
   StatsReporterWidget(QWidget* parent = nullptr);
-  void gameChanged(GUICommon::gameSelection game);
-  void startersPredictionChanged(BaseRNGSystem::StartersPrediction starters);
+  void gameChanged(const GUICommon::gameSelection game);
+  void startersPredictionChanged(const BaseRNGSystem::StartersPrediction starters);
   void reset();
 
 private:
-  void onSecondaryChanged(int newIndex);
+  void onSecondaryChanged(const int newIndex);
   void onStatsGenderChanged();
   void updateStatsSelection();
   void updateStartersLayout();
-  QPixmap pixmapForPokemon(QString name);
+  QPixmap pixmapForPokemon(const QString name);
   void selectedPossibilityChanged();
   void resetStatsSelection();
 

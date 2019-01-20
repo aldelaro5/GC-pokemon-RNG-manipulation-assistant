@@ -8,7 +8,7 @@
 
 #include "../GUICommon.h"
 
-PokemonPropertiesFrame::PokemonPropertiesFrame(QString pokemonName, QPixmap pokemonIcon,
+PokemonPropertiesFrame::PokemonPropertiesFrame(const QString pokemonName, const QPixmap pokemonIcon,
                                                QWidget* parent)
     : QFrame(parent)
 {
@@ -103,7 +103,7 @@ void PokemonPropertiesFrame::setPokemonIcon(const QPixmap icon)
   m_lblIcon->setPixmap(icon);
 }
 
-void PokemonPropertiesFrame::setPokemonProperties(BaseRNGSystem::PokemonProperties properties)
+void PokemonPropertiesFrame::setPokemonProperties(const BaseRNGSystem::PokemonProperties properties)
 {
   m_lblHpIv->setText(QString::number(properties.hpIV));
   m_lblAtkIv->setText(QString::number(properties.atkIV));

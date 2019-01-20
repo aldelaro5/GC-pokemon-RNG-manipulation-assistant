@@ -362,6 +362,13 @@ std::vector<std::string> GaleDarknessRNGSystem::getStartersName()
   return name;
 }
 
+std::vector<std::string> GaleDarknessRNGSystem::getSecondariesName()
+{
+  std::vector<std::string> names;
+  names.push_back("Teddiursa");
+  return names;
+}
+
 u32 GaleDarknessRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   LCG(seed);
@@ -431,19 +438,19 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   return result;
 }
 
-void GaleDarknessRNGSystem::generateAllSecondaryPokemonsInSearchRange(u32 postStarterSeed,
-                                                                      int secondaryIndex)
+void GaleDarknessRNGSystem::generateAllSecondariesInSearchRange(const u32 postStarterSeed,
+                                                                const int secondaryIndex)
 {
   if (secondaryIndex != teddiursaSecondaryIndex)
     return;
 
-  BaseRNGSystem::generateAllSecondaryPokemonsInSearchRange(
+  BaseRNGSystem::generateAllSecondariesInSearchRange(
       postStarterSeed, teddiursaBaseStats, teddiursaLevel, teddiursaGenderRatio,
       secondaryRngAdvanceSearchStart, secondarySearchSeedsAmount);
 }
 
 std::array<BaseRNGSystem::StatsRange, 6>
-GaleDarknessRNGSystem::getPokemonStatsRange(int secondaryIndex)
+GaleDarknessRNGSystem::getSecondaryStatsRange(const int secondaryIndex)
 {
   if (secondaryIndex != teddiursaSecondaryIndex)
     return {};

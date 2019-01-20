@@ -15,7 +15,7 @@ public:
                          QWidget* parent = nullptr);
   void setPokemonName(const QString name);
   void setPokemonIcon(const QPixmap icon);
-  void setPokemonProperties(BaseRNGSystem::PokemonProperties properties);
+  void setPokemonProperties(const BaseRNGSystem::PokemonProperties properties);
   void reset();
 
 private:
