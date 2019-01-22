@@ -49,7 +49,7 @@ if(APPLE)
   add_executable(GC-pokemon-RNG-manip-assistant MACOSX_BUNDLE ${SRCS})
   # The reason OpenMP is complicated to setup is because altough recent versions of CMake supports
   # a more elegant solution, there's an issue with Mojave that prevents it from working and forces
-  # us to manually add the coresponding flags. This requires Qt to be installed with homebrew.
+  # us to manually add the coresponding flags. This requires OpenMP to be installed with homebrew.
   # The details of the issue is available here: https://gitlab.kitware.com/cmake/cmake/issues/18520  
   set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp -I/usr/local/opt/libomp/include")
   set(OpenMP_C_LIB_NAMES omp)
