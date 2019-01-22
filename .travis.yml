@@ -1,9 +1,4 @@
-dist: trusty
-sudo: enabled
-language:
-  - cpp
-compiler:
-  - gcc
+language: cpp
 addons:
   apt:
     sources:
@@ -14,11 +9,27 @@ addons:
       - g++-6
       - qt510-meta-minimal
       - cmake
+matrix:
+  include:
+    - os: linux
+      sudo: enabled
+      dist: trusty
+      compiler: gcc
+      before_script:
+        - QT_ENV_SCRIPT=$(find /opt -name 'qt*-env.sh')
+        - source $QT_ENV_SCRIPT
+        - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+        - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++;
+    - os: osx
+      compiler: clang
+      install: 
+        - brew install qt
+        - brew install libomp
+      before_script:
+        - export PATH="/usr/local/opt/qt/bin:$PATH"
+        - export LDFLAGS="-L/usr/local/opt/qt/lib"
+        - export CPPFLAGS="-I/usr/local/opt/qt/include"
 script:
-  - QT_ENV_SCRIPT=$(find /opt -name 'qt*-env.sh')
-  - source $QT_ENV_SCRIPT
-  - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
-  - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
   - cd Source
   - mkdir build && cd build
   - cmake ..
