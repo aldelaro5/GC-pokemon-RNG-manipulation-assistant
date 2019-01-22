@@ -26,6 +26,29 @@ Once complete, open the solution file `Dolphin-memory-engine.sln` located in the
 #### Windows SDK
 The Windows SDK version 10.0.16299.0 comes with the C++ Desktop Development Workload of Visual Studio 2017 — other versions may work but are untested. To use a different Windows SDK you'll need to select the it in the project properties window. Please note that this will change the `vcxproj` file, so if you plan to submit a Pull Request, make sure to not stage this change.
 
+### Mac OS
+> _The Homebrew package manager must be installed, [refer to the project's website](https://brew.sh/) for more information._
+
+The CMake, Qt and libomp packages from homebrew must be installed. To install them, run the following commands into a terminal:
+
+	brew install cmake
+	brew install qt
+	brew install libomp
+
+Additionally, for the build system to properly recognise Qt, some environements variables needs to be modified accordingly. One can do so by appending these lines to the ~/.bash_profile file:
+
+	export PATH="/usr/local/opt/qt/bin:$PATH"
+	export LDFLAGS="-L/usr/local/opt/qt/lib"
+	export CPPFLAGS="-I/usr/local/opt/qt/include"
+
+Once this is done, simply run the following commands from the `Source` directory to start the build process:
+
+	mkdir build && cd build
+	cmake ..
+	make
+
+An application bundle will be built in the directory named `build`.
+
 ### Linux
 > _CMake and Qt 5 are required. Please refer to your distribution's documentation for specific instructions on how to install them._
 
