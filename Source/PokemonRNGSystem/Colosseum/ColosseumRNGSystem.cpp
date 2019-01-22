@@ -1,6 +1,7 @@
 #include "ColosseumRNGSystem.h"
 
 #include <array>
+#include <string>
 
 // The natures wanted for all Pokemon of all ultimate teams
 static const std::array<std::array<u8, 6>, 8> s_natureTeamsData = {

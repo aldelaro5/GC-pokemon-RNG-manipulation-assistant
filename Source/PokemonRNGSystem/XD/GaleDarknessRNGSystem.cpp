@@ -1,6 +1,7 @@
 #include "GaleDarknessRNGSystem.h"
 
 #include <array>
+#include <string>
 
 // HP stat of the quick battle team pokemon without IV and EV at level 100
 static const std::array<std::array<int, 2>, 10> s_quickBattleTeamMaxBaseHPStat = {{{{322, 340}},
