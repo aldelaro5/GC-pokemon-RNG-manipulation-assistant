@@ -50,14 +50,14 @@ void MainWindow::initialiseWidgets()
   connect(m_cmbGame, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
           &MainWindow::gameChanged);
 
-  m_btnSettings = new QPushButton(tr("Settings"));
+  m_btnSettings = new QPushButton(tr("&Settings"));
   connect(m_btnSettings, &QPushButton::clicked, this, &MainWindow::openSettings);
 
-  m_btnStartSeedFinder = new QPushButton(tr("Find your seed"));
+  m_btnStartSeedFinder = new QPushButton(tr("&Find your seed"));
   connect(m_btnStartSeedFinder, &QPushButton::clicked, this, &MainWindow::startSeedFinder);
   m_btnStartSeedFinder->setEnabled(false);
 
-  m_btnReset = new QPushButton(tr("Reset"));
+  m_btnReset = new QPushButton(tr("&Reset"));
   connect(m_btnReset, &QPushButton::clicked, this, &MainWindow::resetPredictor);
   m_btnReset->setEnabled(false);
 
@@ -66,12 +66,12 @@ void MainWindow::initialiseWidgets()
   connect(m_chkFilterUnwantedPredictions, &QCheckBox::stateChanged, this,
           [=](int state) { m_predictorWidget->filterUnwanted(state == Qt::Checked); });
 
-  m_btnRerollPrediciton = new QPushButton(tr("Reroll\n(requires an additional team generation)"));
+  m_btnRerollPrediciton = new QPushButton(tr("R&eroll\n(requires an additional team generation)"));
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
 
   m_btnAutoRerollPrediciton =
-      new QPushButton(tr("Auto Reroll\n(rerolls until the next desired prediction)"));
+      new QPushButton(tr("&Auto Reroll\n(rerolls until the next desired prediction)"));
   connect(m_btnAutoRerollPrediciton, &QPushButton::clicked, this, &MainWindow::autoRerollPredictor);
   m_btnAutoRerollPrediciton->setEnabled(false);
 
