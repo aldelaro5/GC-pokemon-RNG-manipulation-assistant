@@ -58,7 +58,7 @@ DlgSettings::~DlgSettings()
 void DlgSettings::loadSettings()
 {
   m_generalTab->setPredictionTime(SConfig::getInstance().getPredictionTime());
-  m_generalTab->setFrameDelay(SConfig::getInstance().getFrameDelay());
+  m_generalTab->setFrameOffset(SConfig::getInstance().getFrameOffset());
   m_generalTab->setThreadLimit(SConfig::getInstance().getThreadLimit());
   m_generalTab->setMaxAutoReroll(SConfig::getInstance().getMaxAutoReroll());
 
@@ -70,7 +70,7 @@ void DlgSettings::loadSettings()
 void DlgSettings::saveSettings() const
 {
   SConfig::getInstance().setPredictionTime(m_generalTab->getPredictionTime());
-  SConfig::getInstance().setFrameDelay(m_generalTab->getFrameDelay());
+  SConfig::getInstance().setFrameOffset(m_generalTab->getFrameOffset());
   SConfig::getInstance().setThreadLimit(m_generalTab->getThreadLimit());
   SConfig::getInstance().setMaxAutoReroll(m_generalTab->getMaxAutoReroll());
 

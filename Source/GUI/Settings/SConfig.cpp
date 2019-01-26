@@ -38,7 +38,7 @@ int SConfig::getPredictionTime() const
   return m_settings->value("generalSettings/predictor/time", 10).toInt();
 }
 
-int SConfig::getFrameDelay() const
+int SConfig::getFrameOffset() const
 {
   return m_settings->value("generalSettings/predictor/FrameDelay", 0).toInt();
 }
@@ -179,7 +179,7 @@ void SConfig::setPredictionTime(const int predictionTime)
   m_settings->setValue("generalSettings/predictor/time", predictionTime);
 }
 
-void SConfig::setFrameDelay(const int frameDelay)
+void SConfig::setFrameOffset(const int frameDelay)
 {
   m_settings->setValue("generalSettings/predictor/FrameDelay", frameDelay);
 }

@@ -47,11 +47,13 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   m_spbPredictionsTime->setMaximum(36000);
   m_spbPredictionsTime->setMaximumWidth(150);
 
-  QLabel* lblFrameDelay = new QLabel(tr("Amount of frames to add as delay to predictions: "));
-  m_spbFrameDelay = new QSpinBox();
-  m_spbFrameDelay->setMinimum(0);
-  m_spbFrameDelay->setValue(0);
-  m_spbFrameDelay->setMaximumWidth(150);
+  QLabel* lblFrameOffset =
+      new QLabel(tr("Offset to apply to the amount of frames of the predictions: "));
+  m_spbFrameOffset = new QSpinBox();
+  m_spbFrameOffset->setMinimum(-100);
+  m_spbFrameOffset->setValue(0);
+  m_spbFrameOffset->setMaximum(100);
+  m_spbFrameOffset->setMaximumWidth(150);
 
   QLabel* lblMaxAutoReroll =
       new QLabel(tr("Number of maximum reroll to perform when auto rerolling: "));
@@ -64,7 +66,7 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   QFormLayout* predictionTimeLayout = new QFormLayout;
   predictionTimeLayout->setLabelAlignment(Qt::AlignRight);
   predictionTimeLayout->addRow(lblPredictionsTime, m_spbPredictionsTime);
-  predictionTimeLayout->addRow(lblFrameDelay, m_spbFrameDelay);
+  predictionTimeLayout->addRow(lblFrameOffset, m_spbFrameOffset);
   predictionTimeLayout->addRow(lblMaxAutoReroll, m_spbMaxAutoReroll);
 
   QGroupBox* gbPredictor = new QGroupBox(tr("Starters predictor"));
@@ -83,9 +85,9 @@ int GeneralTab::getPredictionTime() const
   return m_spbPredictionsTime->value();
 }
 
-int GeneralTab::getFrameDelay() const
+int GeneralTab::getFrameOffset() const
 {
-  return m_spbFrameDelay->value();
+  return m_spbFrameOffset->value();
 }
 
 int GeneralTab::getThreadLimit() const
@@ -108,9 +110,9 @@ void GeneralTab::setThreadLimit(const int threadLimit)
   m_cmbThreadLimit->setCurrentIndex(threadLimit);
 }
 
-void GeneralTab::setFrameDelay(const int frameDelay)
+void GeneralTab::setFrameOffset(const int frameDelay)
 {
-  m_spbFrameDelay->setValue(frameDelay);
+  m_spbFrameOffset->setValue(frameDelay);
 }
 
 void GeneralTab::setMaxAutoReroll(const int maxAutoReroll)

@@ -169,7 +169,7 @@ bool PredictorWidget::setStartersPrediction(
                                          startersPrediction[i].trainerId, 5, 10, QChar('0'))));
 
     int frameNumberWithDelay =
-        startersPrediction[i].frameNumber + SConfig::getInstance().getFrameDelay();
+        startersPrediction[i].frameNumber + SConfig::getInstance().getFrameOffset();
     if (i == 0)
     {
       m_tblStartersPrediction->setItem(
