@@ -33,6 +33,7 @@ private:
   void clearLabels();
   void initialiseWidgets();
   void makeLayouts();
+  void scrollToSelectedItem();
   void onSelectedPredictionChanged();
 
   std::vector<BaseRNGSystem::StartersPrediction> m_startersPrediction;

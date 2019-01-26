@@ -1,6 +1,7 @@
 #include "PredictorWidget.h"
 
 #include <QHeaderView>
+#include <QTimer>
 #include <QVBoxLayout>
 
 #include "../SPokemonRNG.h"
@@ -37,6 +38,26 @@ void PredictorWidget::filterUnwanted(const bool filterUnwanted)
                                greenBrush.color().name();
 
     m_tblStartersPrediction->setRowHidden(i, !showRow);
+  }
+
+  if (!filterUnwanted)
+  {
+    // For some reasons, Qt does some kind of refresh caused by changing which rows is shown which
+    // breaks the scrolling, but we can workaround it by simply asking to do it in the near future
+    QTimer::singleShot(1, this, &PredictorWidget::scrollToSelectedItem);
+  }
+  else
+  {
+    m_tblStartersPrediction->clearSelection();
+  }
+}
+
+void PredictorWidget::scrollToSelectedItem()
+{
+  if (m_tblStartersPrediction->selectedItems().size() != 0)
+  {
+    m_tblStartersPrediction->scrollToItem(m_tblStartersPrediction->selectedItems().first(),
+                                          QAbstractItemView::PositionAtCenter);
   }
 }
 
