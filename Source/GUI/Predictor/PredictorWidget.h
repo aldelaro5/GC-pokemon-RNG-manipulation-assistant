@@ -16,9 +16,10 @@ public:
   PredictorWidget(QWidget* parent = nullptr);
   std::vector<BaseRNGSystem::StartersPrediction> getStartersPrediction();
   // Returns whether or not a desired starter has been found
-  bool
-  setStartersPrediction(const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
-                        const GUICommon::gameSelection game);
+  void
+  setStartersPrediction(const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction);
+  bool desiredPredictionFound(const GUICommon::gameSelection game);
+  void updateGUI(const GUICommon::gameSelection game);
   void resetPredictor(const GUICommon::gameSelection currentGame);
   void filterUnwanted(const bool filterUnwanted);
   void switchGame(const GUICommon::gameSelection game);

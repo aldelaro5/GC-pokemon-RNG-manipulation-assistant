@@ -23,8 +23,7 @@ public:
   void gameChanged();
   void startSeedFinder();
   void resetPredictor();
-  // Returns whether we have a desired prediction after the reroll
-  bool rerollPredictor();
+  void singleRerollPredictor();
   void autoRerollPredictor();
   void openSettings();
   void generatePrecalc();
@@ -38,6 +37,8 @@ private:
   void initialiseWidgets();
   void makeLayouts();
   void makeMenus();
+  // Returns whether we have a desired prediction after the reroll
+  bool rerollPredictor(bool withGuiUpdates);
 
   QMenu* m_menuFile;
   QMenu* m_menuEdit;

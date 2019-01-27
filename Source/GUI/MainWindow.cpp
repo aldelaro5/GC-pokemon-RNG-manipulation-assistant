@@ -67,7 +67,7 @@ void MainWindow::initialiseWidgets()
           [=](int state) { m_predictorWidget->filterUnwanted(state == Qt::Checked); });
 
   m_btnRerollPrediciton = new QPushButton(tr("R&eroll\n(requires an additional team generation)"));
-  connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::rerollPredictor);
+  connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::singleRerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
 
   m_btnAutoRerollPrediciton =
@@ -212,7 +212,8 @@ void MainWindow::startSeedFinder()
     std::vector<BaseRNGSystem::StartersPrediction> predictions =
         SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
             m_currentSeed, SConfig::getInstance().getPredictionTime());
-    m_predictorWidget->setStartersPrediction(predictions, selection);
+    m_predictorWidget->setStartersPrediction(predictions);
+    m_predictorWidget->updateGUI(selection);
     m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
     m_btnReset->setEnabled(true);
     m_btnRerollPrediciton->setEnabled(true);
@@ -237,7 +238,12 @@ void MainWindow::resetPredictor()
   m_statsReporterWidget->setDisabled(true);
 }
 
-bool MainWindow::rerollPredictor()
+void MainWindow::singleRerollPredictor()
+{
+  rerollPredictor(true);
+}
+
+bool MainWindow::rerollPredictor(bool withGuiUpdates)
 {
   std::vector<int> dummyCriteria;
   for (int i = 0; i < 6; i++)
@@ -249,11 +255,18 @@ bool MainWindow::rerollPredictor()
   std::vector<BaseRNGSystem::StartersPrediction> predictions =
       SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
           m_currentSeed, SConfig::getInstance().getPredictionTime());
-  bool desiredStarterFound = m_predictorWidget->setStartersPrediction(predictions, selection);
-  m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_rerollCount++;
-  m_lblRerollCount->setText(QString::number(m_rerollCount));
-  m_statsReporterWidget->setDisabled(true);
+
+  m_predictorWidget->setStartersPrediction(predictions);
+  bool desiredStarterFound = m_predictorWidget->desiredPredictionFound(selection);
+
+  if (withGuiUpdates)
+  {
+    m_predictorWidget->updateGUI(selection);
+    m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
+    m_lblRerollCount->setText(QString::number(m_rerollCount));
+    m_statsReporterWidget->setDisabled(true);
+  }
   return desiredStarterFound;
 }
 
@@ -273,7 +286,7 @@ void MainWindow::autoRerollPredictor()
   int nbrRerolls = 0;
   for (nbrRerolls; nbrRerolls < SConfig::getInstance().getMaxAutoReroll(); nbrRerolls++)
   {
-    if (rerollPredictor())
+    if (rerollPredictor(false))
     {
       desiredPredictionFound = true;
       break;
@@ -306,6 +319,11 @@ void MainWindow::autoRerollPredictor()
     msg->exec();
     delete msg;
   }
+  GUICommon::gameSelection selection =
+      static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
+  m_predictorWidget->updateGUI(selection);
+  m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
+  m_lblRerollCount->setText(QString::number(m_rerollCount));
   m_statsReporterWidget->setDisabled(true);
 }
 

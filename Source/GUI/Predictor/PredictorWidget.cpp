@@ -141,12 +141,115 @@ void PredictorWidget::onSelectedPredictionChanged()
   emit selectedPredictionChanged(prediction);
 }
 
-bool PredictorWidget::setStartersPrediction(
-    const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction,
-    const GUICommon::gameSelection game)
+bool PredictorWidget::desiredPredictionFound(const GUICommon::gameSelection game)
 {
-  m_startersPrediction = startersPrediction;
+  QVector<GUICommon::starter> startersSettings;
+  if (game == GUICommon::gameSelection::Colosseum)
+  {
+    startersSettings.append(GUICommon::starter::Espeon);
+    startersSettings.append(GUICommon::starter::Umbreon);
+  }
+  else if (game == GUICommon::gameSelection::XD)
+  {
+    startersSettings.append(GUICommon::starter::Eevee);
+  }
+
+  for (int i = 0; i < m_startersPrediction.size(); i++)
+  {
+    bool passAllFilters = true;
+    for (int j = 0; j < m_startersPrediction[i].starters.size(); j++)
+    {
+      BaseRNGSystem::PokemonProperties starter = m_startersPrediction[i].starters[j];
+
+      if (!(starter.hpIV >= SConfig::getInstance().getMinHpIv(startersSettings[j])))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      if (!(starter.atkIV >= SConfig::getInstance().getMinAtkIv(startersSettings[j])))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      if (!(starter.defIV >= SConfig::getInstance().getMinDefIv(startersSettings[j])))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      if (!(starter.spAtkIV >= SConfig::getInstance().getMinSpAtkIv(startersSettings[j])))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      if (!(starter.spDefIV >= SConfig::getInstance().getMinSpDefIv(startersSettings[j])))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      if (!(starter.speedIV >= SConfig::getInstance().getMinSpeedIv(startersSettings[j])))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      bool enableHiddenPowerTypeFilters =
+          SConfig::getInstance().getEnableHiddenPowerTypesFilter(startersSettings[j]);
+      int minPowerHiddenPower = SConfig::getInstance().getMinPowerHiddenPower(startersSettings[j]);
+      QVector<bool> hiddenPowerTypeFilters =
+          SConfig::getInstance().getHiddenPowerTypesFilters(startersSettings[j]);
+      if (!((hiddenPowerTypeFilters[starter.hiddenPowerTypeIndex] &&
+             starter.hiddenPowerPower >= minPowerHiddenPower) ||
+            !enableHiddenPowerTypeFilters))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      bool enableNatureFilters = SConfig::getInstance().getEnableNatureFilter(startersSettings[j]);
+      QVector<bool> natureFilters = SConfig::getInstance().getNatureFilters(startersSettings[j]);
+      if (!(natureFilters[starter.natureIndex] || !enableNatureFilters))
+      {
+        passAllFilters = false;
+        break;
+      }
+
+      if (game == GUICommon::gameSelection::XD)
+      {
+        int genderIndex = static_cast<int>(SConfig::getInstance().getEeveeGender());
+        if (!(starter.genderIndex == genderIndex ||
+              genderIndex == static_cast<int>(GUICommon::gender::AnyGender)))
+        {
+          passAllFilters = false;
+          break;
+        }
+
+        int shinynessIndex = static_cast<int>(SConfig::getInstance().getEeveeShininess());
+        int isShinyInt = starter.isShiny ? static_cast<int>(GUICommon::shininess::Shiny)
+                                         : static_cast<int>(GUICommon::shininess::NotShiny);
+        if (!(isShinyInt == shinynessIndex ||
+              shinynessIndex == static_cast<int>(GUICommon::shininess::AnyShininess)))
+        {
+          passAllFilters = false;
+          break;
+        }
+      }
+    }
+
+    if (passAllFilters)
+      return true;
+  }
+  return false;
+}
+
+void PredictorWidget::updateGUI(const GUICommon::gameSelection game)
+{
   clearLabels();
+  m_tblStartersPrediction->clearSelection();
   std::vector<std::string> names = SPokemonRNG::getCurrentSystem()->getStartersName();
   for (auto name : names)
   {
@@ -165,7 +268,7 @@ bool PredictorWidget::setStartersPrediction(
   if (m_lblStartersNames.size() > 1)
     m_startersNamesLayout->addStretch();
 
-  m_tblStartersPrediction->setRowCount(static_cast<int>(startersPrediction.size()));
+  m_tblStartersPrediction->setRowCount(static_cast<int>(m_startersPrediction.size()));
   QVector<GUICommon::starter> startersSettings;
   if (game == GUICommon::gameSelection::Colosseum)
   {
@@ -178,19 +281,19 @@ bool PredictorWidget::setStartersPrediction(
   }
 
   bool desiredStarterFound = false;
-  for (int i = 0; i < startersPrediction.size(); i++)
+  for (int i = 0; i < m_startersPrediction.size(); i++)
   {
     bool passAllFilters = true;
     m_tblStartersPrediction->setItem(
         i, 0,
         new QTableWidgetItem(
-            QString("%1").arg(startersPrediction[i].startingSeed, 8, 16, QChar('0')).toUpper()));
+            QString("%1").arg(m_startersPrediction[i].startingSeed, 8, 16, QChar('0')).toUpper()));
     m_tblStartersPrediction->setItem(i, 1,
                                      new QTableWidgetItem(QString("%1").arg(
-                                         startersPrediction[i].trainerId, 5, 10, QChar('0'))));
+                                         m_startersPrediction[i].trainerId, 5, 10, QChar('0'))));
 
     int frameNumberWithDelay =
-        startersPrediction[i].frameNumber + SConfig::getInstance().getFrameOffset();
+        m_startersPrediction[i].frameNumber + SConfig::getInstance().getFrameOffset();
     if (i == 0)
     {
       m_tblStartersPrediction->setItem(
@@ -208,9 +311,9 @@ bool PredictorWidget::setStartersPrediction(
     if (game == GUICommon::gameSelection::XD)
       nbrColPerStarter = 10;
 
-    for (int j = 0; j < startersPrediction[i].starters.size(); j++)
+    for (int j = 0; j < m_startersPrediction[i].starters.size(); j++)
     {
-      BaseRNGSystem::PokemonProperties starter = startersPrediction[i].starters[j];
+      BaseRNGSystem::PokemonProperties starter = m_startersPrediction[i].starters[j];
 
       m_tblStartersPrediction->setItem(
           i, 3 + j * nbrColPerStarter,
@@ -362,5 +465,10 @@ bool PredictorWidget::setStartersPrediction(
     }
   }
   m_tblStartersPrediction->resizeColumnsToContents();
-  return desiredStarterFound;
+}
+
+void PredictorWidget::setStartersPrediction(
+    const std::vector<BaseRNGSystem::StartersPrediction> startersPrediction)
+{
+  m_startersPrediction = startersPrediction;
 }
