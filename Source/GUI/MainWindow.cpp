@@ -300,11 +300,16 @@ void MainWindow::autoRerollPredictor()
 
   if (desiredPredictionFound)
   {
-    QMessageBox* msg = new QMessageBox(
-        QMessageBox::Information, "Desired prediction found",
-        "After " + QString::number(nbrRerolls + 1) +
-            " rerolls, a desired prediction has been found; the predictions list has been updated.",
-        QMessageBox::Ok);
+    QString lastBattleConfirmationStr =
+        QString::fromStdString(SPokemonRNG::getCurrentSystem()->getLastObtainedCriteriasString());
+    QMessageBox* msg =
+        new QMessageBox(QMessageBox::Information, "Desired prediction found",
+                        "After " + QString::number(nbrRerolls + 1) +
+                            " rerolls, a desired prediction has been found; the predictions list "
+                            "has been updated.\n\nOn the last battle confirmation screen, the "
+                            "following information should be displayed:\n" +
+                            lastBattleConfirmationStr,
+                        QMessageBox::Ok);
     msg->exec();
     delete msg;
   }
