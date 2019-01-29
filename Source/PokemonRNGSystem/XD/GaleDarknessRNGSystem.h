@@ -17,7 +17,7 @@ public:
   enum BattleNowTeamLeaderEnemy
   {
     Articuno = 0,
-    Zapidos,
+    Zapdos,
     Moltres,
     Kangaskhan,
     Latias
@@ -37,6 +37,7 @@ private:
 
   u32 rollRNGToBattleMenu(u32 seed, u16* counter = nullptr) final override;
   bool generateBattleTeam(u32& seed, const std::vector<int> criteria) final override;
+  std::string getLastObtainedCriteriasString() final override;
   std::vector<int> obtainTeamGenerationCritera(u32& seed) final override;
   int getNbrCombinationsFirstTwoCriteria() final override;
   int firstTwoCriteriaToIndex(const std::vector<int> criteria) final override;
@@ -67,4 +68,6 @@ private:
 
   std::array<StatsRange, 6> teddiursaStatsRange = {
       {{34, 37}, {19, 28}, {14, 20}, {14, 20}, {14, 20}, {11, 18}}};
+
+  std::vector<int> m_lastObtainedCriterias = {-1, -1, -1, -1, -1, -1};
 };

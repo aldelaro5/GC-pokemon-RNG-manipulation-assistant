@@ -39,6 +39,7 @@ private:
 
   u32 rollRNGToBattleMenu(u32 seed, u16* counter = nullptr) final override;
   bool generateBattleTeam(u32& seed, const std::vector<int> criteria) final override;
+  std::string getLastObtainedCriteriasString() final override;
   std::vector<int> obtainTeamGenerationCritera(u32& seed) final override;
   int getNbrCombinationsFirstTwoCriteria() final override;
   int firstTwoCriteriaToIndex(const std::vector<int> criteria) final override;
@@ -73,4 +74,6 @@ private:
       {{79, 88}, {47, 68}, {47, 68}, {36, 53}, {37, 57}, {35, 53}}};
   std::array<StatsRange, 6> bayleefStatsRange = {
       {{76, 85}, {37, 56}, {47, 68}, {37, 57}, {47, 68}, {36, 55}}};
+
+  std::vector<int> m_lastObtainedCriterias = {-1, -1};
 };

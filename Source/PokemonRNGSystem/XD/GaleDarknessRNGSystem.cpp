@@ -219,7 +219,8 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
 
   // Enemy gen
 
-  // The player trainer ID is generated, low then high 16 bits
+  std::vector<int> obtainedEnemyHP;
+  // The enemy trainer ID is generated, low then high 16 bits
   u32 lTrainerId = LCG(seed) >> 16;
   u32 hTrainerId = LCG(seed) >> 16;
   // Pokemon gen
@@ -237,11 +238,10 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
     LCG(seed);
     generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
     std::array<u8, 6> EVs = generateEVs(seed, false, false, nullptr);
-    // Here, we have the true stats, so let's check the HP
-    if (EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[enemyTeamIndex + 5][i] !=
-            criteria[4 + i] &&
-        criteria[4 + i] != -1)
+    int hp = EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[enemyTeamIndex + 5][i];
+    if (hp != criteria[4 + i] && criteria[4 + i] != -1)
       return false;
+    obtainedEnemyHP.push_back(hp);
   }
 
   // modulo 6 ???
@@ -249,6 +249,7 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
 
   // Player gen
 
+  std::vector<int> obtainedPlayerHP;
   // The player trainer ID is generated, low then high 16 bits
   lTrainerId = LCG(seed) >> 16;
   hTrainerId = LCG(seed) >> 16;
@@ -267,12 +268,71 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
     LCG(seed);
     generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
     std::array<u8, 6> EVs = generateEVs(seed, false, false, nullptr);
-    // Here, we have the true stats, so let's check the HP
-    if (EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[playerTeamIndex][i] != criteria[2 + i] &&
-        criteria[2 + i] != -1)
+    int hp = EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[playerTeamIndex][i];
+    if (hp != criteria[2 + i] && criteria[2 + i] != -1)
       return false;
+    obtainedPlayerHP.push_back(hp);
   }
+
+  m_lastObtainedCriterias.clear();
+  m_lastObtainedCriterias.push_back(playerTeamIndex);
+  m_lastObtainedCriterias.push_back(enemyTeamIndex);
+  m_lastObtainedCriterias.insert(m_lastObtainedCriterias.end(), obtainedPlayerHP.begin(),
+                                 obtainedPlayerHP.end());
+  m_lastObtainedCriterias.insert(m_lastObtainedCriterias.end(), obtainedEnemyHP.begin(),
+                                 obtainedEnemyHP.end());
+
   return true;
+}
+
+std::string GaleDarknessRNGSystem::getLastObtainedCriteriasString()
+{
+  std::string criteriasString = "Player team leader: ";
+  switch (m_lastObtainedCriterias[0])
+  {
+  case Mewtwo:
+    criteriasString += "MEWTWO";
+    break;
+  case Mew:
+    criteriasString += "MEW";
+    break;
+  case Deoxys:
+    criteriasString += "DEOXYS";
+    break;
+  case Rayquaza:
+    criteriasString += "RAYQUAZA";
+    break;
+  case Jirachi:
+    criteriasString += "JIRACHI";
+    break;
+  }
+
+  criteriasString += "\nComputer team leader: ";
+  switch (m_lastObtainedCriterias[1])
+  {
+  case Articuno:
+    criteriasString += "ARTICUNO";
+    break;
+  case Zapdos:
+    criteriasString += "ZAPDOS";
+    break;
+  case Moltres:
+    criteriasString += "MOLTRES";
+    break;
+  case Kangaskhan:
+    criteriasString += "KANGASKHAN";
+    break;
+  case Latias:
+    criteriasString += "LATIAS";
+    break;
+  }
+
+  criteriasString += "\nPlayer Pokémon's HP: " + std::to_string(m_lastObtainedCriterias[2]) + " " +
+                     std::to_string(m_lastObtainedCriterias[3]) + "\n";
+  criteriasString += "Computer Pokémon's HP: " + std::to_string(m_lastObtainedCriterias[4]) + " " +
+                     std::to_string(m_lastObtainedCriterias[5]);
+
+  return criteriasString;
 }
 
 std::vector<int> GaleDarknessRNGSystem::obtainTeamGenerationCritera(u32& seed)

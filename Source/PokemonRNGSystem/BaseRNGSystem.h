@@ -81,6 +81,8 @@ public:
   // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
   // outcome got
   virtual bool generateBattleTeam(u32& seed, const std::vector<int> criteria) = 0;
+  // The last criterias obtained comes from a call to generateBattleTeam
+  virtual std::string getLastObtainedCriteriasString() = 0;
   // Internally generates all the secondary Pokémons in the searh range
   virtual void generateAllSecondariesInSearchRange(const u32 postStarterSeed,
                                                    const int secondaryIndex) = 0;

@@ -223,8 +223,13 @@ bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> cr
         s_genderRatioTeamsData[enemyTeamIndex][i], s_natureTeamsData[enemyTeamIndex][i]);
   }
 
-  if ((LCG(seed) >> 16) % 3 != criteria[1] && criteria[1] != -1)
+  int playerNameIndex = (LCG(seed) >> 16) % 3;
+  if (playerNameIndex != criteria[1] && criteria[1] != -1)
     return false;
+
+  m_lastObtainedCriterias.clear();
+  m_lastObtainedCriterias.push_back(playerTeamIndex);
+  m_lastObtainedCriterias.push_back(playerNameIndex);
 
   // The player trainer ID is generated, low then high 16 bits
   lTrainerId = LCG(seed) >> 16;
@@ -247,6 +252,54 @@ bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> cr
         s_genderRatioTeamsData[playerTeamIndex][i], s_natureTeamsData[playerTeamIndex][i]);
   }
   return true;
+}
+
+std::string ColosseumRNGSystem::getLastObtainedCriteriasString()
+{
+  std::string criteriasString = "Name: ";
+  switch (m_lastObtainedCriterias[1])
+  {
+  case Wes:
+    criteriasString += "WES";
+    break;
+  case Seth:
+    criteriasString += "SETH";
+    break;
+  case Thomas:
+    criteriasString += "THOMAS";
+    break;
+  }
+
+  criteriasString += "\nPlayer team leader: ";
+  switch (m_lastObtainedCriterias[0])
+  {
+  case Blaziken:
+    criteriasString += "BLAZIKEN";
+    break;
+  case Entei:
+    criteriasString += "ENTEI";
+    break;
+  case Swampert:
+    criteriasString += "SWAMPERT";
+    break;
+  case Raikou:
+    criteriasString += "RAIKOU";
+    break;
+  case Meganium:
+    criteriasString += "MEGANIUM";
+    break;
+  case Suicune:
+    criteriasString += "SUICUNE";
+    break;
+  case Metagross:
+    criteriasString += "METAGROSS";
+    break;
+  case Heracross:
+    criteriasString += "HERACROSS";
+    break;
+  }
+
+  return criteriasString;
 }
 
 std::vector<int> ColosseumRNGSystem::obtainTeamGenerationCritera(u32& seed)

@@ -239,7 +239,7 @@ SeedFinderPassXD::SeedFinderPassXD(QWidget* parent, const int nbrFoundSeeds)
   m_enemyTeamIndexBtnGroup->addButton(rbtnArticuno,
                                       GaleDarknessRNGSystem::BattleNowTeamLeaderEnemy::Articuno);
   m_enemyTeamIndexBtnGroup->addButton(rbtnZapdos,
-                                      GaleDarknessRNGSystem::BattleNowTeamLeaderEnemy::Zapidos);
+                                      GaleDarknessRNGSystem::BattleNowTeamLeaderEnemy::Zapdos);
   m_enemyTeamIndexBtnGroup->addButton(rbtnMoltres,
                                       GaleDarknessRNGSystem::BattleNowTeamLeaderEnemy::Moltres);
   m_enemyTeamIndexBtnGroup->addButton(rbtnKangaskhan,
