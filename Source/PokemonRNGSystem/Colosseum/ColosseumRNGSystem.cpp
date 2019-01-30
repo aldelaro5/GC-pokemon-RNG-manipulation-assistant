@@ -227,9 +227,12 @@ bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> cr
   if (playerNameIndex != criteria[1] && criteria[1] != -1)
     return false;
 
-  m_lastObtainedCriterias.clear();
-  m_lastObtainedCriterias.push_back(playerTeamIndex);
-  m_lastObtainedCriterias.push_back(playerNameIndex);
+#pragma omp critical
+  {
+    m_lastObtainedCriterias.clear();
+    m_lastObtainedCriterias.push_back(playerTeamIndex);
+    m_lastObtainedCriterias.push_back(playerNameIndex);
+  }
 
   // The player trainer ID is generated, low then high 16 bits
   lTrainerId = LCG(seed) >> 16;

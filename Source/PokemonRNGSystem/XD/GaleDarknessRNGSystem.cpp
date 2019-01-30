@@ -274,13 +274,16 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
     obtainedPlayerHP.push_back(hp);
   }
 
-  m_lastObtainedCriterias.clear();
-  m_lastObtainedCriterias.push_back(playerTeamIndex);
-  m_lastObtainedCriterias.push_back(enemyTeamIndex);
-  m_lastObtainedCriterias.insert(m_lastObtainedCriterias.end(), obtainedPlayerHP.begin(),
-                                 obtainedPlayerHP.end());
-  m_lastObtainedCriterias.insert(m_lastObtainedCriterias.end(), obtainedEnemyHP.begin(),
-                                 obtainedEnemyHP.end());
+#pragma omp critical
+  {
+    m_lastObtainedCriterias.clear();
+    m_lastObtainedCriterias.push_back(playerTeamIndex);
+    m_lastObtainedCriterias.push_back(enemyTeamIndex);
+    m_lastObtainedCriterias.insert(m_lastObtainedCriterias.end(), obtainedPlayerHP.begin(),
+                                   obtainedPlayerHP.end());
+    m_lastObtainedCriterias.insert(m_lastObtainedCriterias.end(), obtainedEnemyHP.begin(),
+                                   obtainedEnemyHP.end());
+  }
 
   return true;
 }
