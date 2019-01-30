@@ -1,12 +1,15 @@
 #include "MainWindow.h"
 
 #include <QFileInfo>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QRegularExpression>
 #include <QVBoxLayout>
 #include <QtConcurrent>
 
+#include <sstream>
 #include <thread>
 
 #include "../PokemonRNGSystem/Colosseum/ColosseumRNGSystem.h"
@@ -66,6 +69,23 @@ void MainWindow::initialiseWidgets()
   connect(m_chkFilterUnwantedPredictions, &QCheckBox::stateChanged, this,
           [=](int state) { m_predictorWidget->filterUnwanted(state == Qt::Checked); });
 
+  m_edtManualSeed = new QLineEdit();
+  m_edtManualSeed->setEnabled(false);
+  m_btnSetSeedManually = new QPushButton("Set See&d");
+  connect(m_btnSetSeedManually, &QPushButton::clicked, this, &MainWindow::setSeedManually);
+  m_btnSetSeedManually->setEnabled(false);
+
+  m_lblCurrentSeed = new QLabel("  ????  ");
+  m_lblStoredSeed = new QLabel("  None  ");
+
+  m_btnStoreSeed = new QPushButton("St&ore Seed");
+  connect(m_btnStoreSeed, &QPushButton::clicked, this, &MainWindow::storeSeed);
+  m_btnStoreSeed->setEnabled(false);
+
+  m_btnRestoreSeed = new QPushButton("Res&tore Seed");
+  connect(m_btnRestoreSeed, &QPushButton::clicked, this, &MainWindow::restoreSeed);
+  m_btnRestoreSeed->setEnabled(false);
+
   m_btnRerollPrediciton = new QPushButton(tr("R&eroll\n(requires an additional team generation)"));
   connect(m_btnRerollPrediciton, &QPushButton::clicked, this, &MainWindow::singleRerollPredictor);
   m_btnRerollPrediciton->setEnabled(false);
@@ -94,6 +114,11 @@ void MainWindow::makeLayouts()
   buttonsLayout->addWidget(m_btnStartSeedFinder);
   buttonsLayout->addWidget(m_btnReset);
 
+  QHBoxLayout* setSeedLayout = new QHBoxLayout;
+  setSeedLayout->addWidget(new QLabel("Set the seed manually:"));
+  setSeedLayout->addWidget(m_edtManualSeed);
+  setSeedLayout->addWidget(m_btnSetSeedManually);
+
   QHBoxLayout* filterUnwantedLayout = new QHBoxLayout;
   filterUnwantedLayout->addStretch();
   filterUnwantedLayout->addWidget(m_chkFilterUnwantedPredictions);
@@ -107,6 +132,19 @@ void MainWindow::makeLayouts()
   rerollCountLayout->addWidget(m_lblRerollCount);
   rerollCountLayout->addStretch();
 
+  QHBoxLayout* seedInfoLayout = new QHBoxLayout;
+  seedInfoLayout->addStretch();
+  seedInfoLayout->addWidget(new QLabel("Stored Seed:"));
+  seedInfoLayout->addWidget(m_lblStoredSeed);
+  seedInfoLayout->addSpacing(20);
+  seedInfoLayout->addWidget(new QLabel("Current Seed:"));
+  seedInfoLayout->addWidget(m_lblCurrentSeed);
+  seedInfoLayout->addStretch();
+
+  QHBoxLayout* seedStoreRestoreLayout = new QHBoxLayout;
+  seedStoreRestoreLayout->addWidget(m_btnStoreSeed);
+  seedStoreRestoreLayout->addWidget(m_btnRestoreSeed);
+
   QHBoxLayout* rerollButtonsLayout = new QHBoxLayout;
   rerollButtonsLayout->addWidget(m_btnRerollPrediciton);
   rerollButtonsLayout->addWidget(m_btnAutoRerollPrediciton);
@@ -114,10 +152,13 @@ void MainWindow::makeLayouts()
   QVBoxLayout* predictorLayout = new QVBoxLayout;
   predictorLayout->addWidget(m_cmbGame);
   predictorLayout->addLayout(buttonsLayout);
+  predictorLayout->addLayout(setSeedLayout);
   predictorLayout->addLayout(filterUnwantedLayout);
   predictorLayout->addWidget(m_predictorWidget);
   predictorLayout->addLayout(rerollButtonsLayout);
   predictorLayout->addLayout(rerollCountLayout);
+  predictorLayout->addLayout(seedStoreRestoreLayout);
+  predictorLayout->addLayout(seedInfoLayout);
 
   QFrame* separatorLine = new QFrame();
   separatorLine->setFrameShape(QFrame::VLine);
@@ -180,9 +221,33 @@ void MainWindow::gameChanged()
   m_btnAutoRerollPrediciton->setEnabled(false);
   m_rerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  m_edtManualSeed->setEnabled(true);
+  m_btnSetSeedManually->setEnabled(true);
 
   m_statsReporterWidget->gameChanged(selection);
   m_statsReporterWidget->setDisabled(true);
+}
+
+void MainWindow::setCurrentSeed(u32 seed, int rerollCount)
+{
+  m_currentSeed = seed;
+
+  GUICommon::gameSelection selection =
+      static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
+
+  m_lblCurrentSeed->setText(QString::number(m_currentSeed, 16).toUpper());
+  std::vector<BaseRNGSystem::StartersPrediction> predictions =
+      SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
+          m_currentSeed, SConfig::getInstance().getPredictionTime());
+  m_predictorWidget->setStartersPrediction(predictions);
+  m_predictorWidget->updateGUI(selection);
+  m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
+  m_btnReset->setEnabled(true);
+  m_btnRerollPrediciton->setEnabled(true);
+  m_btnAutoRerollPrediciton->setEnabled(true);
+  m_rerollCount = rerollCount;
+  m_lblRerollCount->setText(QString::number(m_rerollCount));
+  m_btnStoreSeed->setEnabled(true);
 }
 
 void MainWindow::startSeedFinder()
@@ -207,20 +272,8 @@ void MainWindow::startSeedFinder()
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   SeedFinderWizard* wizard = new SeedFinderWizard(this, selection);
   if (wizard->exec() == QDialog::Accepted)
-  {
-    m_currentSeed = wizard->getSeeds()[0];
-    std::vector<BaseRNGSystem::StartersPrediction> predictions =
-        SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
-            m_currentSeed, SConfig::getInstance().getPredictionTime());
-    m_predictorWidget->setStartersPrediction(predictions);
-    m_predictorWidget->updateGUI(selection);
-    m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
-    m_btnReset->setEnabled(true);
-    m_btnRerollPrediciton->setEnabled(true);
-    m_btnAutoRerollPrediciton->setEnabled(true);
-    m_rerollCount = 0;
-    m_lblRerollCount->setText(QString::number(m_rerollCount));
-  }
+    setCurrentSeed(wizard->getSeeds()[0], 0);
+
   delete wizard;
 }
 
@@ -234,13 +287,54 @@ void MainWindow::resetPredictor()
   m_btnAutoRerollPrediciton->setEnabled(false);
   m_rerollCount = 0;
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  m_btnStoreSeed->setEnabled(false);
+  m_btnRestoreSeed->setEnabled(false);
+  m_lblCurrentSeed->setText("  ????  ");
+  m_lblStoredSeed->setText("  None  ");
   m_statsReporterWidget->reset();
   m_statsReporterWidget->setDisabled(true);
+}
+
+void MainWindow::storeSeed()
+{
+  m_storedSeed = m_currentSeed;
+  m_storedRerollCount = m_rerollCount;
+  m_lblStoredSeed->setText(QString::number(m_storedSeed, 16).toUpper());
+  m_btnRestoreSeed->setEnabled(true);
+}
+
+void MainWindow::restoreSeed()
+{
+  setCurrentSeed(m_storedSeed, m_storedRerollCount);
+}
+
+void MainWindow::setSeedManually()
+{
+  QRegularExpression hexMatcher("^[0-9A-F]{1,8}$", QRegularExpression::CaseInsensitiveOption);
+  QRegularExpressionMatch match = hexMatcher.match(m_edtManualSeed->text());
+  if (match.hasMatch())
+  {
+    std::stringstream ss(m_edtManualSeed->text().toStdString());
+    ss >> std::hex;
+    u32 seed = 0;
+    ss >> seed;
+    setCurrentSeed(seed, 0);
+  }
+  else
+  {
+    QMessageBox* msg = new QMessageBox(QMessageBox::Critical, "Invalid seed",
+                                       "The seed you have entered is not a valid seed. Pleaser "
+                                       "enter a valid 32 bit hexadecimal number.",
+                                       QMessageBox::Ok);
+    msg->exec();
+    delete msg;
+  }
 }
 
 void MainWindow::singleRerollPredictor()
 {
   rerollPredictor(true);
+  m_lblCurrentSeed->setText(QString::number(m_currentSeed, 16).toUpper());
 }
 
 bool MainWindow::rerollPredictor(bool withGuiUpdates)
@@ -329,6 +423,7 @@ void MainWindow::autoRerollPredictor()
   m_predictorWidget->updateGUI(selection);
   m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_lblRerollCount->setText(QString::number(m_rerollCount));
+  m_lblCurrentSeed->setText(QString::number(m_currentSeed, 16).toUpper());
   m_statsReporterWidget->setDisabled(true);
 }
 

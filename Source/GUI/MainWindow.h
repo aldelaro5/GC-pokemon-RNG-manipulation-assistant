@@ -3,6 +3,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFuture>
+#include <QLineEdit>
 #include <QMainWindow>
 #include <QMenu>
 #include <QProgressDialog>
@@ -23,6 +24,9 @@ public:
   void gameChanged();
   void startSeedFinder();
   void resetPredictor();
+  void storeSeed();
+  void restoreSeed();
+  void setSeedManually();
   void singleRerollPredictor();
   void autoRerollPredictor();
   void openSettings();
@@ -37,6 +41,7 @@ private:
   void initialiseWidgets();
   void makeLayouts();
   void makeMenus();
+  void setCurrentSeed(u32 seed, int rerollCount);
   // Returns whether we have a desired prediction after the reroll
   bool rerollPredictor(bool withGuiUpdates);
 
@@ -49,6 +54,12 @@ private:
   QPushButton* m_btnStartSeedFinder;
   QPushButton* m_btnSettings;
   QPushButton* m_btnReset;
+  QLineEdit* m_edtManualSeed;
+  QPushButton* m_btnSetSeedManually;
+  QLabel* m_lblCurrentSeed;
+  QLabel* m_lblStoredSeed;
+  QPushButton* m_btnStoreSeed;
+  QPushButton* m_btnRestoreSeed;
   QPushButton* m_btnRerollPrediciton;
   QPushButton* m_btnAutoRerollPrediciton;
 
@@ -60,5 +71,7 @@ private:
   QFuture<void> m_precalcFuture;
   QProgressDialog* m_dlgProgressPrecalc;
   u32 m_currentSeed = 0;
+  u32 m_storedSeed = 0;
   int m_rerollCount = 0;
+  int m_storedRerollCount = 0;
 };

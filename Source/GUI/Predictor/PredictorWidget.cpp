@@ -93,7 +93,7 @@ void PredictorWidget::clearLabels()
 void PredictorWidget::switchGame(const GUICommon::gameSelection game)
 {
   clearLabels();
-  QLabel* lblSeedFinder = new QLabel(tr("Find your seed for predictions"));
+  QLabel* lblSeedFinder = new QLabel(tr("Find your seed for predictions or set it manually"));
   lblSeedFinder->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
   m_lblStartersNames.append(lblSeedFinder);
