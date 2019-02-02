@@ -21,6 +21,15 @@ public:
   MainWindow();
   ~MainWindow();
 
+signals:
+  void onUpdatePrecalcProgress(const long value);
+  void onPrecalcDone();
+
+private:
+  void initialiseWidgets();
+  void makeLayouts();
+  void makeMenus();
+
   void gameChanged();
   void startSeedFinder();
   void resetPredictor();
@@ -33,14 +42,6 @@ public:
   void generatePrecalc();
   void precalcDone();
 
-signals:
-  void onUpdatePrecalcProgress(const long value);
-  void onPrecalcDone();
-
-private:
-  void initialiseWidgets();
-  void makeLayouts();
-  void makeMenus();
   void setCurrentSeed(u32 seed, int rerollCount);
   // Returns whether we have a desired prediction after the reroll
   bool rerollPredictor(bool withGuiUpdates);

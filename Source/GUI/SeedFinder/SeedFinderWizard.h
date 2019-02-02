@@ -6,8 +6,8 @@
 
 #include <QCheckBox>
 #include <QFuture>
-#include <QLabel>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QProgressDialog>
 #include <QVector>
 
@@ -39,10 +39,6 @@ public:
   void keyPressEvent(QKeyEvent* event) override;
 
   std::vector<u32> getSeeds() const;
-  void nextSeedFinderPass();
-  void pageChanged();
-  void seedFinderPassDone();
-  void precalcDone();
 
   static int numberPass;
 
@@ -51,6 +47,10 @@ signals:
   void onSeedFinderPassDone();
 
 private:
+  void nextSeedFinderPass();
+  void pageChanged();
+  void seedFinderPassDone();
+
   SeedFinderPassPage* getSeedFinderPassPageForGame();
 
   bool m_seedFinderDone = false;
