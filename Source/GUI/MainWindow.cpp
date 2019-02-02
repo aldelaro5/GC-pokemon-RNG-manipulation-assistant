@@ -430,8 +430,13 @@ void MainWindow::autoRerollPredictor()
 void MainWindow::openSettings()
 {
   DlgSettings* dlg = new DlgSettings(this);
-  dlg->exec();
+  int dlgResult = dlg->exec();
   delete dlg;
+  if (dlgResult == QDialog::Accepted)
+  {
+    // Refresh the predictor
+    setCurrentSeed(m_currentSeed, m_rerollCount);
+  }
 }
 
 void MainWindow::generatePrecalc()
