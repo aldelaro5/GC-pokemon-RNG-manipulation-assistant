@@ -101,6 +101,7 @@ std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const boo
   int sumEV = 0;
   for (int j = 0; j < 101; j++)
   {
+    sumEV = 0;
     for (int k = 0; k < 6; k++)
     {
       EVs[k] += (LCG(seed, counter) >> 16) & 0xFF;
@@ -117,7 +118,6 @@ std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const boo
         if (j >= 100)
           continue;
         EVs.fill(0);
-        sumEV = 0;
         continue;
       }
     }
@@ -127,7 +127,6 @@ std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const boo
     }
     else if (sumEV <= 490)
     {
-      sumEV = 0;
       continue;
     }
     else if (sumEV >= 530)
@@ -135,7 +134,6 @@ std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const boo
       if (j >= 100)
         continue;
       EVs.fill(0);
-      sumEV = 0;
       continue;
     }
     else
