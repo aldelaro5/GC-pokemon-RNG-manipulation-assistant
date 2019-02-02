@@ -21,16 +21,11 @@ DlgSettings::DlgSettings(QWidget* parent) : QDialog(parent)
   m_tabWidget->addTab(m_xdTab,
                       "Predictor (" + GUICommon::gamesStr[GUICommon::gameSelection::XD] + ")");
 
-  m_buttonsDlg = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
-                                      QDialogButtonBox::Apply);
+  m_buttonsDlg = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
   connect(m_buttonsDlg, &QDialogButtonBox::rejected, this, &QDialog::reject);
   connect(m_buttonsDlg, &QDialogButtonBox::clicked, this, [=](QAbstractButton* button) {
-    if (m_buttonsDlg->buttonRole(button) == QDialogButtonBox::ApplyRole)
-    {
-      saveSettings();
-    }
-    else if (m_buttonsDlg->buttonRole(button) == QDialogButtonBox::AcceptRole)
+    if (m_buttonsDlg->buttonRole(button) == QDialogButtonBox::AcceptRole)
     {
       saveSettings();
       QDialog::accept();
