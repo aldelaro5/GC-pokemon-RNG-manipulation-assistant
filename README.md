@@ -15,6 +15,17 @@ Any x86_64 based system should work. For Windows, you must have the [Microsoft V
 
 For faster results, a CPU with high parallelism capabilities is recommended. This means that this program will benefit from having a CPU that has multiple cores/threads, especially if you are generating a precalculation file. Additionally, 500MB of free RAM is recommended (1.5GB if you are generating a precalculation file).
 
+## General usage
+Download the precalculation file provided along the binaries release for the game you intend to use the manipulation and extract it into the program's directory. Then, select the game in the dropdown list and start the seed finding procedure by clicking on `Find your seed`. This will show a wizard to guide you through the process. If it succeeds, you will be able to see your starters prodictions depending on the amount of frames it takes to press A on the new game confirmation prompt and pressing A on the name confirmation prompt. Alternatively, you may set the seed manually by entering the seed in hexadecimal in the appropriate field and click `Set Seed`.
+
+You can set the desired predictions you wish to get by configuring the filters in the settings and you can also reroll the predictions as many times as you want providing you generate another random battle team. You may also store the current seed to restore it later on if you wish to see if better options are available with more rerolls.
+
+Once you are satisfied with a certain prediction, you are ready to start your run, but for the manipulation to succeed, you have to hit the right frame when confirming the trainer name which is a time span of 1/60th of a second. A program like [FlowTimer](https://github.com/stringflow/FlowTimer/releases) or [Eon timer](https://bitbucket.org/ToastPlusOne/eontimer/downloads/) can assist you by providing audio and visual cues for the timing. You may quickly verify the success of the manipulation by comparing the trainer ID of the starter with the trainer ID of the prediction you wished to get as well as the HP stat displayed next to the HP IV.
+
+Alternatively, you may generate the precalculation file for the game yourself in the `File` menu, but this process will take a few hours depending on your CPU and threads count. For this reason, it is highly recommended to download the file instead since the file is the same for every usage of the program.
+
+Finally, it is possible to have a pretty report of the stats of the starters as well as a way to predict the stats of the secondaries Pokémon using the `Stats reporter` part of the interface. You must select the row coresponding to the seed you wish to use during the run before using the stats reporter.
+
 ## How to Build
 ### Microsoft Windows
 This repository provides a solution file for Visual Studio 2015 and later. The Windows SDK Version 10.0.16299.0 (Windows 10 Fall Creators Update) is required.
@@ -59,13 +70,6 @@ To build, simply run the following commands from the `Source` directory:
 	make
 
 The compiled binaries should appear in the directory named `build`.
-
-## General usage
-Download the precalculation file provided along the binaries release for the game you intend to use the manipulation and extract it into the program's directory. Then, select the game in the dropdown list and start the seed finding procedure by clicking on "Find your seed". This will show a wizard to guide you through the process. If it succeeds, you will be able to see your starters prodictions depending on the amount of frames it takes to press A on the new game confirmation prompt and pressing A on the name confirmation prompt. You can set the desired predictions you wish to get by configuring the filters in the settings and you can also reroll the predictions as many times as you want providing you generate another random battle team. 
-
-Once you are satisfied with a certain prediction, you are ready to start your run, but for the manipulation to succeed, you have to hit the right frame when confirming the trainer name which is a time span of 1/60th of a second. A program like the [Eon timer](https://bitbucket.org/ToastPlusOne/eontimer/downloads/) can assist you by providing audio and visual cues for the timing. You may quickly verify the success of the manipulation by comparing the trainer ID of the starter with the trainer ID of the prediction you wished to get as well as the HP stat displayed next to the HP IV.
-
-Alternatively, you may generate the precalculation file for the game yourself in the `File` menu, but this process will take a few hours depending on your CPU and threads count. For this reason, it is highly recommended to download the file instead since the file is the same for every usage of the program.
 
 ## License
 This program is licensed under the MIT license which grants you the permission to do anything you wish to with the software, as long as you preserve all copyright notices. (See the file LICENSE for the legal text.)
