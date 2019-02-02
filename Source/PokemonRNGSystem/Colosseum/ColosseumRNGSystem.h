@@ -26,6 +26,7 @@ public:
     Thomas
   };
 
+  ~ColosseumRNGSystem(){};
   std::string getPrecalcFilename() final override;
 
 private:

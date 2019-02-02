@@ -23,6 +23,7 @@ public:
     Latias
   };
 
+  ~GaleDarknessRNGSystem(){};
   std::string getPrecalcFilename() final override;
 
   const int teddiursaSecondaryIndex = 0;

@@ -59,6 +59,7 @@ public:
     int min;
     int max;
   };
+  virtual ~BaseRNGSystem(){};
 
   virtual std::string getPrecalcFilename() = 0;
   virtual int getNbrStartersPrediction() = 0;
