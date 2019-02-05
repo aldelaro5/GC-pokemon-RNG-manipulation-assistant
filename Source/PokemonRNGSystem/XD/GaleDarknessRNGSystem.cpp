@@ -461,15 +461,13 @@ std::vector<std::string> GaleDarknessRNGSystem::getSecondariesName()
 u32 GaleDarknessRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   LCG(seed);
+  LCG(seed);
 
-  // The PAL version of XD has the particularity of only doing 1 call before the naming screen
-  // appears instead 2 as well as not call the RNG at all when it is shown unlike any other
-  // versions of both Colosseum and XD. Everything after the naming screen is done as usual, but it
-  // locks the predictions to have only one possible prediction
+  // The PAL version of XD has the particularity of not call the RNG at all when the naming screen
+  // is shown unlike any other versions of both Colosseum and XD. Everything after the naming screen
+  // is done as usual, but it locks the predictions to have only one possible prediction
   if (s_palEnabled)
     return seed;
-
-  LCG(seed);
 
   // Exhaust all guaranteed calls before considering input and wasted frames.
   for (int i = 0; i < minNamingScreenAnimRenderCalls - 1; i++)
