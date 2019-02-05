@@ -228,6 +228,9 @@ void MainWindow::gameChanged()
   m_lblRerollCount->setText(QString::number(m_rerollCount));
   m_edtManualSeed->setEnabled(true);
   m_btnSetSeedManually->setEnabled(true);
+  m_lblCurrentSeed->setText("  ????  ");
+  m_seedSet = false;
+  m_lblStoredSeed->setText("  None  ");
 
   m_statsReporterWidget->gameChanged(selection);
   m_statsReporterWidget->setDisabled(true);
