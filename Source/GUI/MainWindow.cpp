@@ -405,7 +405,7 @@ void MainWindow::autoRerollPredictor()
         new QMessageBox(QMessageBox::Information, "Desired prediction found",
                         "After " + QString::number(nbrRerolls + 1) +
                             " rerolls, a desired prediction has been found; the predictions list "
-                            "has been updated.\n\nOn the last battle confirmation screen, the "
+                            "will be updated.\n\nOn the last battle confirmation screen, the "
                             "following information should be displayed:\n" +
                             lastBattleConfirmationStr,
                         QMessageBox::Ok);
@@ -417,7 +417,7 @@ void MainWindow::autoRerollPredictor()
     QMessageBox* msg = new QMessageBox(
         QMessageBox::Critical, "No desired prediction has been found",
         "The predictor has reached the limit of " + QString::number(nbrRerolls) +
-            " rerolls, but no desired prediction has been found; the predictions list has been "
+            " rerolls, but no desired prediction has been found; the predictions list will be "
             "updated. You may try to auto reroll again.",
         QMessageBox::Ok);
     msg->exec();
