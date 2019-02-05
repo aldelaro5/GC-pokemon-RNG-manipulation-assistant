@@ -74,6 +74,7 @@ void DlgSettings::saveSettings() const
   saveEspeonSettings();
   saveEeveeSettings();
   SConfig::getInstance().setXDPalVersionEnabled(m_xdTab->getPalVersionEnabled());
+  GaleDarknessRNGSystem::setPalEnabled(m_xdTab->getPalVersionEnabled());
 }
 
 void DlgSettings::loadUmbreonSettings()

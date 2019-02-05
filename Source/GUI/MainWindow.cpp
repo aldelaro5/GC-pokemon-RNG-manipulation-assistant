@@ -205,9 +205,14 @@ void MainWindow::gameChanged()
   GUICommon::gameSelection selection =
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   if (selection == GUICommon::gameSelection::Colosseum)
+  {
     SPokemonRNG::setCurrentSystem(new ColosseumRNGSystem());
+  }
   else if (selection = GUICommon::gameSelection::XD)
+  {
     SPokemonRNG::setCurrentSystem(new GaleDarknessRNGSystem());
+    GaleDarknessRNGSystem::setPalEnabled(SConfig::getInstance().getXDPalVersionEnabled());
+  }
 
   if (m_cmbGame->count() == static_cast<int>(GUICommon::gameSelection::Unselected) + 1)
   {
