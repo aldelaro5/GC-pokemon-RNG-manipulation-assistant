@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QtConcurrent>
 
+#include "../../PokemonRNGSystem/XD/GaleDarknessRNGSystem.h"
 #include "../SPokemonRNG.h"
 #include "../Settings/SConfig.h"
 
@@ -295,18 +296,28 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
     QString additionalNotes("");
     if (game == GUICommon::gameSelection::Colosseum)
       additionalNotes = tr("You MUST use a preset name for the predictions to work.");
-    if (game == GUICommon::gameSelection::XD)
-      additionalNotes = tr("You MUST use a custom name for the predictions to work.");
+
+    QString predictorInstructions =
+        "Predictions of the starters will appear depending on the amount of frames "
+        "between pressing A on starting a new game and pressing A on the trainer name "
+        "confirmation.";
+    if (game == GUICommon::gameSelection::XD && GaleDarknessRNGSystem::getPalEnabled())
+      predictorInstructions =
+          "There will only be a single prediction in the prediction list, this will be your "
+          "starter no matter how many frames you spend on the naming screen.";
+
     m_lblResult = new QLabel(
         "The seed finding procedure completed sucessfully.\n\n" + QString("Your current seed is ") +
             QString("%1").arg(seed, 8, 16, QChar('0')).toUpper() +
-            QString("\n\nPredictions of the starters will appear depending on the amount of frames "
-                    "between pressing A on starting a new game and pressing A on the trainer name "
-                    "confirmation. Desired predictions will appear in green while undesired ones "
-                    "will appear in red (you may configure the filters in the settings). If you "
-                    "are unsatisfied with the predictions, generate another team and click the "
-                    "reroll button. You may only go back to the main menu of the game if you are "
-                    "satisfied with the predictions. ") +
+            QString(
+                "\n\n" + predictorInstructions +
+                " Desired predictions will appear in green while undesired ones "
+                "will appear in red (you may configure the filters in the settings). If you "
+                "are unsatisfied with the predictions, generate another team and click the "
+                "reroll or autoreroll button. You may only go back to the main menu of the game if "
+                "you are satisfied with the predictions. You may also use the stats reporter when "
+                "you select a prediction which allows you to see the possible secondaries "
+                "stats. ") +
             additionalNotes +
             QString("\n\nClick \"Finish\" to see your prediction in "
                     "the previous window."),
@@ -326,7 +337,7 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
   mainlayout->addStretch();
   setLayout(mainlayout);
   m_lblResult->adjustSize();
-  setFixedHeight(m_lblResult->height() + 150);
+  setFixedHeight(m_lblResult->height() + 200);
 }
 
 int EndPage::nextId() const
