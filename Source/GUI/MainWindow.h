@@ -72,6 +72,7 @@ private:
   QFuture<void> m_precalcFuture;
   QProgressDialog* m_dlgProgressPrecalc;
   u32 m_currentSeed = 0;
+  bool m_seedSet = false;
   u32 m_storedSeed = 0;
   int m_rerollCount = 0;
   int m_storedRerollCount = 0;

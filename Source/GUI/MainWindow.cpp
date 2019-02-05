@@ -272,7 +272,10 @@ void MainWindow::startSeedFinder()
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
   SeedFinderWizard* wizard = new SeedFinderWizard(this, selection);
   if (wizard->exec() == QDialog::Accepted)
+  {
     setCurrentSeed(wizard->getSeeds()[0], 0);
+    m_seedSet = true;
+  }
 
   delete wizard;
 }
@@ -290,6 +293,7 @@ void MainWindow::resetPredictor()
   m_btnStoreSeed->setEnabled(false);
   m_btnRestoreSeed->setEnabled(false);
   m_lblCurrentSeed->setText("  ????  ");
+  m_seedSet = false;
   m_lblStoredSeed->setText("  None  ");
   m_statsReporterWidget->reset();
   m_statsReporterWidget->setDisabled(true);
@@ -319,6 +323,7 @@ void MainWindow::setSeedManually()
     u32 seed = 0;
     ss >> seed;
     setCurrentSeed(seed, 0);
+    m_seedSet = true;
   }
   else
   {
@@ -432,7 +437,7 @@ void MainWindow::openSettings()
   DlgSettings* dlg = new DlgSettings(this);
   int dlgResult = dlg->exec();
   delete dlg;
-  if (dlgResult == QDialog::Accepted)
+  if (dlgResult == QDialog::Accepted && m_seedSet)
   {
     // Refresh the predictor
     setCurrentSeed(m_currentSeed, m_rerollCount);
