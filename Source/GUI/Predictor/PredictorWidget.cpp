@@ -292,19 +292,26 @@ void PredictorWidget::updateGUI(const GUICommon::gameSelection game)
                                      new QTableWidgetItem(QString("%1").arg(
                                          m_startersPrediction[i].trainerId, 5, 10, QChar('0'))));
 
-    int frameNumberWithDelay =
-        m_startersPrediction[i].frameNumber + SConfig::getInstance().getFrameOffset();
-    if (i == 0)
+    if (m_startersPrediction[i].frameNumber == -1)
     {
-      m_tblStartersPrediction->setItem(
-          i, 2, new QTableWidgetItem(QString::number(frameNumberWithDelay) + " (frame perfect)"));
+      m_tblStartersPrediction->setItem(i, 2, new QTableWidgetItem("ALL FRAMES (N/A)"));
     }
     else
     {
-      m_tblStartersPrediction->setItem(
-          i, 2,
-          new QTableWidgetItem(QString::number(frameNumberWithDelay) + " (" +
-                               QString::number(frameNumberWithDelay / 60.0) + ")"));
+      int frameNumberWithDelay =
+          m_startersPrediction[i].frameNumber + SConfig::getInstance().getFrameOffset();
+      if (i == 0)
+      {
+        m_tblStartersPrediction->setItem(
+            i, 2, new QTableWidgetItem(QString::number(frameNumberWithDelay) + " (frame perfect)"));
+      }
+      else
+      {
+        m_tblStartersPrediction->setItem(
+            i, 2,
+            new QTableWidgetItem(QString::number(frameNumberWithDelay) + " (" +
+                                 QString::number(frameNumberWithDelay / 60.0) + ")"));
+      }
     }
 
     int nbrColPerStarter = 8;

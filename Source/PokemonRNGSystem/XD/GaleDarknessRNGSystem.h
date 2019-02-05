@@ -25,6 +25,11 @@ public:
 
   ~GaleDarknessRNGSystem(){};
   std::string getPrecalcFilename() final override;
+  std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed,
+                                                               const int nbrSeconds) final override;
+
+  static bool getPalEnabled();
+  static void setPalEnabled(const bool palEnabled);
 
   const int teddiursaSecondaryIndex = 0;
 

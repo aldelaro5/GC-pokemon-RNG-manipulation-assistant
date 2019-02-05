@@ -29,6 +29,33 @@ static const int minNamingScreenAnimRenderCalls = 725;
 // a custom name on the naming screen, obtained by TASing.
 static const int minNamingScreenFrames = 116;
 
+static bool s_palEnabled = false;
+
+bool GaleDarknessRNGSystem::getPalEnabled()
+{
+  return s_palEnabled;
+}
+
+void GaleDarknessRNGSystem::setPalEnabled(const bool palEnabled)
+{
+  s_palEnabled = palEnabled;
+}
+
+std::vector<BaseRNGSystem::StartersPrediction>
+GaleDarknessRNGSystem::predictStartersForNbrSeconds(u32 seed, const int nbrSeconds)
+{
+  if (s_palEnabled)
+  {
+    std::vector<StartersPrediction> predictionsResult;
+    seed = rollRNGNamingScreenInit(seed);
+    BaseRNGSystem::StartersPrediction prediction = generateStarterPokemons(seed);
+    prediction.frameNumber = -1;
+    predictionsResult.push_back(prediction);
+    return predictionsResult;
+  }
+  return BaseRNGSystem::predictStartersForNbrSeconds(seed, nbrSeconds);
+}
+
 std::string GaleDarknessRNGSystem::getPrecalcFilename()
 {
   return "xd.precalc";
@@ -434,6 +461,14 @@ std::vector<std::string> GaleDarknessRNGSystem::getSecondariesName()
 u32 GaleDarknessRNGSystem::rollRNGNamingScreenInit(u32 seed)
 {
   LCG(seed);
+
+  // The PAL version of XD has the particularity of only doing 1 call before the naming screen
+  // appears instead 2 as well as not call the RNG at all when it is shown unlike any other
+  // versions of both Colosseum and XD. Everything after the naming screen is done as usual, but it
+  // locks the predictions to have only one possible prediction
+  if (s_palEnabled)
+    return seed;
+
   LCG(seed);
 
   // Exhaust all guaranteed calls before considering input and wasted frames.
@@ -444,6 +479,10 @@ u32 GaleDarknessRNGSystem::rollRNGNamingScreenInit(u32 seed)
 
 u32 GaleDarknessRNGSystem::rollRNGNamingScreenNext(u32 seed)
 {
+  // Since PAL has no calls during the naming screen, just do nothing!
+  if (s_palEnabled)
+    return seed;
+
   seed = LCG(seed);
   u16 hiSeed = seed >> 16;
   if (static_cast<double>(hiSeed) / 65536.0 < 0.1)

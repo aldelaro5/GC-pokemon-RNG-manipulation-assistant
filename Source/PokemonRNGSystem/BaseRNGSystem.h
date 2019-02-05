@@ -78,7 +78,8 @@ public:
   void seedFinderPass(unsigned int threadCount, const std::vector<int> criteria,
                       std::vector<u32>& seeds, std::function<void(long)> progressUpdate,
                       std::function<bool()> shouldCancelNow);
-  std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed, const int nbrSeconds);
+  virtual std::vector<StartersPrediction> predictStartersForNbrSeconds(u32 seed,
+                                                                       const int nbrSeconds);
   // Does one battle team generation RNG calls, returns whether or not the criteria sent matches the
   // outcome got
   virtual bool generateBattleTeam(u32& seed, const std::vector<int> criteria) = 0;
