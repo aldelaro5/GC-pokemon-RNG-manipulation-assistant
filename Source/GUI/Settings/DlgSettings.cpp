@@ -60,6 +60,7 @@ void DlgSettings::loadSettings()
   loadUmbreonSettings();
   loadEspeonSettings();
   loadEeveeSettings();
+  m_xdTab->setPalVersionEnabled(SConfig::getInstance().getXDPalVersionEnabled());
 }
 
 void DlgSettings::saveSettings() const
@@ -72,6 +73,7 @@ void DlgSettings::saveSettings() const
   saveUmbreonSettings();
   saveEspeonSettings();
   saveEeveeSettings();
+  SConfig::getInstance().setXDPalVersionEnabled(m_xdTab->getPalVersionEnabled());
 }
 
 void DlgSettings::loadUmbreonSettings()

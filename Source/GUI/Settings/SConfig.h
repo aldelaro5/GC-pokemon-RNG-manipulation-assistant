@@ -31,6 +31,7 @@ public:
 
   GUICommon::shininess getEeveeShininess() const;
   GUICommon::gender getEeveeGender() const;
+  bool getXDPalVersionEnabled() const;
 
   void setThreadLimit(const int threadLimit);
   void setPredictionTime(const int predictionTime);
@@ -53,6 +54,7 @@ public:
 
   void setEeveeShininess(const GUICommon::shininess shininess) const;
   void setEeveeGender(const GUICommon::gender gender) const;
+  void setXDPalVersionEnabled(const bool xdPalVersionEnabled) const;
 
 private:
   SConfig();

@@ -15,12 +15,15 @@ public:
   CommonPredictorFiltersWidget* getEeveeFiltersWidget() const;
   GUICommon::shininess getShininess() const;
   GUICommon::gender getGender() const;
+  bool getPalVersionEnabled() const;
 
   void setShininess(const GUICommon::shininess shininess);
   void setGender(const GUICommon::gender gender);
+  void setPalVersionEnabled(const bool palVersionEnabled);
 
 private:
   CommonPredictorFiltersWidget* m_predictorFiltersEevee;
   QComboBox* m_cmbShininess;
   QComboBox* m_cmbGender;
+  QCheckBox* m_chkPalVersion;
 };

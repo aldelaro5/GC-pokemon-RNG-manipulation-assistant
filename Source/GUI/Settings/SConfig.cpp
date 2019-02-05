@@ -169,6 +169,11 @@ GUICommon::gender SConfig::getEeveeGender() const
                                             .toInt());
 }
 
+bool SConfig::getXDPalVersionEnabled() const
+{
+  return m_settings->value("galeDarknessPredictor/PALVersionEnabled", false).toBool();
+}
+
 void SConfig::setThreadLimit(const int threadLimit)
 {
   m_settings->setValue("generalSettings/CPUThreadLimit", threadLimit);
@@ -297,4 +302,9 @@ void SConfig::setEeveeShininess(const GUICommon::shininess shininess) const
 void SConfig::setEeveeGender(const GUICommon::gender gender) const
 {
   m_settings->setValue("galeDarknessPredictor/eevee/gender", static_cast<int>(gender));
+}
+
+void SConfig::setXDPalVersionEnabled(const bool xdPalVersionEnabled) const
+{
+  m_settings->setValue("galeDarknessPredictor/PALVersionEnabled", xdPalVersionEnabled);
 }
