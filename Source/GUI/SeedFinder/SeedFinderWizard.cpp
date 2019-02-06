@@ -227,12 +227,12 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
         "Ultimate. You should see a confirmation screen of a battle with a randomly generated "
         "team. The seed finder will ask you for the informations displayed on this screen so make "
         "sure you input them correctly. After entering the information and confirming everything, "
-        "wait that the pass is done, the first pass especially may take a while. Once done, back "
-        "off the confirmation screen (NEVER accept it or it will invalidate the procedure) and "
-        "select Single Battle -> Ultimate again; you are now ready to enter the informations of "
-        "the next pass. You have to do this several times until only 1 result is left, you can see "
-        "the number of results after each pass in the title of the wizard page. Note: NEVER go "
-        "back to the main menu during this procedure or it will invalidate it."));
+        "wait that the pass is done. Once done, back off the confirmation screen (NEVER accept it "
+        "or it will invalidate the procedure) and select Single Battle -> Ultimate again; you are "
+        "now ready to enter the informations of the next pass. You have to do this several times "
+        "until only 1 result is left, you can see the number of results after each pass in the "
+        "title of the wizard page. Note: NEVER go back to the main menu during this procedure or "
+        "it will invalidate it."));
     break;
   case GUICommon::gameSelection::XD:
     m_lblGameInstructions = new QLabel(tr(
@@ -240,13 +240,12 @@ InstructionsPage::InstructionsPage(QWidget* parent, const GUICommon::gameSelecti
         "Single Battle -> Ultimate. You should see a confirmation screen of a battle with a "
         "randomly generated team. The seed finder will ask you for the informations displayed on "
         "this screen so make sure you input them correctly. After entering the information and "
-        "confirming everything, wait that the pass is done, the first pass especially may take a "
-        "while. Once done, back off the confirmation screen (NEVER accept it or it will invalidate "
-        "the procedure) and select Single Battle -> Ultimate again; you are now ready to enter the "
-        "informations of the next pass. You have to do this several times until only 1 result is "
-        "left, you can see the number of results after each pass in the title of the wizard page. "
-        "Note: NEVER go back to the main menu during this procedure or it will invalidate "
-        "it."));
+        "confirming everything, wait that the pass is done. Once done, back off the confirmation "
+        "screen (NEVER accept it or it will invalidate the procedure) and select Single Battle -> "
+        "Ultimate again; you are now ready to enter the informations of the next pass. You have to "
+        "do this several times until only 1 result is left, you can see the number of results "
+        "after each pass in the title of the wizard page. Note: NEVER go back to the main menu "
+        "during this procedure or it will invalidate it."));
     break;
   default:
     m_lblGameInstructions = new QLabel("");
