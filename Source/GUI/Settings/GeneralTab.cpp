@@ -59,7 +59,7 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
       new QLabel(tr("Number of maximum reroll to perform when auto rerolling: "));
   m_spbMaxAutoReroll = new QSpinBox();
   m_spbMaxAutoReroll->setMinimum(1);
-  m_spbMaxAutoReroll->setMaximum(1000);
+  m_spbMaxAutoReroll->setMaximum(10000);
   m_spbMaxAutoReroll->setValue(100);
   m_spbMaxAutoReroll->setMaximumWidth(150);
 
