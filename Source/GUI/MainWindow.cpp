@@ -173,7 +173,6 @@ void MainWindow::makeLayouts()
   setCentralWidget(mainWidget);
 
   setWindowTitle("GameCube Pokémon RNG assistant");
-  setMinimumWidth(600);
 }
 
 void MainWindow::makeMenus()

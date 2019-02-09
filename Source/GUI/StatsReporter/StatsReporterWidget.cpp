@@ -103,6 +103,8 @@ StatsReporterWidget::StatsReporterWidget(QWidget* parent) : QWidget(parent)
           &StatsReporterWidget::onStatsGenderChanged);
   connect(m_cmbSpeedStat, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
           &StatsReporterWidget::onStatsGenderChanged);
+
+  setFixedWidth(400);
 }
 
 void StatsReporterWidget::gameChanged(const GUICommon::gameSelection game)
