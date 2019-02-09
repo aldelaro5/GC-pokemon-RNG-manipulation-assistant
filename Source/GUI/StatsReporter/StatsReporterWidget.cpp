@@ -129,6 +129,9 @@ void StatsReporterWidget::gameChanged(const GUICommon::gameSelection game)
     m_starterFrames.append(frame);
   }
 
+  if (game == GUICommon::gameSelection::Colosseum)
+    std::swap(m_starterFrames[0], m_starterFrames[1]);
+
   for (auto name : SPokemonRNG::getCurrentSystem()->getSecondariesName())
   {
     m_cmbSecondaryPokemon->addItem(QString::fromStdString(name));
