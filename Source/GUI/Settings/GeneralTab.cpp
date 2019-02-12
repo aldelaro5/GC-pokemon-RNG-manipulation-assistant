@@ -72,9 +72,14 @@ GeneralTab::GeneralTab(QWidget* parent) : QWidget(parent)
   QGroupBox* gbPredictor = new QGroupBox(tr("Starters predictor"));
   gbPredictor->setLayout(predictionTimeLayout);
 
+  m_chkRestorePreviousWindowGeometry = new QCheckBox(
+      "Restore the previous main window's position and size at the start of the program");
+  m_chkRestorePreviousWindowGeometry->setChecked(false);
+
   QVBoxLayout* mainLayout = new QVBoxLayout;
   mainLayout->addWidget(gbCPUSettings);
   mainLayout->addWidget(gbPredictor);
+  mainLayout->addWidget(m_chkRestorePreviousWindowGeometry);
   mainLayout->addStretch();
 
   setLayout(mainLayout);
@@ -100,6 +105,11 @@ int GeneralTab::getMaxAutoReroll() const
   return m_spbMaxAutoReroll->value();
 }
 
+bool GeneralTab::getRestorePreviousWindowGeometry() const
+{
+  return m_chkRestorePreviousWindowGeometry->isChecked();
+}
+
 void GeneralTab::setPredictionTime(const int predictionTime)
 {
   m_spbPredictionsTime->setValue(predictionTime);
@@ -118,4 +128,9 @@ void GeneralTab::setFrameOffset(const int frameDelay)
 void GeneralTab::setMaxAutoReroll(const int maxAutoReroll)
 {
   m_spbMaxAutoReroll->setValue(maxAutoReroll);
+}
+
+void GeneralTab::setRestorePreviousWindowGeometry(const bool restoreGeometry)
+{
+  m_chkRestorePreviousWindowGeometry->setChecked(restoreGeometry);
 }

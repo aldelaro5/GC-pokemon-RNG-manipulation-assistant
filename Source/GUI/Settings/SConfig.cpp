@@ -53,6 +53,16 @@ bool SConfig::getSkipInstructionPage() const
   return m_settings->value("generalSettings/skipInstructionPage", false).toBool();
 }
 
+bool SConfig::getRestorePreviousWindowGeometry() const
+{
+  return m_settings->value("generalSettings/restoreWindowGeometry", false).toBool();
+}
+
+QByteArray SConfig::getPreviousWindowGeometry() const
+{
+  return m_settings->value("generalSettings/windowGeometry").toByteArray();
+}
+
 int SConfig::getMinHpIv(const GUICommon::starter starter) const
 {
   QString gameGroupStr = gameGroupStrForStarter(starter);
@@ -197,6 +207,16 @@ void SConfig::setMaxAutoReroll(const int maxAutoReroll)
 void SConfig::setSkipInstructionPage(const bool skipInstructionPage)
 {
   m_settings->setValue("generalSettings/skipInstructionPage", skipInstructionPage);
+}
+
+void SConfig::setRestorePreviousWindowGeometry(const bool restoreWindowGeometry)
+{
+  m_settings->setValue("generalSettings/restoreWindowGeometry", restoreWindowGeometry);
+}
+
+void SConfig::setPreviousWindowGeometry(const QByteArray windowGeometry)
+{
+  m_settings->setValue("generalSettings/windowGeometry", windowGeometry);
 }
 
 void SConfig::setMinHpIv(const GUICommon::starter starter, const int minHpIv)

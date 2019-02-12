@@ -17,6 +17,8 @@ public:
   int getFrameOffset() const;
   int getMaxAutoReroll() const;
   bool getSkipInstructionPage() const;
+  bool getRestorePreviousWindowGeometry() const;
+  QByteArray getPreviousWindowGeometry() const;
   int getMinHpIv(const GUICommon::starter starter) const;
   int getMinAtkIv(const GUICommon::starter starter) const;
   int getMinDefIv(const GUICommon::starter starter) const;
@@ -38,6 +40,8 @@ public:
   void setFrameOffset(const int frameDelay);
   void setMaxAutoReroll(const int maxAutoReroll);
   void setSkipInstructionPage(const bool skipInstructionPage);
+  void setRestorePreviousWindowGeometry(const bool restoreWindowGeometry);
+  void setPreviousWindowGeometry(const QByteArray windowGeometry);
   void setMinHpIv(const GUICommon::starter starter, const int minHpIv);
   void setMinAtkIv(const GUICommon::starter starter, const int minAtkIv);
   void setMinDefIv(const GUICommon::starter starter, const int minDefIv);

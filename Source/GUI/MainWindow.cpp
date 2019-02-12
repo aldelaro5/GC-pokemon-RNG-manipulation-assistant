@@ -36,12 +36,20 @@ MainWindow::MainWindow()
     else
       m_dlgProgressPrecalc->setValue(value);
   });
+
+  if (SConfig::getInstance().getRestorePreviousWindowGeometry())
+    restoreGeometry(SConfig::getInstance().getPreviousWindowGeometry());
 }
 
 MainWindow::~MainWindow()
 {
   SPokemonRNG::deleteSystem();
   delete m_dlgProgressPrecalc;
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+  SConfig::getInstance().setPreviousWindowGeometry(saveGeometry());
 }
 
 void MainWindow::initialiseWidgets()

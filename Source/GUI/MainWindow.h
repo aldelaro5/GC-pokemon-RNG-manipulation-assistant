@@ -26,6 +26,8 @@ signals:
   void onPrecalcDone();
 
 private:
+  void closeEvent(QCloseEvent* event) override;
+
   void initialiseWidgets();
   void makeLayouts();
   void makeMenus();
