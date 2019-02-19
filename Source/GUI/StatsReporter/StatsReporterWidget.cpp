@@ -112,6 +112,8 @@ void StatsReporterWidget::gameChanged(const GUICommon::gameSelection game)
   if (game == GUICommon::gameSelection::Unselected)
     return;
 
+  m_currentGame = game;
+
   reset();
   m_cmbSecondaryPokemon->disconnect();
 
@@ -152,8 +154,15 @@ void StatsReporterWidget::startersPredictionChanged(
   reset();
   updateStatsSelection();
 
-  for (int i = 0; i < m_starterFrames.size(); i++)
-    m_starterFrames[i]->setPokemonProperties(starters.starters[i]);
+  if (m_currentGame == GUICommon::gameSelection::Colosseum)
+  {
+    m_starterFrames[0]->setPokemonProperties(starters.starters[1]);
+    m_starterFrames[1]->setPokemonProperties(starters.starters[0]);
+  }
+  else
+  {
+    m_starterFrames[0]->setPokemonProperties(starters.starters[0]);
+  }
 
   m_startingSeed = starters.startingSeed;
 

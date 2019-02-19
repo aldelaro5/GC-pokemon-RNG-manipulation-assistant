@@ -51,4 +51,5 @@ private:
   QVector<PokemonPropertiesFrame*> m_starterFrames;
   std::vector<BaseRNGSystem::SecondaryCandidate> m_filteredCandidates;
   PokemonPropertiesFrame* m_secondaryFrame;
+  GUICommon::gameSelection m_currentGame = GUICommon::gameSelection::Unselected;
 };
