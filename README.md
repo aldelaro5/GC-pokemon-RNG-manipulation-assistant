@@ -8,7 +8,7 @@ A program to aid RTA speedrunners to manipulate the starters in Pokemon Colosseu
 
 This program allows this manipulation technique to work as it assists the runner into all these steps with user-friendliness being a priority. The goal of having such a method is to reduce the amount of early resets required to start a run and to also open up new possibilities for having better than usual starters as this method makes it easier to see the different possibilities.
 
-For binary releases of this program, refer to [the "releases" page](https://github.com/aldelaro5/Dolphin-memory-engine/releases) on [the Github repository](https://github.com/aldelaro5/Dolphin-memory-engine).
+For binary releases of this program, refer to [the "releases" page](https://github.com/aldelaro5/GC-pokemon-RNG-manipulation-assistant/releases) on [the Github repository](https://github.com/aldelaro5/GC-pokemon-RNG-manipulation-assistant).
 
 ## System requirements
 Any x86_64 based system should work. For Windows, you must have the [Microsoft Visual C++ Redistributable for Visual Studio 2017](https://support.microsoft.com/en-ca/help/2977003/the-latest-supported-visual-c-downloads) installed.
