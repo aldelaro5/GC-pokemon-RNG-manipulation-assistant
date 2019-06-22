@@ -98,7 +98,7 @@ public:
 protected:
   // The number of time the game polls the input per second on the naming screen
   static const int pollingRateNamingScreenPerSec = 60;
-  virtual u32 rollRNGToBattleMenu(const u32 seed, u16* counter = nullptr) = 0;
+  virtual u32 rollRNGToBattleMenu(const u32 seed) = 0;
   virtual int getMinFramesAmountNamingScreen() = 0;
   // Do all the RNG calls to get to before the first possible frame of confirming the name on the
   // naming screen using a preset name
@@ -114,16 +114,14 @@ protected:
                                            const int searchSeedsAmount);
 
   // The LCG used in both Pokemon games
-  u32 inline LCG(u32& seed, u16* counter = nullptr)
+  u32 inline LCG(u32& seed)
   {
-    seed = seed * 0x343fd + 0x269EC3;
-    if (counter != nullptr)
-      (*counter)++;
+    seed = seed * 0x343FD + 0x269EC3;
     return seed;
   }
 
   // Apply the LCG n times in O(log n) complexity
-  u32 inline LCGn(u32 seed, const u32 n, u16* counter = nullptr)
+  u32 inline LCGn(u32 seed, const u32 n)
   {
     u32 ex = n - 1;
     u32 q = 0x343fd;
@@ -140,9 +138,7 @@ protected:
       q *= q;
       ex /= 2;
     }
-    seed = (seed * Common::modpow32(0x343fd, n)) + (sum + factor) * 0x269EC3;
-    if (counter != nullptr)
-      *counter += n;
+    seed = (seed * Common::modpow32(0x343FD, n)) + (sum + factor) * 0x269EC3;
     return seed;
   }
 

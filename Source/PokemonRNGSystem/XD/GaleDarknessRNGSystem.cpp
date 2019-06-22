@@ -63,7 +63,7 @@ std::string GaleDarknessRNGSystem::getPrecalcFilename()
 
 u32 inline GaleDarknessRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerId,
                                                      const u32 lTrainerId, const u32 dummyId,
-                                                     u16* counter, const WantedShininess shininess,
+                                                     const WantedShininess shininess,
                                                      const s8 wantedGender, const u32 genderRatio,
                                                      const s8 wantedNature)
 {
@@ -73,8 +73,8 @@ u32 inline GaleDarknessRNGSystem::generatePokemonPID(u32& seed, const u32 hTrain
   while (nbrPidAttemptLeft > 0)
   {
     // A personality ID is generated as candidate, high then low 16 bits
-    u32 hId = LCG(seed, counter) >> 16;
-    u32 lId = LCG(seed, counter) >> 16;
+    u32 hId = LCG(seed) >> 16;
+    u32 lId = LCG(seed) >> 16;
     pid = (hId << 16) | (lId);
     nbrPidAttemptLeft--;
 
@@ -122,7 +122,7 @@ u32 inline GaleDarknessRNGSystem::generatePokemonPID(u32& seed, const u32 hTrain
 }
 
 std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const bool allowUnfilledEV,
-                                                            const bool endPrematurely, u16* counter)
+                                                            const bool endPrematurely)
 {
   std::array<u8, 6> EVs = {0};
   int sumEV = 0;
@@ -131,7 +131,7 @@ std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const boo
     sumEV = 0;
     for (int k = 0; k < 6; k++)
     {
-      EVs[k] += (LCG(seed, counter) >> 16) & 0xFF;
+      EVs[k] += (LCG(seed) >> 16) & 0xFF;
       sumEV += EVs[k];
     }
     if (allowUnfilledEV)
@@ -197,31 +197,31 @@ std::array<u8, 6> inline GaleDarknessRNGSystem::generateEVs(u32& seed, const boo
   return EVs;
 }
 
-u32 GaleDarknessRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
+u32 GaleDarknessRNGSystem::rollRNGToBattleMenu(u32 seed)
 {
   // Before getting to the quick battle menu, the reason this is deterministic is because the only
   // thing that is consequential is a dummy pokemon generation, but there's no criteria on the pid
   // meaning the first pid generated will always be the one used
-  seed = LCGn(seed, 1139, counter);
+  seed = LCGn(seed, 1139);
   // Some dummy team gen going on...
   for (int i = 0; i < 4; i++)
   {
     // The player trainer ID is generated, low then high 16 bits
-    u32 lTrainerId = LCG(seed, counter) >> 16;
-    u32 hTrainerId = LCG(seed, counter) >> 16;
+    u32 lTrainerId = LCG(seed) >> 16;
+    u32 hTrainerId = LCG(seed) >> 16;
     for (int j = 0; j < 2; j++)
     {
       // Dummy personality ID (doesn't matter)
-      LCG(seed, counter);
-      LCG(seed, counter);
+      LCG(seed);
+      LCG(seed);
       // HP, ATK, DEF IV
-      LCG(seed, counter);
+      LCG(seed);
       // SPEED, SPATK, SPDEF IV
-      LCG(seed, counter);
+      LCG(seed);
       // Ability
-      LCG(seed, counter);
-      generatePokemonPID(seed, hTrainerId, lTrainerId, 0, counter, WantedShininess::notShiny);
-      generateEVs(seed, true, true, counter);
+      LCG(seed);
+      generatePokemonPID(seed, hTrainerId, lTrainerId, 0, WantedShininess::notShiny);
+      generateEVs(seed, true, true);
     }
   }
   return seed;
@@ -261,8 +261,8 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
     LCG(seed);
     // Ability
     LCG(seed);
-    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
-    std::array<u8, 6> EVs = generateEVs(seed, false, false, nullptr);
+    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, WantedShininess::notShiny);
+    std::array<u8, 6> EVs = generateEVs(seed, false, false);
     int hp = EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[enemyTeamIndex + 5][i];
     if (hp != criteria[4 + i] && criteria[4 + i] != -1)
       return false;
@@ -291,8 +291,8 @@ bool GaleDarknessRNGSystem::generateBattleTeam(u32& seed, const std::vector<int>
     LCG(seed);
     // Ability
     LCG(seed);
-    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
-    std::array<u8, 6> EVs = generateEVs(seed, false, false, nullptr);
+    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, WantedShininess::notShiny);
+    std::array<u8, 6> EVs = generateEVs(seed, false, false);
     int hp = EVs[0] / 4 + hpIV + s_quickBattleTeamMaxBaseHPStat[playerTeamIndex][i];
     if (hp != criteria[2 + i] && criteria[2 + i] != -1)
       return false;
@@ -393,8 +393,8 @@ std::vector<int> GaleDarknessRNGSystem::obtainTeamGenerationCritera(u32& seed)
     LCG(seed);
     // Ability
     LCG(seed);
-    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
-    generateEVs(seed, false, false, nullptr);
+    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, WantedShininess::notShiny);
+    generateEVs(seed, false, false);
   }
 
   // modulo 6 ???
@@ -418,8 +418,8 @@ std::vector<int> GaleDarknessRNGSystem::obtainTeamGenerationCritera(u32& seed)
     LCG(seed);
     // Ability
     LCG(seed);
-    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr, WantedShininess::notShiny);
-    generateEVs(seed, false, false, nullptr);
+    generatePokemonPID(seed, hTrainerId, lTrainerId, 0, WantedShininess::notShiny);
+    generateEVs(seed, false, false);
   }
   return criteria;
 }
@@ -527,7 +527,7 @@ BaseRNGSystem::StartersPrediction GaleDarknessRNGSystem::generateStarterPokemons
   fillStarterGenHiddenPowerInfo(starter);
 
   // Generates the true perosnality ID with no criteria
-  u32 personalityID = generatePokemonPID(seed, hTrainerId, lTrainerId, 0, nullptr);
+  u32 personalityID = generatePokemonPID(seed, hTrainerId, lTrainerId, 0);
   starter.isShiny = isPidShiny(lTrainerId, hTrainerId, personalityID);
   starter.genderIndex = getPidGender(eeveeGenderRatio, personalityID);
   starter.natureIndex = personalityID % 25;

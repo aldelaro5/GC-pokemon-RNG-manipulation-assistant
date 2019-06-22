@@ -74,7 +74,7 @@ std::string ColosseumRNGSystem::getPrecalcFilename()
 
 u32 inline ColosseumRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerId,
                                                   const u32 lTrainerId, const u32 dummyId,
-                                                  u16* counter, const s8 wantedGender,
+                                                  const s8 wantedGender,
                                                   const u32 genderRatio, const s8 wantedNature)
 {
   u32 id = 0;
@@ -82,8 +82,8 @@ u32 inline ColosseumRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerI
   while (!goodId)
   {
     // A personality ID is generated as candidate, high then low 16 bits
-    u32 hId = LCG(seed, counter) >> 16;
-    u32 lId = LCG(seed, counter) >> 16;
+    u32 hId = LCG(seed) >> 16;
+    u32 lId = LCG(seed) >> 16;
     id = (hId << 16) | (lId);
 
     // If we want a gender AND the gender of the pokemon is uncertain
@@ -114,45 +114,45 @@ u32 inline ColosseumRNGSystem::generatePokemonPID(u32& seed, const u32 hTrainerI
   return id;
 }
 
-u32 inline ColosseumRNGSystem::rollRNGToPokemonCompanyLogo(u32 seed, u16* counter)
+u32 inline ColosseumRNGSystem::rollRNGToPokemonCompanyLogo(u32 seed)
 {
   // The game generates 500 numbers of 32 bit in a row, this is 2 LCG call per number which makes
   // 1000 calls
-  seed = LCGn(seed, 1000, counter);
+  seed = LCGn(seed, 1000);
   // A personality ID is generated as candidate, low then high 16 bits
-  u32 lTrainerId = LCG(seed, counter) >> 16;
-  u32 hTrainerId = LCG(seed, counter) >> 16;
+  u32 lTrainerId = LCG(seed) >> 16;
+  u32 hTrainerId = LCG(seed) >> 16;
 
   for (int i = 0; i < 2; i++)
   {
     // A personality ID is generated as candidate, high then low 16 bits
-    u32 hDummyId = LCG(seed, counter) >> 16;
-    u32 lDummyId = LCG(seed, counter) >> 16;
+    u32 hDummyId = LCG(seed) >> 16;
+    u32 lDummyId = LCG(seed) >> 16;
     u32 dummyId = (hDummyId << 16) | (lDummyId);
 
     // These calls seems to generate some IV and a 50/50, they don't actually matter for the rest of
     // the calls
-    LCG(seed, counter);
-    LCG(seed, counter);
-    LCG(seed, counter);
-    generatePokemonPID(seed, hTrainerId, lTrainerId, dummyId, counter, 0, 0x1f);
+    LCG(seed);
+    LCG(seed);
+    LCG(seed);
+    generatePokemonPID(seed, hTrainerId, lTrainerId, dummyId, 0, 0x1f);
   }
 
   // These calls don't matter
-  LCG(seed, counter);
-  LCG(seed, counter);
+  LCG(seed);
+  LCG(seed);
 
   return seed;
 }
 
-u32 inline ColosseumRNGSystem::rollRNGEnteringBattleMenu(u32 seed, u16* counter)
+u32 inline ColosseumRNGSystem::rollRNGEnteringBattleMenu(u32 seed)
 {
-  seed = LCGn(seed, 120, counter);
+  seed = LCGn(seed, 120);
   for (int i = 0; i < 4; i++)
   {
     // A trainer ID is generated, low then high 16 bits
-    u32 lTrainerId = LCG(seed, counter) >> 16;
-    u32 hTrainerId = LCG(seed, counter) >> 16;
+    u32 lTrainerId = LCG(seed) >> 16;
+    u32 hTrainerId = LCG(seed) >> 16;
     for (int j = 0; j < 7; j++)
     {
       // For some reasons, the last call of all the 24 call to the perosnality ID generation is
@@ -160,22 +160,22 @@ u32 inline ColosseumRNGSystem::rollRNGEnteringBattleMenu(u32 seed, u16* counter)
       if (j == 6 && i != 3)
         continue;
       // A personality ID is generated as candidate, high then low 16 bits
-      u32 hDummyId = LCG(seed, counter) >> 16;
-      u32 lDummyId = LCG(seed, counter) >> 16;
+      u32 hDummyId = LCG(seed) >> 16;
+      u32 lDummyId = LCG(seed) >> 16;
       u32 dummyId = (hDummyId << 16) | (lDummyId);
 
       // These calls generate the IV and the ability, they don't actually matter for the rest
       // of the calls
-      LCG(seed, counter);
-      LCG(seed, counter);
-      LCG(seed, counter);
+      LCG(seed);
+      LCG(seed);
+      LCG(seed);
       if (j == 6)
       {
-        generatePokemonPID(seed, hTrainerId, lTrainerId, dummyId, counter);
+        generatePokemonPID(seed, hTrainerId, lTrainerId, dummyId);
       }
       else
       {
-        generatePokemonPID(seed, hTrainerId, lTrainerId, dummyId, counter,
+        generatePokemonPID(seed, hTrainerId, lTrainerId, dummyId,
                            s_genderDummyTeamsData[i][j], s_genderRatioDummyTeamsData[i][j]);
       }
     }
@@ -183,10 +183,10 @@ u32 inline ColosseumRNGSystem::rollRNGEnteringBattleMenu(u32 seed, u16* counter)
   return seed;
 }
 
-u32 ColosseumRNGSystem::rollRNGToBattleMenu(u32 seed, u16* counter)
+u32 ColosseumRNGSystem::rollRNGToBattleMenu(u32 seed)
 {
-  seed = rollRNGToPokemonCompanyLogo(seed, counter);
-  return rollRNGEnteringBattleMenu(seed, counter);
+  seed = rollRNGToPokemonCompanyLogo(seed);
+  return rollRNGEnteringBattleMenu(seed);
 }
 
 bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> criteria)
@@ -219,7 +219,7 @@ bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> cr
     LCG(seed);
     LCG(seed);
     generatePokemonPID(
-        seed, hTrainerId, lTrainerId, dummyId, nullptr, s_genderTeamsData[enemyTeamIndex][i],
+        seed, hTrainerId, lTrainerId, dummyId, s_genderTeamsData[enemyTeamIndex][i],
         s_genderRatioTeamsData[enemyTeamIndex][i], s_natureTeamsData[enemyTeamIndex][i]);
   }
 
@@ -251,7 +251,7 @@ bool ColosseumRNGSystem::generateBattleTeam(u32& seed, const std::vector<int> cr
     LCG(seed);
     LCG(seed);
     generatePokemonPID(
-        seed, hTrainerId, lTrainerId, dummyId, nullptr, s_genderTeamsData[playerTeamIndex][i],
+        seed, hTrainerId, lTrainerId, dummyId, s_genderTeamsData[playerTeamIndex][i],
         s_genderRatioTeamsData[playerTeamIndex][i], s_natureTeamsData[playerTeamIndex][i]);
   }
   return true;
@@ -335,7 +335,7 @@ std::vector<int> ColosseumRNGSystem::obtainTeamGenerationCritera(u32& seed)
     LCG(seed);
     LCG(seed);
     generatePokemonPID(
-        seed, hTrainerId, lTrainerId, dummyId, nullptr, s_genderTeamsData[enemyTeamIndex][i],
+        seed, hTrainerId, lTrainerId, dummyId, s_genderTeamsData[enemyTeamIndex][i],
         s_genderRatioTeamsData[enemyTeamIndex][i], s_natureTeamsData[enemyTeamIndex][i]);
   }
 
@@ -358,7 +358,7 @@ std::vector<int> ColosseumRNGSystem::obtainTeamGenerationCritera(u32& seed)
     LCG(seed);
     LCG(seed);
     generatePokemonPID(
-        seed, hTrainerId, lTrainerId, dummyId, nullptr, s_genderTeamsData[playerTeamIndex][i],
+        seed, hTrainerId, lTrainerId, dummyId, s_genderTeamsData[playerTeamIndex][i],
         s_genderRatioTeamsData[playerTeamIndex][i], s_natureTeamsData[playerTeamIndex][i]);
   }
 
@@ -455,7 +455,7 @@ BaseRNGSystem::StartersPrediction ColosseumRNGSystem::generateStarterPokemons(u3
 
     // Generates the true perosnality ID with any nature, but the gender has to be male.
     u32 personalityID =
-        generatePokemonPID(seed, hBaseId, lBaseId, dummyId, nullptr, 0, s_genderRatioStarters, -1);
+        generatePokemonPID(seed, hBaseId, lBaseId, dummyId, 0, s_genderRatioStarters, -1);
     starter.isShiny = false;
     starter.genderIndex = 0;
     starter.natureIndex = personalityID % 25;
