@@ -1,5 +1,7 @@
 #include "SeedFinderWizard.h"
 
+#include <thread>
+
 #include <QAbstractButton>
 #include <QMessageBox>
 #include <QPushButton>
