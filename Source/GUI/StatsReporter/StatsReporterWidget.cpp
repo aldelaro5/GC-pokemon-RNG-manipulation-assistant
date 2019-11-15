@@ -45,7 +45,7 @@ StatsReporterWidget::StatsReporterWidget(QWidget* parent) : QWidget(parent)
   m_tblSecondaryPossibilities->setSelectionMode(QAbstractItemView::SingleSelection);
   m_tblSecondaryPossibilities->setSelectionBehavior(QAbstractItemView::SelectRows);
   m_possibilitiesHeaderLabels = QStringList(
-      {"Seed", "Nature", "HP", "Atk", "Def", "SpA", "SpD", "Spe", "H. Power", "Gender"});
+      {"Frame", "Nature", "HP", "Atk", "Def", "SpA", "SpD", "Spe", "H. Power", "Gender"});
   m_tblSecondaryPossibilities->setColumnCount(m_possibilitiesHeaderLabels.size());
   m_tblSecondaryPossibilities->setRowCount(0);
   m_tblSecondaryPossibilities->setHorizontalHeaderLabels(m_possibilitiesHeaderLabels);
@@ -262,7 +262,7 @@ void StatsReporterWidget::onStatsGenderChanged()
     for (int i = 0; i < m_filteredCandidates.size(); i++)
     {
       QTableWidgetItem* seedItem = new QTableWidgetItem(
-          QString("%1").arg(m_filteredCandidates[i].startingSeed, 8, 16, QChar('0')).toUpper());
+          QString("%1").arg(m_filteredCandidates[i].frameNumber, 6, 10, QChar('0')).toUpper());
       QTableWidgetItem* natureItem = new QTableWidgetItem(
           GUICommon::naturesStr[m_filteredCandidates[i].properties.natureIndex]);
       QTableWidgetItem* hpItem =
