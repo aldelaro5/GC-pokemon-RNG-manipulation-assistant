@@ -170,8 +170,9 @@ BaseRNGSystem::predictStartersForNbrSeconds(u32 seed, const int nbrSeconds)
 }
 
 BaseRNGSystem::SecondaryCandidate BaseRNGSystem::generateSecondary(u32 seed, const Stats baseStats,
-                                                                   const int level, const u8 genderRatio, 
-																   int frameNumber)
+                                                                   const int level,
+                                                                   const u8 genderRatio,
+                                                                   int frameNumber)
 {
   SecondaryCandidate secondary;
 
