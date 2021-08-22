@@ -65,8 +65,8 @@ private:
   std::array<u8, 6> generateEVs(u32& seed, const bool allowUnfilledEV, const bool endPrematurely,
                                 u16* counter = nullptr);
 
-  const int secondaryRngAdvanceSearchStart = 693000;
-  const int secondarySearchSeedsAmount = 50000;
+  const int secondaryRngAdvanceSearchStart = 680000;
+  const int secondarySearchSeedsAmount = 63000;
   const int teddiursaLevel = 11;
   const u8 teddiursaGenderRatio = 127;
 
