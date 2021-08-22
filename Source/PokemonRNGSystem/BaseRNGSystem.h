@@ -44,6 +44,7 @@ public:
     PokemonProperties properties;
     Stats stats;
     u32 startingSeed = 0;
+    int frameNumber = 0;
   };
 
   struct StartersPrediction
@@ -184,7 +185,7 @@ protected:
 
 private:
   SecondaryCandidate generateSecondary(u32 seed, const Stats baseStats, const int level,
-                                       const u8 genderRatio);
+                                       const u8 genderRatio, int frameNumber);
 
   std::vector<SecondaryCandidate> m_secondaryCandidates;
 };
