@@ -5,6 +5,7 @@
 
 #include <array>
 #include <functional>
+#include <string>
 #include <vector>
 
 // This class manages all the backend and the implementation details of the RNG of a GameCube
