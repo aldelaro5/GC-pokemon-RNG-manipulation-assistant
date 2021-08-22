@@ -7,7 +7,7 @@
 
 StatsReporterWidget::StatsReporterWidget(QWidget* parent) : QWidget(parent)
 {
-  QLabel* lblTitle = new QLabel("Stats reporter");
+  QLabel* lblTitle = new QLabel("Stats Reporter");
   lblTitle->setAlignment(Qt::AlignCenter);
 
   m_cmbSecondaryPokemon = new QComboBox;
