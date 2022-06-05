@@ -84,6 +84,7 @@ void MainWindow::initialiseWidgets()
   m_btnSetSeedManually->setEnabled(false);
 
   m_lblCurrentSeed = new QLabel("  ????  ");
+  m_lblCurrentSeed->setTextInteractionFlags(NULL);
   m_lblStoredSeed = new QLabel("  None  ");
 
   m_btnStoreSeed = new QPushButton("St&ore Seed");
@@ -236,6 +237,7 @@ void MainWindow::gameChanged()
   m_edtManualSeed->setEnabled(true);
   m_btnSetSeedManually->setEnabled(true);
   m_lblCurrentSeed->setText("  ????  ");
+  m_lblCurrentSeed->setTextInteractionFlags(NULL);
   m_seedSet = false;
   m_lblStoredSeed->setText("  None  ");
 
@@ -251,6 +253,7 @@ void MainWindow::setCurrentSeed(u32 seed, int rerollCount)
       static_cast<GUICommon::gameSelection>(m_cmbGame->currentIndex());
 
   m_lblCurrentSeed->setText(QString::number(m_currentSeed, 16).toUpper());
+  m_lblCurrentSeed->setTextInteractionFlags(Qt::TextSelectableByMouse);
   std::vector<BaseRNGSystem::StartersPrediction> predictions =
       SPokemonRNG::getCurrentSystem()->predictStartersForNbrSeconds(
           m_currentSeed, SConfig::getInstance().getPredictionTime());
@@ -308,6 +311,7 @@ void MainWindow::resetPredictor()
   m_btnStoreSeed->setEnabled(false);
   m_btnRestoreSeed->setEnabled(false);
   m_lblCurrentSeed->setText("  ????  ");
+  m_lblCurrentSeed->setTextInteractionFlags(NULL);
   m_seedSet = false;
   m_lblStoredSeed->setText("  None  ");
   m_statsReporterWidget->reset();
@@ -355,6 +359,7 @@ void MainWindow::singleRerollPredictor()
 {
   rerollPredictor(true);
   m_lblCurrentSeed->setText(QString::number(m_currentSeed, 16).toUpper());
+  m_lblCurrentSeed->setTextInteractionFlags(Qt::TextSelectableByMouse);
 }
 
 bool MainWindow::rerollPredictor(bool withGuiUpdates)
@@ -444,6 +449,7 @@ void MainWindow::autoRerollPredictor()
   m_predictorWidget->filterUnwanted(m_chkFilterUnwantedPredictions->isChecked());
   m_lblRerollCount->setText(QString::number(m_rerollCount));
   m_lblCurrentSeed->setText(QString::number(m_currentSeed, 16).toUpper());
+  m_lblCurrentSeed->setTextInteractionFlags(Qt::TextSelectableByMouse);
   m_statsReporterWidget->setDisabled(true);
 }
 
