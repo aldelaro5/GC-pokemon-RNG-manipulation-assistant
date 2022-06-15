@@ -323,6 +323,7 @@ EndPage::EndPage(QWidget* parent, const bool sucess, const GUICommon::gameSelect
             QString("\n\nClick \"Finish\" to see your prediction in "
                     "the previous window."),
         this);
+    m_lblResult->setTextInteractionFlags(Qt::TextSelectableByMouse);
   }
   else
   {
