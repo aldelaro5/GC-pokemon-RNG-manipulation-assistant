@@ -84,7 +84,7 @@ void MainWindow::initialiseWidgets()
   m_btnSetSeedManually->setEnabled(false);
 
   m_lblCurrentSeed = new QLabel("  ????  ");
-  m_lblCurrentSeed->setTextInteractionFlags(NULL);
+  m_lblCurrentSeed->setTextInteractionFlags(Qt::NoTextInteraction);
   m_lblStoredSeed = new QLabel("  None  ");
 
   m_btnStoreSeed = new QPushButton("St&ore Seed");
@@ -237,7 +237,7 @@ void MainWindow::gameChanged()
   m_edtManualSeed->setEnabled(true);
   m_btnSetSeedManually->setEnabled(true);
   m_lblCurrentSeed->setText("  ????  ");
-  m_lblCurrentSeed->setTextInteractionFlags(NULL);
+  m_lblCurrentSeed->setTextInteractionFlags(Qt::NoTextInteraction);
   m_seedSet = false;
   m_lblStoredSeed->setText("  None  ");
 
@@ -311,7 +311,7 @@ void MainWindow::resetPredictor()
   m_btnStoreSeed->setEnabled(false);
   m_btnRestoreSeed->setEnabled(false);
   m_lblCurrentSeed->setText("  ????  ");
-  m_lblCurrentSeed->setTextInteractionFlags(NULL);
+  m_lblCurrentSeed->setTextInteractionFlags(Qt::NoTextInteraction);
   m_seedSet = false;
   m_lblStoredSeed->setText("  None  ");
   m_statsReporterWidget->reset();
